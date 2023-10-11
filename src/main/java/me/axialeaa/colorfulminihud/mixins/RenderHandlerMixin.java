@@ -7,10 +7,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.event.RenderHandler;
+import me.axialeaa.colorfulminihud.config.Formats;
 
 @Mixin(RenderHandler.class)
 public class RenderHandlerMixin
 {
+  @Shadow(remap = false) private int fps;
   @Shadow(remap = false) private void addLine(String text){}
 
   private void addLine1(String text, Variable<?>... vars)
@@ -31,6 +33,13 @@ public class RenderHandlerMixin
     switch(type)
     {
       case FPS:
+        addLine1(Formats.FPS_FORMAT.getStringValue(), new Variable<Integer>("{FPS}", "%", fps));
+      case MEMORY_USAGE:
+        long memMax = Runtime.getRuntime().maxMemory();
+        long memTotal = Runtime.getRuntime().totalMemory();
+        long memFree = Runtime.getRuntime().freeMemory();
+        long memUsed = memTotal - memFree;
+        // addLine1(Formats.MEMORY_USAGE_FORMAT.getStringValue(), new Variable<Integer>("{pused}", "%", memUsed * 100L / memMax));
     }
   }
 
