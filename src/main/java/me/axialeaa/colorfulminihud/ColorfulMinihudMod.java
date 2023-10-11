@@ -1,4 +1,4 @@
-package me.lntricate.template_mod;
+package me.axialeaa.colorfulminihud;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -6,11 +6,11 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TemplateMod implements ModInitializer
+public class ColorfulMinihudMod implements ModInitializer
 {
   public static final Logger LOGGER = LogManager.getLogger();
 
-  public static final String MOD_ID = "template_mod";
+  public static final String MOD_ID = "colorfulminihud";
   public static String MOD_VERSION = "unknown";
   public static String MOD_NAME = "unknown";
 

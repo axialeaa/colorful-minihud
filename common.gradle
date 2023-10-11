@@ -32,6 +32,7 @@ dependencies {
   include "com.github.LlamaLad7:MixinExtras:0.1.1"
   // Mods
   // modImplementation "carpet:fabric-carpet:${project.carpet_version}"
+  modImplementation "curse.maven:minihud-244260:${project.minihud_file_id}"
 }
 
 loom {

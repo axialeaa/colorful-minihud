@@ -1,4 +1,4 @@
-package me.lntricate.template_mod;
+package me.axialeaa.colorfulminihud;
 
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;

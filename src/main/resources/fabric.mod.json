@@ -6,10 +6,11 @@
   "name": "${name}",
   "description": "",
   "authors": [
+    "axialeaa",
     "lntricate"
   ],
   "contact": {
-    "sources": "https://github.com/lntricate1/"
+    "sources": "https://github.com/axialeaa/colorful-minihud"
   },
 
   "icon": "assets/${id}/icon.png",
@@ -17,10 +18,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.lntricate.${id}.TemplateMod"
+      "me.axialeaa.${id}.ColorfulMinihudMod"
     ],
     "preLaunch": [
-      "me.lntricate.${id}.PreLaunch"
+      "me.axialeaa.${id}.PreLaunch"
     ]
   },
   "mixins": [
