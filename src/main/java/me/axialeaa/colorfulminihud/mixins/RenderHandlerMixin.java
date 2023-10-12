@@ -2,7 +2,9 @@ package me.axialeaa.colorfulminihud.mixins;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,17 +19,19 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.event.RenderHandler;
+import fi.dy.masa.minihud.util.DataStorage;
 import me.axialeaa.colorfulminihud.ColorfulLines;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.level.Level;
 
 @Mixin(RenderHandler.class)
 public class RenderHandlerMixin
 {
   @Shadow(remap = false) private int fps;
+  @Shadow(remap = false) @Final private DataStorage data;
+  @Shadow(remap = false) private Set<InfoToggle> addedTypes;
   @Shadow(remap = false) private void addLine(String text){}
 
   private final List<Component> lines = new ArrayList<>();
@@ -98,7 +102,9 @@ public class RenderHandlerMixin
   @Redirect(method = "updateLines", at = @At(value = "INVOKE", target = "Lfi/dy/masa/minihud/event/RenderHandler;addLine(Lfi/dy/masa/minihud/config/InfoToggle;)V"), remap = false)
   private void addLine(RenderHandler self, InfoToggle type)
   {
-    addLine(ColorfulLines.getLine(type, fps));
+    String line = ColorfulLines.getLine(type, fps, data, addedTypes);
+    if(line != null)
+      addLine(line);
   }
 
   @Inject(method = "updateLines", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V", ordinal = 1), remap = false)

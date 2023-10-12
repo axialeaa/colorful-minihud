@@ -39,7 +39,7 @@ public class Formats
     "Biome reg name: %name\"}", "Format of infoBiomeRegistryName"),
 
     BLOCK_BREAK_SPEED_FORMAT         = new ConfigString("infoBlockBreakSpeedFormat", "{\"color\":\"white\",\"text\":\"" +
-    "BBS: %bbs$.2f\"}", "Format of infoBlockBreakSpeed"),
+    "BBS: %bbs\"}", "Format of infoBlockBreakSpeed"),
 
     BLOCK_IN_CHUNK_FORMAT            = new ConfigString("infoBlockInChunkFormat", "{\"color\":\"white\",\"text\":\"" +
     "Block: %x, %y, %z within Sub-Chunk: %cx, %cy, %cz\"}", "Format of infoBlockInChunk"),
@@ -81,7 +81,7 @@ public class Formats
     "\"}", "Format of infoChunkUpdates"),
 
     COORDINATES_FORMAT               = new ConfigString("infoCoordinatesFormat", "{\"color\":\"white\",\"text\":\"" +
-    "XYZ: %x$.2f / %y$.4f / %z$.2f\"}", "Format of infoCoordinates, change precision by changing the numbers"),
+    "XYZ: %x / %y / %z\"}", "Format of infoCoordinates, change precision by changing the numbers"),
 
     DIFFICULTY_FORMAT                = new ConfigString("infoDifficultyFormat", "{\"color\":\"white\",\"text\":\"" +
     "Local Difficulty: %local$.2f // %clamped$.2f (Day %day)\"}", "Format of infoDifficulty"),
@@ -140,14 +140,14 @@ public class Formats
     LOOKING_AT_ENTITY_LIVING_FORMAT  = new ConfigString("infoLookingAtEntityLivingFormat", "{\"color\":\"white\",\"text\":\"" +
     "Entity: %entity - HP: %hp$.1f / %maxhp$.1f\"}", "Format of infoLookingAtEntity when entity is living"),
 
-    MEMORY_USAGE_FORMAT              = new ConfigString("infoMemoryUsageFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Mem: %pused$2d%% %used$03d/%max$03dMB | Allocated: %pallocated$2d%% %total$03dMB\"}", "Format of infoMemoryUsage"),
-
     LOADED_CHUNKS_COUNT_SERVER_FORMAT= new ConfigString("infoLoadedChunksCountServerFormat", "{\"color\":\"white\",\"text\":\"" +
     "Server: %chunks / %total - Client: %client\"}", "Format of infoLoadedChunksCount when playing singleplayer"),
 
     LOADED_CHUNKS_COUNT_CLIENT_FORMAT= new ConfigString("infoLoadedChunksCountClientFormat", "{\"color\":\"white\",\"text\":\"" +
     "%client\"}", "Format of infoLoadedChunksCount when playing on a server"),
+
+    MEMORY_USAGE_FORMAT              = new ConfigString("infoMemoryUsageFormat", "{\"color\":\"white\",\"text\":\"" +
+    "Mem: %pused%% %used/%maxMB | Allocated: %pallocated%% %totalMB\"}", "Format of infoMemoryUsage"),
 
     PARTICLE_COUNT_FORMAT            = new ConfigString("infoParticleCountFormat", "{\"color\":\"white\",\"text\":\"" +
     "P: %p\"}", "Format of infoParticleCount"),
@@ -165,10 +165,10 @@ public class Formats
     "Yaw: %yaw$.1f\"}", "Format of infoRotationYaw"),
 
     SERVER_TPS_VANILLA_FORMAT        = new ConfigString("infoServerTPSVanillaFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Server TPS: %preTps%tps$.1f%rst (MSPT [est]: %preMspt%mspt$.1f%rst)\"}", "Format of infoServerTPS for vanilla servers"),
+    "Server TPS: %preTps%tps%rst (MSPT [est]: %preMspt%mspt%rst)\"}", "Format of infoServerTPS for vanilla servers"),
 
     SERVER_TPS_CARPET_FORMAT         = new ConfigString("infoServerTPSCarpetFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Server TPS: %preTps%tps$.1f%rst MSPT: %preMspt%mspt$.1f%rst\"}", "Format of infoServerTPS for carpet servers"),
+    "Server TPS: %preTps%tps%rst MSPT: %preMspt%mspt%rst\"}", "Format of infoServerTPS for carpet servers"),
 
     SERVER_TPS_NULL_FORMAT           = new ConfigString("infoServerTPSNullFormat", "{\"color\":\"white\",\"text\":\"" +
     "Server TPS: <no valid data>\"}", "Format of infoServerTPS when info is unavailable"),
@@ -195,19 +195,19 @@ public class Formats
     "Client world TE - L: %loaded, T: %ticking\"}", "Format of infoTileEntities"),
 
     TIME_DAY_MODULO_FORMAT           = new ConfigString("infoTimeDayModuloFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Day time %% %mod: %time$5d\"}", "Format of infoTimeDayModulo"),
+    "Day time %% %mod: %time\"}", "Format of infoTimeDayModulo"),
 
     TIME_REAL_FORMAT                 = new ConfigString("infoTimeIRLFormat", "{\"color\":\"white\",\"text\":\"" +
     "%time$tk:%time$tM:%time$tS\"}", "The format string for real time, see the Java Formatter\nclass for the format patterns, if needed."),
 
     TIME_TOTAL_MODULO_FORMAT         = new ConfigString("infoTimeTotalModuloFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Total time %% %mod: %time$5d\"}", "Format of infoTimeTotalModulo"),
+    "Total time %% %mod: %time\"}", "Format of infoTimeTotalModulo"),
 
     TIME_WORLD_FORMAT                = new ConfigString("infoTimeWorldFormat", "{\"color\":\"white\",\"text\":\"" +
-    "World time: %time$5d - total: %total\"}", "Format of infoTimeWorld"),
+    "World time: %time - total: %total\"}", "Format of infoTimeWorld"),
 
     TIME_WORLD_FORMATTED_FORMAT      = new ConfigString("infoWorldTimeFormattedFormat", "{\"color\":\"white\",\"text\":\"" +
-    "MC time: (day %day) %hour$02d:%min$02d:xx\"}", "The format string for the Minecraft time.\nThe supported placeholders are: %DAY_1, %DAY, %HOUR, %MIN, %SEC.\n%DAY_1 starts the day counter from 1, %DAY starts from 0.");
+    "MC time: (day %day) %hour:%min:xx\"}", "The format string for the Minecraft time.\nThe supported placeholders are: %DAY_1, %DAY, %HOUR, %MIN, %SEC.\n%DAY_1 starts the day counter from 1, %DAY starts from 0.");
 
   public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
     BEE_COUNT_FORMAT,
