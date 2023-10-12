@@ -84,7 +84,7 @@ public class Formats
     "XYZ: %x / %y / %z\"}", "Format of infoCoordinates, change precision by changing the numbers"),
 
     DIFFICULTY_FORMAT                = new ConfigString("infoDifficultyFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Local Difficulty: %local$.2f // %clamped$.2f (Day %day)\"}", "Format of infoDifficulty"),
+    "Local Difficulty: %local // %clamped (Day %day)\"}", "Format of infoDifficulty"),
 
     DIMENSION_FORMAT                 = new ConfigString("infoDimensionIdFormat", "{\"color\":\"white\",\"text\":\"" +
     " / dim: %dim\"}", "Format of infoDimensionId"),
@@ -183,7 +183,7 @@ public class Formats
     "NO\"}", "Format of the infoSlimeChunk result when it's negative"),
 
     SLIME_CHUNK_NO_SEED_FORMAT       = new ConfigString("infoSlimeChunkNoSeedFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Slime chunk: <world seed not known>\"}", "Format of infoSlimeChunk when there's no seed"),
+    "<world seed not known>\"}", "Format of infoSlimeChunk when there's no seed"),
 
     SPEED_FORMAT                     = new ConfigString("infoSpeedFormat", "{\"color\":\"white\",\"text\":\"" +
     " / Speed: %speed$.3f m/s\"}", "Format of infoSpeed"),

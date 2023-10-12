@@ -1,10 +1,5 @@
 package me.axialeaa.colorfulminihud;
 
-import java.util.Date;
-import java.util.Set;
-
-import org.jetbrains.annotations.Nullable;
-
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.minihud.config.Configs;
@@ -16,8 +11,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 
 public class ColorfulLines
 {
@@ -112,6 +116,7 @@ public class ColorfulLines
     LocalPlayer player = mc.player;
     double x = player.getX(), y = player.getY(), z = player.getZ();
     BlockPos pos = new BlockPos(x, y, z);
+    ChunkPos chunkPos = new ChunkPos(pos);
 
     switch(type)
     {
@@ -285,6 +290,76 @@ public class ColorfulLines
           va("rx", ".2f", ref.x),
           va("ry", ".2f", ref.y),
           va("rz", ".2f", ref.z));
+
+      case FACING:
+        Direction facing = player.getDirection();
+        String str2 = switch(facing)
+          {
+            case NORTH -> Formats.FACING_PZ_FORMAT.getStringValue();
+            case SOUTH -> Formats.FACING_NZ_FORMAT.getStringValue();
+            case EAST -> Formats.FACING_PX_FORMAT.getStringValue();
+            case WEST -> Formats.FACING_NX_FORMAT.getStringValue();
+            default -> "Invalid";
+          };
+        return line(Formats.FACING_FORMAT, va("dir", str2));
+
+      // case LIGHT_LEVEL_CLIENT:
+      // case LIGHT_LEVEL_SERVER:
+      // case BEE_COUNT:
+      // case HONEY_LEVEL:
+      // case ROTATION_YAW:
+      // case ROTATION_PITCH:
+      // case SPEED:
+      // case SPEED_AXIS:
+      // case CHUNK_SECTIONS:
+      // case CHUNK_SECTIONS_FULL:
+      // case CHUNK_UPDATES:
+      // case LOADED_CHUNKS_COUNT:
+
+      case PARTICLE_COUNT:
+        return line(Formats.PARTICLE_COUNT_FORMAT, va("p", mc.particleEngine.countParticles()));
+
+      case DIFFICULTY:
+        ChunkAccess serverChunk = Objects.requireNonNull(level).getChunk(chunkPos.getWorldPosition());
+
+        float moonPhaseFactor = level.getMoonBrightness();
+        long chunkInhabitedTime = serverChunk.getInhabitedTime();
+        DifficultyInstance diff = new DifficultyInstance(level.getDifficulty(), level.getDayTime(), chunkInhabitedTime, moonPhaseFactor);
+        return line(Formats.DIFFICULTY_FORMAT,
+          va("local", ".2f", diff.getEffectiveDifficulty()),
+          va("clamped", ".2f", diff.getSpecialMultiplier()),
+          va("day", level.getDayTime() / 24000L)
+        );
+
+      // case BIOME:
+      // case BIOME_REG_NAME:
+      // case TILE_ENTITIES:
+      // case ENTITIES_CLIENT:
+      // case ENTITIES_SERVER:
+
+      case SLIME_CHUNK:
+        if (!MiscUtils.isOverworld(Objects.requireNonNull(level)))
+          return null;
+        if (data.isWorldSeedKnown(level))
+        {
+          long seed = data.getWorldSeed(level);
+          return line(Formats.SLIME_CHUNK_FORMAT,
+            va("result", MiscUtils.canSlimeSpawnAt(pos.getX(), pos.getZ(), seed) ?
+              Formats.SLIME_CHUNK_YES_FORMAT.getStringValue() :
+              Formats.SLIME_CHUNK_NO_FORMAT.getStringValue()
+            )
+          );
+        }
+        else
+        {
+          return line(Formats.SLIME_CHUNK_FORMAT, va("result", Formats.SLIME_CHUNK_NO_SEED_FORMAT.getStringValue()));
+        }
+
+      // case LOOKING_AT_ENTITY:
+      // case ENTITY_REG_NAME:
+      // case LOOKING_AT_BLOCK:
+      // case LOOKING_AT_BLOCK_CHUNK:
+      // case BLOCK_PROPS:
 
       default:
         return null;
