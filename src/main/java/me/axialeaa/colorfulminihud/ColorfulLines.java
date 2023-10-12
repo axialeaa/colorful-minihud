@@ -9,7 +9,6 @@ import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
-import fi.dy.masa.minihud.event.RenderHandler;
 import fi.dy.masa.minihud.util.DataStorage;
 import fi.dy.masa.minihud.util.MiscUtils;
 import me.axialeaa.colorfulminihud.config.Formats;
@@ -17,8 +16,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class ColorfulLines
 {
@@ -275,6 +274,17 @@ public class ColorfulLines
 
       case BLOCK_BREAK_SPEED:
         return line(Formats.BLOCK_BREAK_SPEED_FORMAT, va("bbs", ".2f", data.getBlockBreakingSpeed()));
+
+      case DISTANCE:
+        Vec3 ref = data.getDistanceReferencePoint();
+        return line(Formats.DISTANCE_FORMAT,
+          va("d", ".2f", Math.sqrt(ref.distanceToSqr(x, y, z))),
+          va("dx", ".2f", x - ref.x),
+          va("dy", ".2f", y - ref.y),
+          va("dz", ".2f", z - ref.z),
+          va("rx", ".2f", ref.x),
+          va("ry", ".2f", ref.y),
+          va("rz", ".2f", ref.z));
 
       default:
         return null;

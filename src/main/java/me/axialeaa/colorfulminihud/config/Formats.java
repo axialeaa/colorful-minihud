@@ -90,7 +90,7 @@ public class Formats
     " / dim: %dim\"}", "Format of infoDimensionId"),
 
     DISTANCE_FORMAT                  = new ConfigString("infoDistanceFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Distance: %dx$.2f (x: %dx$.2f y: %dy$.2f z: %dz$.2f) [to x: %rx$.2f y: %ry$.2f z: %rz$.2f]\"}", "Format of infoDistance"),
+    "Distance: %d (x: %dx y: %dy z: %dz) [to x: %rx y: %ry z: %rz]\"}", "Format of infoDistance"),
 
     ENTITIES_CLIENT_FORMAT           = new ConfigString("infoEntitiesClientFormat", "{\"color\":\"white\",\"text\":\"" +
     "Entities - Client: %e\"}", "Format of infoEntitiesClient"),
