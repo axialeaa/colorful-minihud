@@ -2,8 +2,11 @@ package me.axialeaa.colorfulminihud;
 
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
+import fi.dy.masa.minihud.event.RenderHandler;
+import fi.dy.masa.minihud.mixin.IMixinWorldRenderer;
 import fi.dy.masa.minihud.util.DataStorage;
 import fi.dy.masa.minihud.util.MiscUtils;
 import me.axialeaa.colorfulminihud.config.Formats;
@@ -12,10 +15,18 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.BeehiveBlock;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +36,8 @@ import java.util.Set;
 
 public class ColorfulLines
 {
+  private static final IRenderHandler accessor = (IRenderHandler)RenderHandler.getInstance();
+
   private static class Variable<T>
   {
     private final String key;
@@ -252,9 +265,9 @@ public class ColorfulLines
           hasOther = true;
 
           str1.append(line(Formats.CHUNK_POS_FORMAT,
-            va("x", pos.getX() >> 4),
+            va("x", chunkPos.x),
             va("y", pos.getY() >> 4),
-            va("z", pos.getZ() >> 4)));
+            va("z", chunkPos.z)));
           addedTypes.add(InfoToggle.CHUNK_POS);
         }
         if(InfoToggle.REGION_FILE.getBooleanValue())
@@ -273,9 +286,9 @@ public class ColorfulLines
           va("x", pos.getX() & 0xf),
           va("y", pos.getY() & 0xf),
           va("z", pos.getZ() & 0xf),
-          va("cx", pos.getX() >> 4),
+          va("cx", chunkPos.x),
           va("cy", pos.getY() >> 4),
-          va("cz", pos.getZ() >> 4));
+          va("cz", chunkPos.z));
 
       case BLOCK_BREAK_SPEED:
         return line(Formats.BLOCK_BREAK_SPEED_FORMAT, va("bbs", ".2f", data.getBlockBreakingSpeed()));
@@ -294,27 +307,95 @@ public class ColorfulLines
       case FACING:
         Direction facing = player.getDirection();
         String str2 = switch(facing)
-          {
-            case NORTH -> Formats.FACING_PZ_FORMAT.getStringValue();
-            case SOUTH -> Formats.FACING_NZ_FORMAT.getStringValue();
-            case EAST -> Formats.FACING_PX_FORMAT.getStringValue();
-            case WEST -> Formats.FACING_NX_FORMAT.getStringValue();
-            default -> "Invalid";
-          };
+        {
+          case NORTH -> Formats.FACING_PZ_FORMAT.getStringValue();
+          case SOUTH -> Formats.FACING_NZ_FORMAT.getStringValue();
+          case EAST -> Formats.FACING_PX_FORMAT.getStringValue();
+          case WEST -> Formats.FACING_NX_FORMAT.getStringValue();
+          default -> "Invalid direction";
+        };
         return line(Formats.FACING_FORMAT, va("dir", str2));
 
-      // case LIGHT_LEVEL_CLIENT:
-      // case LIGHT_LEVEL_SERVER:
-      // case BEE_COUNT:
-      // case HONEY_LEVEL:
-      // case ROTATION_YAW:
-      // case ROTATION_PITCH:
-      // case SPEED:
-      // case SPEED_AXIS:
-      // case CHUNK_SECTIONS:
-      // case CHUNK_SECTIONS_FULL:
-      // case CHUNK_UPDATES:
-      // case LOADED_CHUNKS_COUNT:
+      case LIGHT_LEVEL:
+        if(accessor.getChunkPublic(chunkPos).isEmpty())
+          return null;
+
+        LevelLightEngine lightEngine = level.getChunkSource().getLightEngine();
+        return line(Formats.LIGHT_LEVEL_CLIENT_FORMAT,
+          va("light", lightEngine.getRawBrightness(pos, 0)),
+          va("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
+          va("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos)));
+
+      case BEE_COUNT:
+        Level bestLevel = WorldUtils.getBestWorld(mc);
+        BlockEntity be = accessor.getTargetedBlockEntityPublic(bestLevel, mc);
+        return be instanceof BeehiveBlockEntity bbe ?
+          line(Formats.BEE_COUNT_FORMAT, va("bees", bbe.getOccupantCount())) : null;
+
+      case HONEY_LEVEL:
+        BlockState state = accessor.getTargetedBlockPublic(mc);
+        return state != null && state.getBlock() instanceof BeehiveBlock ?
+          line(Formats.HONEY_LEVEL_FORMAT, va("honey", BeehiveBlockEntity.getHoneyLevel(state))) : null;
+
+      case ROTATION_YAW:
+      case ROTATION_PITCH:
+      case SPEED:
+        if(addedTypes.contains(InfoToggle.ROTATION_YAW) || addedTypes.contains(InfoToggle.ROTATION_PITCH) || addedTypes.contains(InfoToggle.SPEED))
+          return null;
+
+        StringBuilder str3 = new StringBuilder(128);
+        str3.append("[");
+        boolean hasOther1 = InfoToggle.ROTATION_YAW.getBooleanValue();
+        if(hasOther1)
+        {
+          str3.append(line(Formats.ROTATION_YAW_FORMAT, va("yaw", Mth.wrapDegrees(player.getYRot()))));
+          addedTypes.add(InfoToggle.ROTATION_YAW);
+        }
+        if(InfoToggle.ROTATION_PITCH.getBooleanValue())
+        {
+          if(hasOther1)
+            str3.append(",");
+          hasOther1 = true;
+          str3.append(line(Formats.ROTATION_PITCH_FORMAT, va("pitch", Mth.wrapDegrees(player.getXRot()))));
+          addedTypes.add(InfoToggle.ROTATION_PITCH);
+        }
+        if(InfoToggle.SPEED.getBooleanValue())
+        {
+          if(hasOther1)
+            str3.append(",");
+          double dx = x - player.xOld, dy = y - player.yOld, dz = z - player.zOld;
+          double dist1 = Math.sqrt(dx*dx + dy*dy + dz*dz);
+          str3.append(line(Formats.SPEED_FORMAT, va("speed", dist1 * 20)));
+          addedTypes.add(InfoToggle.SPEED);
+        }
+        return str3.append("]").toString();
+
+      case SPEED_AXIS:
+        return line(Formats.SPEED_AXIS_FORMAT,
+          va("x", (x - player.xOld) * 20),
+          va("y", (y - player.yOld) * 20),
+          va("z", (z - player.zOld) * 20));
+
+      case CHUNK_SECTIONS:
+        return line(Formats.CHUNK_SECTIONS_FORMAT, va("c", ((IMixinWorldRenderer)mc.levelRenderer).getRenderedChunksInvoker()));
+
+      case CHUNK_SECTIONS_FULL:
+        return line(Formats.CHUNK_SECTIONS_FULL_FORMAT, va("c", mc.levelRenderer.getChunkStatistics()));
+
+      case CHUNK_UPDATES:
+        return "TODO"; // minihud parity
+
+      case LOADED_CHUNKS_COUNT:
+        String chunksClient = level.gatherChunkSourceStats();
+        Level levelServer = WorldUtils.getBestWorld(mc);
+        if(levelServer == null || levelServer != level)
+          return line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT, va("client", chunksClient));
+
+        ServerChunkCache cache = (ServerChunkCache)levelServer.getChunkSource();
+        return line(Formats.LOADED_CHUNKS_COUNT_SERVER_FORMAT,
+          va("chunks", cache.getLoadedChunksCount()),
+          va("total", cache.getTickingGenerated()),
+          va("client", chunksClient));
 
       case PARTICLE_COUNT:
         return line(Formats.PARTICLE_COUNT_FORMAT, va("p", mc.particleEngine.countParticles()));

@@ -22,18 +22,46 @@ import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.event.RenderHandler;
 import fi.dy.masa.minihud.util.DataStorage;
 import me.axialeaa.colorfulminihud.ColorfulLines;
+import me.axialeaa.colorfulminihud.IRenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 @Mixin(RenderHandler.class)
-public class RenderHandlerMixin
+public class RenderHandlerMixin implements IRenderHandler
 {
   @Shadow(remap = false) private int fps;
   @Shadow(remap = false) @Final private DataStorage data;
   @Shadow(remap = false) private Set<InfoToggle> addedTypes;
   @Shadow(remap = false) private void addLine(String text){}
+
+  @Shadow(remap = false) private LevelChunk getChunk(ChunkPos pos){return null;}
+  @Shadow(remap = false) private BlockEntity getTargetedBlockEntity(Level level, Minecraft mc){return null;}
+  @Shadow(remap = false) private BlockState getTargetedBlock(Minecraft mc){return null;}
+
+  @Override
+  public LevelChunk getChunkPublic(ChunkPos pos)
+  {
+    return getChunk(pos);
+  }
+
+  @Override
+  public BlockEntity getTargetedBlockEntityPublic(Level level, Minecraft mc)
+  {
+    return getTargetedBlockEntity(level, mc);
+  }
+
+  @Override
+  public BlockState getTargetedBlockPublic(Minecraft mc)
+  {
+    return getTargetedBlock(mc);
+  }
 
   @Unique
   private final List<Component> lines = new ArrayList<>();
