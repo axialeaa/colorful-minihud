@@ -22,6 +22,9 @@
     ],
     "preLaunch": [
       "me.axialeaa.${id}.PreLaunch"
+    ],
+    "mm:early_risers": [
+      "me.axialeaa.${id}.EarlyRiser"
     ]
   },
   "mixins": [

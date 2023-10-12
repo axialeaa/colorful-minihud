@@ -24,8 +24,13 @@ repositories {
 dependencies {
   // loom
   minecraft "com.mojang:minecraft:${project.minecraft_version}"
-  mappings loom.officialMojangMappings()
+  mappings loom.layered {
+    mappings file("../../malilib_mappings.tiny")
+    officialMojangMappings()
+  }
   modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+  // ASM
+  modImplementation(include("com.github.Chocohead:Fabric-ASM:v2.3"))
   // MixinExtras
   implementation "com.github.LlamaLad7:MixinExtras:0.1.1"
   annotationProcessor "com.github.LlamaLad7:MixinExtras:0.1.1"
