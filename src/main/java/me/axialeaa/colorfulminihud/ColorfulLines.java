@@ -1,5 +1,4 @@
 package me.axialeaa.colorfulminihud;
-
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.WorldUtils;
