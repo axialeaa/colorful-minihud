@@ -7,6 +7,7 @@ import java.util.Set;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -34,6 +35,7 @@ public class RenderHandlerMixin
   @Shadow(remap = false) private Set<InfoToggle> addedTypes;
   @Shadow(remap = false) private void addLine(String text){}
 
+  @Unique
   private final List<Component> lines = new ArrayList<>();
 
   @Redirect(method = "onRenderGameOverlayPost", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/render/RenderUtils;renderText(IIDIILfi/dy/masa/malilib/config/HudAlignment;ZZLjava/util/List;Lcom/mojang/blaze3d/vertex/PoseStack;)I"), remap = false)
@@ -74,7 +76,7 @@ public class RenderHandlerMixin
           px = scaledWidth / scale - width - xOff - bgMargin;
           break;
         case CENTER:
-          px = scaledWidth / scale / 2 - width / 2 - xOff;
+          px = scaledWidth / scale / 2 - width / 2F - xOff;
           break;
         default:
       }
