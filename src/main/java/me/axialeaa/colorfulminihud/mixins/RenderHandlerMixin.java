@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 
 @Mixin(RenderHandler.class)
 public class RenderHandlerMixin
@@ -109,6 +110,13 @@ public class RenderHandlerMixin
   @Redirect(method = "updateLines", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 1), remap = false)
   private boolean collectLines(List<String> self, Object text)
   {
-    return lines.add(ColorfulLines.interpret((String)text));
+    try
+    {
+      return lines.add(Component.Serializer.fromJsonLenient((String)text));
+    }
+    catch(Exception e)
+    {
+      return lines.add(new TextComponent("Formatting failed - Invalid JSON"));
+    }
   }
 }
