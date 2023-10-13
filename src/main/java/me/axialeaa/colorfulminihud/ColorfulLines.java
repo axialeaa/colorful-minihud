@@ -572,7 +572,7 @@ public class ColorfulLines
 
     entry(InfoToggle.CHUNK_SECTIONS_FULL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_SECTIONS_FULL_FORMAT, va("c", mc.levelRenderer.getChunkStatistics())))),
 
-    entry(InfoToggle.CHUNK_UPDATES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add("TODO")),
+    entry(InfoToggle.CHUNK_UPDATES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_UPDATES_FORMAT))),
 
     entry(InfoToggle.LOADED_CHUNKS_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
@@ -623,10 +623,7 @@ public class ColorfulLines
       lines.add(line(Formats.BIOME_REG_NAME_FORMAT, va("name", resourceLocation != null ? resourceLocation.toString() : "?")));
     }),
 
-    entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) ->
-    {
-      //TODO
-    }),
+    entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TILE_ENTITIES_FORMAT, va("loaded", "?"), va("ticking", "?")))),
 
     entry(InfoToggle.ENTITIES_CLIENT_WORLD, ENTITIES),
     entry(InfoToggle.ENTITIES, ENTITIES),
