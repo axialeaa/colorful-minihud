@@ -9,7 +9,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 
 public interface IRenderHandler
 {
-  public LevelChunk getChunkPublic(ChunkPos pos);
-  public BlockEntity getTargetedBlockEntityPublic(Level level, Minecraft mc);
-  public BlockState getTargetedBlockPublic(Minecraft mc);
+  LevelChunk getChunkPublic(ChunkPos pos);
+  BlockEntity getTargetedBlockEntityPublic(Level level, Minecraft mc);
+  BlockState getTargetedBlockPublic(Minecraft mc);
 }

@@ -1,6 +1,9 @@
 package me.axialeaa.colorfulminihud;
+
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.interfaces.IRenderer;
+import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
@@ -14,21 +17,35 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.BeehiveBlock;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.lighting.LevelLightEngine;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
@@ -37,25 +54,13 @@ public class ColorfulLines
 {
   private static final IRenderHandler accessor = (IRenderHandler)RenderHandler.getInstance();
 
-  private static class Variable<T>
-  {
-    private final String key;
-    private final String defaultFormat;
-    public final T value;
+  private record Variable<T>(String key, String defaultFormat, T value) {
 
-    public Variable(String key, String defaultFormat, T value)
-    {
-      this.key = key;
-      this.defaultFormat = defaultFormat;
-      this.value = value;
+    public String apply(String text, int i) {
+        text = text.replace("%" + key + "$", "%" + i + "$");
+        return text.replace("%" + key, "%" + i + "$" + defaultFormat);
+      }
     }
-
-    public String apply(String text, int i)
-    {
-      text = text.replace("%" + key + "$", "%" + i + "$");
-      return text.replace("%" + key, "%" + i + "$" + defaultFormat);
-    }
-  }
 
   private static String line(ConfigString config, Variable<?>... vars)
   {
@@ -126,7 +131,7 @@ public class ColorfulLines
     Minecraft mc = Minecraft.getInstance();
     Level level = mc.level;
     LocalPlayer player = mc.player;
-    double x = player.getX(), y = player.getY(), z = player.getZ();
+    double x = Objects.requireNonNull(player).getX(), y = player.getY(), z = player.getZ();
     BlockPos pos = new BlockPos(x, y, z);
     ChunkPos chunkPos = new ChunkPos(pos);
 
@@ -151,12 +156,12 @@ public class ColorfulLines
       case TIME_REAL -> line(Formats.TIME_REAL_FORMAT, va("time", "tk", new Date(System.currentTimeMillis())));
 
       case TIME_WORLD -> line(Formats.TIME_WORLD_FORMAT,
-        va("time", "5d", level.getDayTime()),
+        va("time", "5d", Objects.requireNonNull(level).getDayTime()),
         va("total", level.getGameTime()));
 
       case TIME_WORLD_FORMATTED ->
       {
-        long timeDay = level.getDayTime();
+        long timeDay = Objects.requireNonNull(level).getDayTime();
         long day = timeDay / 24000;
         int dayTicks = (int)(timeDay % 24000);
         yield line(Formats.TIME_WORLD_FORMATTED_FORMAT,
@@ -172,7 +177,7 @@ public class ColorfulLines
         int mod = Configs.Generic.TIME_DAY_DIVISOR.getIntegerValue();
         yield line(Formats.TIME_DAY_MODULO_FORMAT,
           va("mod", mod),
-          va("time", "5d", level.getDayTime() % mod));
+          va("time", "5d", Objects.requireNonNull(level).getDayTime() % mod));
       }
 
       case TIME_TOTAL_MODULO ->
@@ -180,12 +185,12 @@ public class ColorfulLines
         int mod1 = Configs.Generic.TIME_TOTAL_DIVISOR.getIntegerValue();
         yield line(Formats.TIME_TOTAL_MODULO_FORMAT,
           va("mod", mod1),
-          va("time", "5d", level.getGameTime() % mod1));
+          va("time", "5d", Objects.requireNonNull(level).getGameTime() % mod1));
       }
 
       case SERVER_TPS ->
       {
-        if(mc.hasSingleplayerServer() && mc.getSingleplayerServer().getTickCount() % 10 == 0)
+        if(mc.hasSingleplayerServer() && Objects.requireNonNull(mc.getSingleplayerServer()).getTickCount() % 10 == 0)
           data.updateIntegratedServerTPS();
 
         if(!data.hasTPSData())
@@ -243,7 +248,7 @@ public class ColorfulLines
         {
           if(InfoToggle.COORDINATES.getBooleanValue())
             str.append(",");
-          str.append(line(Formats.DIMENSION_FORMAT, va("dim", level.dimension().location().toString())));
+          str.append(line(Formats.DIMENSION_FORMAT, va("dim", Objects.requireNonNull(level).dimension().location().toString())));
           addedTypes.add(InfoToggle.DIMENSION);
         }
         yield str.append("]").toString();
@@ -323,7 +328,10 @@ public class ColorfulLines
           case WEST -> Formats.FACING_NX_FORMAT.getStringValue();
           default -> "Invalid direction";
         };
-        yield line(Formats.FACING_FORMAT, va("dir", str2));
+        yield line(Formats.FACING_FORMAT,
+          va("dir", facing.toString()),
+          va("coord", str2)
+        );
       }
 
       case LIGHT_LEVEL ->
@@ -331,7 +339,7 @@ public class ColorfulLines
         if(accessor.getChunkPublic(chunkPos).isEmpty())
           yield null;
 
-        LevelLightEngine lightEngine = level.getChunkSource().getLightEngine();
+        LevelLightEngine lightEngine = Objects.requireNonNull(level).getChunkSource().getLightEngine();
         yield line(Formats.LIGHT_LEVEL_CLIENT_FORMAT,
           va("light", lightEngine.getRawBrightness(pos, 0)),
           va("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
@@ -399,20 +407,21 @@ public class ColorfulLines
 
       case LOADED_CHUNKS_COUNT ->
       {
-        String chunksClient = level.gatherChunkSourceStats();
+        String chunksClient = Objects.requireNonNull(level).gatherChunkSourceStats();
         Level levelServer = WorldUtils.getBestWorld(mc);
         if(levelServer == null || levelServer != level)
           yield line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT, va("client", chunksClient));
 
         ServerChunkCache cache = (ServerChunkCache)levelServer.getChunkSource();
         yield line(Formats.LOADED_CHUNKS_COUNT_SERVER_FORMAT,
-          va("chunks", cache.getLoadedChunksCount()),
-          va("total", cache.getTickingGenerated()),
-          va("client", chunksClient));
+                va("chunks", cache.getLoadedChunksCount()),
+                va("total", cache.getTickingGenerated()),
+                va("client", chunksClient));
       }
 
       case PARTICLE_COUNT -> line(Formats.PARTICLE_COUNT_FORMAT, va("p", mc.particleEngine.countParticles()));
 
+      case COORDINATES_SCALED -> "TODO";
       case DIFFICULTY ->
       {
         ChunkAccess serverChunk = Objects.requireNonNull(level).getChunk(chunkPos.getWorldPosition());
@@ -427,11 +436,33 @@ public class ColorfulLines
         );
       }
 
-      // case BIOME ->
-      // case BIOME_REG_NAME ->
-      // case TILE_ENTITIES ->
-      // case ENTITIES_CLIENT ->
-      // case ENTITIES_SERVER ->
+      case BIOME ->
+      {
+        if (accessor.getChunkPublic(chunkPos).isEmpty())
+          yield null;
+        else
+        {
+          Biome biome = Objects.requireNonNull(level).getBiome(pos);
+          ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+          yield line(Formats.BIOME_FORMAT, va("biome", StringUtils.translate("biome." + Objects.requireNonNull(resourceLocation).toString().replace(":", "."))));
+        }
+      }
+
+      case BIOME_REG_NAME ->
+      {
+        if (accessor.getChunkPublic(chunkPos).isEmpty())
+          yield null;
+        else
+        {
+          Biome biome = Objects.requireNonNull(level).getBiome(pos);
+          ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+          yield line(Formats.BIOME_REG_NAME_FORMAT, va("name", resourceLocation != null ? resourceLocation.toString() : "?"));
+        }
+      }
+
+      case TILE_ENTITIES -> "TODO";
+      case ENTITIES_CLIENT_WORLD -> "TODO";
+      case ENTITIES -> "TODO";
 
       case SLIME_CHUNK ->
       {
@@ -451,13 +482,122 @@ public class ColorfulLines
           yield line(Formats.SLIME_CHUNK_FORMAT, va("result", Formats.SLIME_CHUNK_NO_SEED_FORMAT.getStringValue()));
       }
 
-      // case LOOKING_AT_ENTITY ->
-      // case ENTITY_REG_NAME ->
-      // case LOOKING_AT_BLOCK ->
-      // case LOOKING_AT_BLOCK_CHUNK ->
-      // case BLOCK_PROPS ->
+      case LOOKING_AT_ENTITY ->
+      {
+        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.ENTITY)
+        {
+          Entity lookedEntity = mc.crosshairPickEntity;
+          if (lookedEntity instanceof LivingEntity living)
+            yield line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
+                    va("entity", lookedEntity.getName().getString()),
+                    va("hp", living.getHealth()),
+                    va("maxhp", living.getMaxHealth())
+            );
+          else
+            yield line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT, va("entity", Objects.requireNonNull(lookedEntity).getName().getString()));
+        }
+        else
+          yield null;
+      }
 
-      default -> null;
+      case ENTITY_REG_NAME ->
+      {
+        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.ENTITY)
+        {
+          Entity lookedEntity = ((EntityHitResult) mc.hitResult).getEntity();
+          ResourceLocation resourceLocation = EntityType.getKey(lookedEntity.getType());
+          yield line(Formats.ENTITY_REG_NAME_FORMAT, va("name", resourceLocation.toString()));
+        }
+        else
+          yield null;
+      }
+
+      case LOOKING_AT_BLOCK, LOOKING_AT_BLOCK_CHUNK -> {
+        // Don't add the same line multiple times
+        if (addedTypes.contains(InfoToggle.LOOKING_AT_BLOCK) || addedTypes.contains(InfoToggle.LOOKING_AT_BLOCK_CHUNK))
+          yield null;
+        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK) {
+          BlockPos lookPos = ((BlockHitResult)mc.hitResult).getBlockPos();
+          StringBuilder str5 = new StringBuilder(128);
+          str5.append("[");
+          boolean hasOther3 = InfoToggle.LOOKING_AT_BLOCK.getBooleanValue();
+          if (hasOther3) {
+            str5.append(line(Formats.LOOKING_AT_BLOCK_FORMAT,
+              va("x", lookPos.getX()),
+              va("y", lookPos.getY()),
+              va("z", lookPos.getZ())
+            ));
+            addedTypes.add(InfoToggle.LOOKING_AT_BLOCK);
+          }
+
+          if (InfoToggle.LOOKING_AT_BLOCK_CHUNK.getBooleanValue()) {
+            if (hasOther3) str5.append(",");
+            str5.append(line(Formats.LOOKING_AT_BLOCK_CHUNK_FORMAT,
+              va("x", lookPos.getX()),
+              va("y", lookPos.getY()),
+              va("z", lookPos.getZ()),
+              va("cx", lookPos.getX() >> 4),
+              va("cy", lookPos.getY() >> 4),
+              va("cz", lookPos.getZ() >> 4)
+            ));
+            addedTypes.add(InfoToggle.LOOKING_AT_BLOCK_CHUNK);
+          }
+          yield str5.append("]").toString();
+        }
+        else
+          yield null;
+      }
+
+      case BLOCK_PROPS -> "TODO";
+
+      case FURNACE_XP -> "TODO";
+      case HORSE_SPEED -> "TODO";
+      case HORSE_JUMP -> "TODO";
+      case SPEED_HV -> "TODO";
     };
   }
+
+  private static void getBlockProperties(Minecraft mc)
+  {
+    if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK)
+    {
+      BlockPos posLooking = ((BlockHitResult)mc.hitResult).getBlockPos();
+      BlockState state = Objects.requireNonNull(mc.level).getBlockState(posLooking);
+      ResourceLocation resourceLocation = Registry.BLOCK.getKey(state.getBlock());
+
+      line(Formats.BLOCK_PROPS_HEADING_FORMAT, va("name", resourceLocation.toString()));
+      String separator = line(Formats.BLOCK_PROPS_SEPARATOR_FORMAT);
+
+      Collection<net.minecraft.world.level.block.state.properties.Property<?>> properties = state.getProperties();
+      if (properties.size() > 0)
+        for (Property<?> property : properties)
+        {
+          Comparable<?> value = state.getValue(property);
+          if (property instanceof BooleanProperty)
+            line(value.equals(Boolean.TRUE) ? Formats.BLOCK_PROPS_BOOLEAN_TRUE_FORMAT : Formats.BLOCK_PROPS_BOOLEAN_FALSE_FORMAT,
+              va("prop", property.getName()),
+              va("separator", separator)
+            );
+          else if (property instanceof DirectionProperty)
+            line(Formats.BLOCK_PROPS_DIRECTION_FORMAT,
+              va("prop", property.getName()),
+              va("separator", separator),
+              va("value", value.toString())
+            );
+          else if (property instanceof IntegerProperty)
+            line(Formats.BLOCK_PROPS_INT_FORMAT,
+              va("prop", property.getName()),
+              va("separator", separator),
+              va("value", value.toString())
+            );
+          else
+            line(Formats.BLOCK_PROPS_STRING_FORMAT,
+              va("prop", property.getName()),
+              va("separator", separator),
+              va("value", value.toString())
+            );
+        }
+    }
+  }
+  
 }

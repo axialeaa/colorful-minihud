@@ -99,7 +99,7 @@ public class Formats
     ", Server: %e\"}", "Format of infoEntitiesServer"),
 
     ENTITY_REG_NAME_FORMAT           = new ConfigString("infoEntityRegistryNameFormat", "{\"color\":\"white\",\"text\":\"" +
-    "Entity reg name: %names\"}", "Format of infoEntityRegistryName"),
+    "Entity reg name: %name\"}", "Format of infoEntityRegistryName"),
 
     FACING_FORMAT                    = new ConfigString("infoFacingFormat", "[{\"color\":\"white\",\"text\":\"" +
     "Facing: %dir (\"}, %coord, {\"color\":\"white\",\"text\":\")\"}]", "Format of infoFacing"),
