@@ -47,8 +47,8 @@ public class Formats
     BLOCK_POS_FORMAT                 = new ConfigString("infoBlockPositionFormat", "{\"color\":\"white\",\"text\":\"" +
     "Block: %x, %y, %z\"}", "Format of infoBlockPosition"),
 
-    BLOCK_PROPS_SEPARATOR_FORMAT     = new ConfigString("infoBlockPropertiesSeparatorFormat", "{\"color\":\"white\",\"text\":\"" +
-    ":\"}", "Format of the separator used in infoBlockProperties"),
+    BLOCK_PROPS_FORMAT     = new ConfigString("infoBlockPropertiesSeparatorFormat", "{\"color\":\"white\",\"text\":\"" +
+    "%prop: %value\"}", "Format of the separator used in infoBlockProperties"),
 
     BLOCK_PROPS_BOOLEAN_TRUE_FORMAT  = new ConfigString("infoBlockPropertiesBooleanTrueFormat", "[{\"color\":\"white\",\"text\":\"" +
     "%prop\"}, %separator, {\"color\":\"green\",\"text\":\"TRUE\"}]", "Format of boolean properties in infoBlockProperties when they're true"),
@@ -66,7 +66,7 @@ public class Formats
     "%prop\"}, %separator, {\"color\":\"white\",\"text\":\"%value\"}]", "Format of string properties in infoBlockProperties"),
 
     BLOCK_PROPS_HEADING_FORMAT       = new ConfigString("infoBlockPropertiesHeadingFormat", "{\"color\":\"white\",\"text\":\"" +
-    "%name\"}", "Format of the heading of infoBlockProperties"),
+    "%block\"}", "Format of the heading of infoBlockProperties"),
 
     CHUNK_POS_FORMAT                 = new ConfigString("infoChunkPositionFormat", "{\"color\":\"white\",\"text\":\"" +
     " / Sub-Chunk: %x, %y, %z\"}", "Format of infoChunkPosition"),
