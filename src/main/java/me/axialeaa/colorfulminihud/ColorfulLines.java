@@ -49,17 +49,12 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import static java.util.Map.entry;
 
+@SuppressWarnings("unused")
 public class ColorfulLines
 {
   private static final IRenderHandler accessor = (IRenderHandler)RenderHandler.getInstance();
@@ -250,7 +245,7 @@ public class ColorfulLines
       {
         double jump = horse.getCustomJump();
         double calculatedJumpHeight = -0.1817584952 * jump*jump*jump + 3.689713992 * jump*jump + 2.128599134 * jump - 0.343930367;
-        lines.add(line(Formats.HORSE_JUMP_FORMAT, va("speed", ".3f", calculatedJumpHeight)));
+        lines.add(line(Formats.HORSE_JUMP_FORMAT, va("jump", ".3f", calculatedJumpHeight)));
       }
 
       addedTypes.add(InfoToggle.HORSE_SPEED);
@@ -510,7 +505,7 @@ public class ColorfulLines
 
     entry(InfoToggle.LIGHT_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      if(accessor.getChunkPublic(chunkPos).isEmpty())
+      if(accessor.colorful_minihud$getChunkPublic(chunkPos).isEmpty())
         return;
 
       LevelLightEngine lightEngine = Objects.requireNonNull(level).getChunkSource().getLightEngine();
@@ -523,7 +518,7 @@ public class ColorfulLines
     entry(InfoToggle.BEE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       Level bestLevel = WorldUtils.getBestWorld(mc);
-      BlockEntity be = accessor.getTargetedBlockEntityPublic(bestLevel, mc);
+      BlockEntity be = accessor.colorful_minihud$getTargetedBlockEntityPublic(bestLevel, mc);
       if(be instanceof BeehiveBlockEntity bbe)
         lines.add(line(Formats.BEE_COUNT_FORMAT, va("bees", bbe.getOccupantCount())));
     }),
@@ -531,14 +526,14 @@ public class ColorfulLines
     entry(InfoToggle.FURNACE_XP, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       Level bestLevel = WorldUtils.getBestWorld(mc);
-      BlockEntity be = accessor.getTargetedBlockEntityPublic(bestLevel, mc);
+      BlockEntity be = accessor.colorful_minihud$getTargetedBlockEntityPublic(bestLevel, mc);
       if(be instanceof AbstractFurnaceBlockEntity furnace)
         lines.add(line(Formats.FURNACE_XP_FORMAT, va("xp", MiscUtils.getFurnaceXpAmount(furnace))));
     }),
 
     entry(InfoToggle.HONEY_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      BlockState state = accessor.getTargetedBlockPublic(mc);
+      BlockState state = accessor.colorful_minihud$getTargetedBlockPublic(mc);
       if(state != null && state.getBlock() instanceof BeehiveBlock)
         lines.add(line(Formats.HONEY_LEVEL_FORMAT, va("honey", BeehiveBlockEntity.getHoneyLevel(state))));
     }),
@@ -573,7 +568,7 @@ public class ColorfulLines
       if(levelServer == null || levelServer != level)
         lines.add(line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT, va("client", chunksClient)));
 
-      ServerChunkCache cache = (ServerChunkCache)levelServer.getChunkSource();
+      ServerChunkCache cache = (ServerChunkCache)Objects.requireNonNull(levelServer).getChunkSource();
       lines.add(line(Formats.LOADED_CHUNKS_COUNT_SERVER_FORMAT,
         va("chunks", cache.getLoadedChunksCount()),
         va("total", cache.getTickingGenerated()),
@@ -597,7 +592,7 @@ public class ColorfulLines
 
     entry(InfoToggle.BIOME, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      if(accessor.getChunkPublic(chunkPos).isEmpty())
+      if(accessor.colorful_minihud$getChunkPublic(chunkPos).isEmpty())
         return;
 
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
@@ -607,7 +602,7 @@ public class ColorfulLines
 
     entry(InfoToggle.BIOME_REG_NAME, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      if(accessor.getChunkPublic(chunkPos).isEmpty())
+      if(accessor.colorful_minihud$getChunkPublic(chunkPos).isEmpty())
         return;
 
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
@@ -702,7 +697,7 @@ public class ColorfulLines
     public int compare(Component a, Component b)
     {
       int as = a.getString().length(); int bs = b.getString().length();
-      return as > bs ? 1 : as < bs ? -1 : 0;
+      return Integer.compare(as, bs);
     }
   }
 }

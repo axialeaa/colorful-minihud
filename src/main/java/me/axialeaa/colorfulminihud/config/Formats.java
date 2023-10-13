@@ -47,7 +47,7 @@ public class Formats
     BLOCK_POS_FORMAT                 = new ConfigString("infoBlockPositionFormat", "{\"color\":\"white\",\"text\":\"" +
     "Block: %x, %y, %z\"}", "Format of infoBlockPosition"),
 
-    BLOCK_PROPS_FORMAT     = new ConfigString("infoBlockPropertiesSeparatorFormat", "{\"color\":\"white\",\"text\":\"" +
+    BLOCK_PROPS_FORMAT               = new ConfigString("infoBlockPropertiesSeparatorFormat", "{\"color\":\"white\",\"text\":\"" +
     "%prop: %value\"}", "Format of the separator used in infoBlockProperties"),
 
     BLOCK_PROPS_BOOLEAN_TRUE_FORMAT  = new ConfigString("infoBlockPropertiesBooleanTrueFormat", "[{\"color\":\"white\",\"text\":\"" +

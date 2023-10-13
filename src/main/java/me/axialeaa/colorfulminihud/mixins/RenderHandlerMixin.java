@@ -1,29 +1,9 @@
 package me.axialeaa.colorfulminihud.mixins;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
-
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
@@ -43,6 +23,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Mixin(RenderHandler.class)
 public class RenderHandlerMixin implements IRenderHandler
@@ -50,26 +43,25 @@ public class RenderHandlerMixin implements IRenderHandler
   @Shadow(remap = false) private int fps;
   @Shadow(remap = false) @Final private DataStorage data;
   @Shadow(remap = false) private Set<InfoToggle> addedTypes;
-  @Shadow(remap = false) private void addLine(String text){}
 
   @Shadow(remap = false) private LevelChunk getChunk(ChunkPos pos){return null;}
   @Shadow(remap = false) private BlockEntity getTargetedBlockEntity(Level level, Minecraft mc){return null;}
   @Shadow(remap = false) private BlockState getTargetedBlock(Minecraft mc){return null;}
 
   @Override
-  public LevelChunk getChunkPublic(ChunkPos pos)
+  public LevelChunk colorful_minihud$getChunkPublic(ChunkPos pos)
   {
     return getChunk(pos);
   }
 
   @Override
-  public BlockEntity getTargetedBlockEntityPublic(Level level, Minecraft mc)
+  public BlockEntity colorful_minihud$getTargetedBlockEntityPublic(Level level, Minecraft mc)
   {
     return getTargetedBlockEntity(level, mc);
   }
 
   @Override
-  public BlockState getTargetedBlockPublic(Minecraft mc)
+  public BlockState colorful_minihud$getTargetedBlockPublic(Minecraft mc)
   {
     return getTargetedBlock(mc);
   }
@@ -185,7 +177,7 @@ public class RenderHandlerMixin implements IRenderHandler
     for(String text : linesString)
       try
       {
-        linesComponent.add(Component.Serializer.fromJsonLenient((String)text));
+        linesComponent.add(Component.Serializer.fromJsonLenient(text));
       }
       catch(Exception e)
       {
@@ -194,7 +186,7 @@ public class RenderHandlerMixin implements IRenderHandler
 
     if(Configs.Generic.SORT_LINES_BY_LENGTH.getBooleanValue())
     {
-      Collections.sort(linesComponent, new ColorfulLines.StringHolder());
+      linesComponent.sort(new ColorfulLines.StringHolder());
       if(Configs.Generic.SORT_LINES_REVERSED.getBooleanValue())
         Collections.reverse(linesComponent);
     }
