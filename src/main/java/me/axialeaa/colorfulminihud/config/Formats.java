@@ -48,25 +48,25 @@ public class Formats
     "\"Block: %x, %y, %z\"", "Format of infoBlockPosition"),
 
     BLOCK_PROPS_FORMAT     = new ConfigString("infoBlockPropertiesSeparatorFormat",
-    "\"%prop: \", %value", "Format of infoBlockProperties"),
+    "[\"%prop: \", %value]", "Format of infoBlockProperties"),
 
     BLOCK_PROPS_HEADING_FORMAT       = new ConfigString("infoBlockPropertiesHeadingFormat",
     "\"%block\"", "Format of the heading of infoBlockProperties"),
 
     BLOCK_PROPS_BOOLEAN_TRUE_FORMAT  = new ConfigString("infoBlockPropertiesBooleanTrueFormat", """
-    ["%prop: ", {"color":"green","text":"TRUE"}]""", "Format of boolean properties in infoBlockProperties when they're true"),
+    {"color":"green","text":"TRUE"}""", "Format of boolean properties in infoBlockProperties when they're true"),
 
     BLOCK_PROPS_BOOLEAN_FALSE_FORMAT = new ConfigString("infoBlockPropertiesBooleanFalseFormat", """
-    ["%prop: ", {"color":"red","text":"FALSE"}]""", "Format of boolean properties in infoBlockProperties when they're false"),
+    {"color":"red","text":"FALSE"}""", "Format of boolean properties in infoBlockProperties when they're false"),
 
     BLOCK_PROPS_DIRECTION_FORMAT     = new ConfigString("infoBlockPropertiesDirectionFormat", """
-    ["%prop: ", {"color":"gold","text":"%value"}]""", "Format of direction properties in infoBlockProperties"),
+    {"color":"gold","text":"%value"}""", "Format of direction properties in infoBlockProperties"),
 
     BLOCK_PROPS_INT_FORMAT           = new ConfigString("infoBlockPropertiesIntFormat", """
-    ["%prop: ", {"color":"aqua","text":"%value"}]""", "Format of int properties in infoBlockProperties"),
+    {"color":"aqua","text":"%value"}""", "Format of int properties in infoBlockProperties"),
 
     BLOCK_PROPS_STRING_FORMAT        = new ConfigString("infoBlockPropertiesStringFormat",
-    "\"%prop: %value\"", "Format of String properties in infoBlockProperties"),
+    "\"%value\"", "Format of String properties in infoBlockProperties"),
 
     CHUNK_POS_FORMAT                 = new ConfigString("infoChunkPositionFormat",
     "\" / Sub-Chunk: %x, %y, %z\"", "Format of infoChunkPosition"),
