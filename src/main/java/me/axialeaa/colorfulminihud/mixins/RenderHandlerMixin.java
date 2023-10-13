@@ -12,10 +12,11 @@ import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.event.RenderHandler;
 import fi.dy.masa.minihud.util.DataStorage;
 import me.axialeaa.colorfulminihud.ColorfulLines;
-import me.axialeaa.colorfulminihud.IRenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.ChunkPos;
@@ -35,36 +36,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Mixin(RenderHandler.class)
-public class RenderHandlerMixin implements IRenderHandler
+public class RenderHandlerMixin
 {
   @Shadow(remap = false) private int fps;
   @Shadow(remap = false) @Final private DataStorage data;
   @Shadow(remap = false) private Set<InfoToggle> addedTypes;
 
+  @Shadow(remap = false) private LevelChunk getClientChunk(ChunkPos pos){return null;}
   @Shadow(remap = false) private LevelChunk getChunk(ChunkPos pos){return null;}
   @Shadow(remap = false) private BlockEntity getTargetedBlockEntity(Level level, Minecraft mc){return null;}
   @Shadow(remap = false) private BlockState getTargetedBlock(Minecraft mc){return null;}
-
-  @Override
-  public LevelChunk colorful_minihud$getChunkPublic(ChunkPos pos)
-  {
-    return getChunk(pos);
-  }
-
-  @Override
-  public BlockEntity colorful_minihud$getTargetedBlockEntityPublic(Level level, Minecraft mc)
-  {
-    return getTargetedBlockEntity(level, mc);
-  }
-
-  @Override
-  public BlockState colorful_minihud$getTargetedBlockPublic(Minecraft mc)
-  {
-    return getTargetedBlock(mc);
-  }
 
   @Unique private final List<String> linesString = new ArrayList<>();
   @Unique private final List<Component> linesComponent = new ArrayList<>();
@@ -160,7 +145,14 @@ public class RenderHandlerMixin implements IRenderHandler
   @Inject(method = "updateLines", at = @At(value = "INVOKE", target = "Ljava/util/Collections;sort(Ljava/util/List;)V", ordinal = 0), remap = false)
   private void preUpdateLines(CallbackInfo ci)
   {
-    ColorfulLines.setup(fps, data);
+    Minecraft mc = Minecraft.getInstance();
+    Level level = mc.level;
+    LocalPlayer player = mc.player;
+    double x = Objects.requireNonNull(player).getX(), y = player.getY(), z = player.getZ();
+    BlockPos pos = new BlockPos(x, y, z);
+    ChunkPos chunkPos = new ChunkPos(pos);
+
+    ColorfulLines.setup(fps, data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
     linesString.clear();
   }
 

@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -57,29 +58,34 @@ import static java.util.Map.entry;
 @SuppressWarnings("unused")
 public class ColorfulLines
 {
-  private static final IRenderHandler accessor = (IRenderHandler)RenderHandler.getInstance();
-
   private static int fps;
   private static DataStorage data;
 
   private static final Minecraft mc = Minecraft.getInstance();
-  private static Level level = mc.level;
-  private static LocalPlayer player = mc.player;
-  private static double x = Objects.requireNonNull(player).getX(), y = player.getY(), z = player.getZ();
-  private static double dx = x - player.xOld, dy = y - player.yOld, dz = z - player.zOld;
-  private static BlockPos pos = new BlockPos(x, y, z);
-  private static ChunkPos chunkPos = new ChunkPos(pos);
+  private static Level level;
+  private static LocalPlayer player;
+  private static double x, y, z;
+  private static double dx, dy, dz;
+  private static BlockPos pos;
+  private static ChunkPos chunkPos;
+  private static LevelChunk clientChunk, serverChunk;
+  private static BlockState targetedBlockState;
+  private static BlockEntity targetedBlockEntity;
 
-  public static void setup(int fps, DataStorage data)
+  public static void setup(int fps, DataStorage data, Level level, LocalPlayer player, double x, double y, double z, BlockPos pos, ChunkPos chunkPos, LevelChunk clientChunk, LevelChunk serverChunk, BlockState targetedBlockState, BlockEntity targetedBlockEntity)
   {
     ColorfulLines.fps = fps;
     ColorfulLines.data = data;
-    level = mc.level;
-    player = mc.player;
-    x = Objects.requireNonNull(player).getX(); y = player.getY(); z = player.getZ();
+    ColorfulLines.level = level;
+    ColorfulLines.player = player;
+    ColorfulLines.x = x;
+    ColorfulLines.y = y;
+    ColorfulLines.z = z;
     dx = x - player.xOld; dy = y - player.yOld; dz = z - player.zOld;
-    pos = new BlockPos(x, y, z);
-    chunkPos = new ChunkPos(pos);
+    ColorfulLines.pos = pos;
+    ColorfulLines.chunkPos = chunkPos;
+    ColorfulLines.clientChunk = clientChunk;
+    ColorfulLines.serverChunk = serverChunk;
   }
 
   public static void addLine(InfoToggle type, List<String> lines, Set<InfoToggle> addedTypes)
@@ -505,11 +511,21 @@ public class ColorfulLines
 
     entry(InfoToggle.LIGHT_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      if(accessor.colorful_minihud$getChunkPublic(chunkPos).isEmpty())
+      if(clientChunk.isEmpty())
         return;
 
       LevelLightEngine lightEngine = Objects.requireNonNull(level).getChunkSource().getLightEngine();
       lines.add(line(Formats.LIGHT_LEVEL_CLIENT_FORMAT,
+        va("light", lightEngine.getRawBrightness(pos, 0)),
+        va("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
+        va("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
+
+      Level bestLevel = WorldUtils.getBestWorld(mc);
+      if(serverChunk == null || serverChunk == clientChunk)
+        return;
+
+      lightEngine = bestLevel.getChunkSource().getLightEngine();
+      lines.add(line(Formats.LIGHT_LEVEL_SERVER_FORMAT,
         va("light", lightEngine.getRawBrightness(pos, 0)),
         va("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
         va("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
@@ -518,24 +534,21 @@ public class ColorfulLines
     entry(InfoToggle.BEE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       Level bestLevel = WorldUtils.getBestWorld(mc);
-      BlockEntity be = accessor.colorful_minihud$getTargetedBlockEntityPublic(bestLevel, mc);
-      if(be instanceof BeehiveBlockEntity bbe)
+      if(targetedBlockEntity instanceof BeehiveBlockEntity bbe)
         lines.add(line(Formats.BEE_COUNT_FORMAT, va("bees", bbe.getOccupantCount())));
     }),
 
     entry(InfoToggle.FURNACE_XP, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       Level bestLevel = WorldUtils.getBestWorld(mc);
-      BlockEntity be = accessor.colorful_minihud$getTargetedBlockEntityPublic(bestLevel, mc);
-      if(be instanceof AbstractFurnaceBlockEntity furnace)
+      if(targetedBlockEntity instanceof AbstractFurnaceBlockEntity furnace)
         lines.add(line(Formats.FURNACE_XP_FORMAT, va("xp", MiscUtils.getFurnaceXpAmount(furnace))));
     }),
 
     entry(InfoToggle.HONEY_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      BlockState state = accessor.colorful_minihud$getTargetedBlockPublic(mc);
-      if(state != null && state.getBlock() instanceof BeehiveBlock)
-        lines.add(line(Formats.HONEY_LEVEL_FORMAT, va("honey", BeehiveBlockEntity.getHoneyLevel(state))));
+      if(targetedBlockState != null && targetedBlockState.getBlock() instanceof BeehiveBlock)
+        lines.add(line(Formats.HONEY_LEVEL_FORMAT, va("honey", BeehiveBlockEntity.getHoneyLevel(targetedBlockState))));
     }),
 
     entry(InfoToggle.ROTATION_YAW, ROTATION_SPEED),
@@ -592,7 +605,7 @@ public class ColorfulLines
 
     entry(InfoToggle.BIOME, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      if(accessor.colorful_minihud$getChunkPublic(chunkPos).isEmpty())
+      if(serverChunk.isEmpty())
         return;
 
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
@@ -602,7 +615,7 @@ public class ColorfulLines
 
     entry(InfoToggle.BIOME_REG_NAME, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      if(accessor.colorful_minihud$getChunkPublic(chunkPos).isEmpty())
+      if(serverChunk.isEmpty())
         return;
 
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
