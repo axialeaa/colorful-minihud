@@ -49,7 +49,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
