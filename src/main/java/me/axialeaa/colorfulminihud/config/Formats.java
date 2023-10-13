@@ -119,8 +119,17 @@ public class Formats
     FPS_FORMAT                       = new ConfigString("infoFPSFormat", "{\"color\":\"white\",\"text\":\"" +
     "%fps fps\"}", "Format of infoFPS"),
 
+    FURNACE_XP_FORMAT                = new ConfigString("infoFurnaceXpFormat", "[{\"color\":\"white\",\"text\":\"" +
+    "Furnace XP: \"}, {\"color\":\"aqua\",\"text\":\"%xp\"}]", "Format of infoFurnaceXp"),
+
     HONEY_LEVEL_FORMAT               = new ConfigString("infoHoneyLevelFormat", "[{\"color\":\"white\",\"text\":\"" +
     "Honey: \"}, {\"color\":\"aqua\",\"text\":\"%honey\"}]", "Format of infoHoneyLevel"),
+
+    HORSE_JUMP_FORMAT                = new ConfigString("infoHorseJumpFormat", "{\"color\":\"white\",\"text\":\"" +
+    "Horse Jump: %jump m\"}", "Format of infoHorseJump"),
+
+    HORSE_SPEED_FORMAT               = new ConfigString("infoHorseSpeedFormat", "{\"color\":\"white\",\"text\":\"" +
+    "Horse Speed: %speed m/s\"}", "Format of infoHorseSpeed"),
 
     LIGHT_LEVEL_CLIENT_FORMAT        = new ConfigString("infoLightLevelClientFormat", "{\"color\":\"white\",\"text\":\"" +
     "Client Light: %light (block: %block, sky: %sky)\"}", "Format of infoLightLevelClient"),
@@ -191,6 +200,9 @@ public class Formats
     SPEED_AXIS_FORMAT                = new ConfigString("infoSpeedAxisFormat", "{\"color\":\"white\",\"text\":\"" +
     "Speed: x: %x$.3f y: %y$.3f z: %z$.3f m/s\"}", "Format of infoSpeedAxis"),
 
+    SPEED_HV_FORMAT                  = new ConfigString("infoSpeedHVFormat", "{\"color\":\"white\",\"text\":\"" +
+    "Speed: xz: %xz y: %y m/s\"}", "Format of infoSpeedHV"),
+
     TILE_ENTITIES_FORMAT             = new ConfigString("infoTileEntitiesFormat", "{\"color\":\"white\",\"text\":\"" +
     "Client world TE - L: %loaded, T: %ticking\"}", "Format of infoTileEntities"),
 
@@ -240,7 +252,10 @@ public class Formats
     FACING_PZ_FORMAT,
     FACING_NZ_FORMAT,
     FPS_FORMAT,
+    FURNACE_XP_FORMAT,
     HONEY_LEVEL_FORMAT,
+    HORSE_JUMP_FORMAT,
+    HORSE_SPEED_FORMAT,
     LIGHT_LEVEL_CLIENT_FORMAT,
     LIGHT_LEVEL_SERVER_FORMAT,
     LOOKING_AT_BLOCK_FORMAT,
@@ -264,6 +279,7 @@ public class Formats
     SLIME_CHUNK_NO_SEED_FORMAT,
     SPEED_FORMAT,
     SPEED_AXIS_FORMAT,
+    SPEED_HV_FORMAT,
     TILE_ENTITIES_FORMAT,
     TIME_DAY_MODULO_FORMAT,
     TIME_REAL_FORMAT,

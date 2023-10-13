@@ -2,14 +2,15 @@ package me.axialeaa.colorfulminihud;
 
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.event.RenderHandler;
+import fi.dy.masa.minihud.mixin.IMixinServerWorld;
 import fi.dy.masa.minihud.mixin.IMixinWorldRenderer;
 import fi.dy.masa.minihud.util.DataStorage;
+import fi.dy.masa.minihud.util.IServerEntityManager;
 import fi.dy.masa.minihud.util.MiscUtils;
 import me.axialeaa.colorfulminihud.config.Formats;
 import net.minecraft.client.Minecraft;
@@ -20,16 +21,19 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.BeehiveBlock;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,13 +58,14 @@ public class ColorfulLines
 {
   private static final IRenderHandler accessor = (IRenderHandler)RenderHandler.getInstance();
 
-  private record Variable<T>(String key, String defaultFormat, T value) {
-
-    public String apply(String text, int i) {
-        text = text.replace("%" + key + "$", "%" + i + "$");
-        return text.replace("%" + key, "%" + i + "$" + defaultFormat);
-      }
+  private record Variable<T>(String key, String defaultFormat, T value)
+  {
+    public String apply(String text, int i)
+    {
+      text = text.replace("%" + key + "$", "%" + i + "$");
+      return text.replace("%" + key, "%" + i + "$" + defaultFormat);
     }
+  }
 
   private static String line(ConfigString config, Variable<?>... vars)
   {
@@ -97,32 +102,32 @@ public class ColorfulLines
 
   private static <T> Variable<T> va(String key, String defaultFormat, T value)
   {
-    return new Variable<T>(key, defaultFormat, value);
+    return new Variable<>(key, defaultFormat, value);
   }
 
   private static Variable<String> va(String key, String value)
   {
-    return new Variable<String>(key, "s", value);
+    return new Variable<>(key, "s", value);
   }
 
   private static Variable<Integer> va(String key, int value)
   {
-    return new Variable<Integer>(key, "d", value);
+    return new Variable<>(key, "d", value);
   }
 
   private static Variable<Long> va(String key, long value)
   {
-    return new Variable<Long>(key, "d", value);
+    return new Variable<>(key, "d", value);
   }
 
   private static Variable<Float> va(String key, float value)
   {
-    return new Variable<Float>(key, "f", value);
+    return new Variable<>(key, "f", value);
   }
 
   private static Variable<Double> va(String key, double value)
   {
-    return new Variable<Double>(key, "f", value);
+    return new Variable<>(key, "f", value);
   }
 
   @Nullable
@@ -132,6 +137,7 @@ public class ColorfulLines
     Level level = mc.level;
     LocalPlayer player = mc.player;
     double x = Objects.requireNonNull(player).getX(), y = player.getY(), z = player.getZ();
+    double dx = x - player.xOld, dy = y - player.yOld, dz = z - player.zOld;
     BlockPos pos = new BlockPos(x, y, z);
     ChunkPos chunkPos = new ChunkPos(pos);
 
@@ -228,6 +234,8 @@ public class ColorfulLines
         PlayerInfo info = player.connection.getPlayerInfo(player.getUUID());
         yield info == null ? null : line(Formats.PING_FORMAT, va("ping", info.getLatency()));
       }
+
+      case COORDINATES_SCALED -> "TODO - will be merged with the below case";
 
       case COORDINATES, DIMENSION ->
       {
@@ -354,6 +362,16 @@ public class ColorfulLines
           line(Formats.BEE_COUNT_FORMAT, va("bees", bbe.getOccupantCount())) : null;
       }
 
+      case FURNACE_XP ->
+      {
+        Level bestLevel = WorldUtils.getBestWorld(mc);
+        BlockEntity be = accessor.getTargetedBlockEntityPublic(bestLevel, mc);
+        if (be instanceof AbstractFurnaceBlockEntity furnace)
+          yield line(Formats.FURNACE_XP_FORMAT, va("xp", MiscUtils.getFurnaceXpAmount(furnace)));
+        else
+          yield null;
+      }
+
       case HONEY_LEVEL ->
       {
         BlockState state = accessor.getTargetedBlockPublic(mc);
@@ -386,7 +404,6 @@ public class ColorfulLines
         {
           if(hasOther1)
             str3.append(",");
-          double dx = x - player.xOld, dy = y - player.yOld, dz = z - player.zOld;
           double dist1 = Math.sqrt(dx*dx + dy*dy + dz*dz);
           str3.append(line(Formats.SPEED_FORMAT, va("speed", dist1 * 20)));
           addedTypes.add(InfoToggle.SPEED);
@@ -394,10 +411,45 @@ public class ColorfulLines
         yield str3.append("]").toString();
       }
 
+      case SPEED_HV ->
+        line(Formats.SPEED_HV_FORMAT,
+          va("xz", ".3f", Math.sqrt(dx*dx + dz*dz) * 20.0),
+          va("y", ".3f", dy * 20.0));
+
       case SPEED_AXIS -> line(Formats.SPEED_AXIS_FORMAT,
-        va("x", (x - player.xOld) * 20),
-        va("y", (y - player.yOld) * 20),
-        va("z", (z - player.zOld) * 20));
+        va("x", dx * 20),
+        va("y", dy * 20),
+        va("z", dz * 20));
+
+      case HORSE_SPEED, HORSE_JUMP -> {
+        if (addedTypes.contains(InfoToggle.HORSE_SPEED) || addedTypes.contains(InfoToggle.HORSE_JUMP))
+          yield null;
+
+        Entity vehicle = player.getVehicle();
+        if (!(vehicle instanceof AbstractHorse horse))
+          yield null;
+
+        if (horse.isSaddled())
+        {
+          if (InfoToggle.HORSE_SPEED.getBooleanValue())
+          {
+            float horseSpeed = horse.getSpeed();
+            horseSpeed *= 42.163F;
+            line(Formats.HORSE_SPEED_FORMAT, va("speed", ".3f", horseSpeed)); // TODO - requires addLine
+          }
+
+          if (InfoToggle.HORSE_JUMP.getBooleanValue())
+          {
+            double jump = horse.getCustomJump();
+            double calculatedJumpHeight = -0.1817584952 * jump*jump*jump + 3.689713992 * jump*jump + 2.128599134 * jump - 0.343930367;
+            line(Formats.HORSE_JUMP_FORMAT, va("speed", ".3f", calculatedJumpHeight)); // TODO - requires addLine
+          }
+
+          addedTypes.add(InfoToggle.HORSE_SPEED);
+          addedTypes.add(InfoToggle.HORSE_JUMP);
+        }
+        yield null;
+      }
 
       case CHUNK_SECTIONS -> line(Formats.CHUNK_SECTIONS_FORMAT, va("c", ((IMixinWorldRenderer)mc.levelRenderer).getRenderedChunksInvoker()));
 
@@ -421,7 +473,6 @@ public class ColorfulLines
 
       case PARTICLE_COUNT -> line(Formats.PARTICLE_COUNT_FORMAT, va("p", mc.particleEngine.countParticles()));
 
-      case COORDINATES_SCALED -> "TODO";
       case DIFFICULTY ->
       {
         ChunkAccess serverChunk = Objects.requireNonNull(level).getChunk(chunkPos.getWorldPosition());
@@ -440,42 +491,65 @@ public class ColorfulLines
       {
         if (accessor.getChunkPublic(chunkPos).isEmpty())
           yield null;
-        else
-        {
-          Biome biome = Objects.requireNonNull(level).getBiome(pos);
-          ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
-          yield line(Formats.BIOME_FORMAT, va("biome", StringUtils.translate("biome." + Objects.requireNonNull(resourceLocation).toString().replace(":", "."))));
-        }
+
+        Biome biome = Objects.requireNonNull(level).getBiome(pos);
+        ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+        yield line(Formats.BIOME_FORMAT, va("biome", StringUtils.translate("biome." + Objects.requireNonNull(resourceLocation).toString().replace(":", "."))));
       }
 
       case BIOME_REG_NAME ->
       {
         if (accessor.getChunkPublic(chunkPos).isEmpty())
           yield null;
-        else
-        {
-          Biome biome = Objects.requireNonNull(level).getBiome(pos);
-          ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
-          yield line(Formats.BIOME_REG_NAME_FORMAT, va("name", resourceLocation != null ? resourceLocation.toString() : "?"));
-        }
+
+        Biome biome = Objects.requireNonNull(level).getBiome(pos);
+        ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+        yield line(Formats.BIOME_REG_NAME_FORMAT, va("name", resourceLocation != null ? resourceLocation.toString() : "?"));
       }
 
       case TILE_ENTITIES -> "TODO";
-      case ENTITIES_CLIENT_WORLD -> "TODO";
-      case ENTITIES -> "TODO";
+
+      case ENTITIES_CLIENT_WORLD, ENTITIES ->
+      {
+        if (addedTypes.contains(InfoToggle.ENTITIES_CLIENT_WORLD) || addedTypes.contains(InfoToggle.ENTITIES))
+          yield null;
+
+        StringBuilder str4 = new StringBuilder(128);
+        str4.append("[");
+        boolean hasOther2 = InfoToggle.ENTITIES_CLIENT_WORLD.getBooleanValue();
+        if (hasOther2)
+        {
+          str4.append(line(Formats.ENTITIES_CLIENT_FORMAT, va("e", Objects.requireNonNull(mc.level).getEntityCount())));
+          addedTypes.add(InfoToggle.ENTITIES_CLIENT_WORLD);
+        }
+        if (InfoToggle.ENTITIES.getBooleanValue() && mc.hasSingleplayerServer())
+        {
+          Level world = WorldUtils.getBestWorld(mc);
+          if (world instanceof ServerLevel)
+          {
+            if (hasOther2)
+              str4.append(",");
+            str4.append(line(Formats.ENTITIES_SERVER_FORMAT, va("e", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
+            addedTypes.add(InfoToggle.ENTITIES);
+            hasOther2 = true;
+          }
+        }
+        if (hasOther2)
+          yield str4.append("]").toString();
+        else
+          yield null;
+      }
 
       case SLIME_CHUNK ->
       {
         if (!MiscUtils.isOverworld(Objects.requireNonNull(level)))
           yield null;
+
         if (data.isWorldSeedKnown(level))
         {
           long seed = data.getWorldSeed(level);
           yield line(Formats.SLIME_CHUNK_FORMAT,
-            va("result", MiscUtils.canSlimeSpawnAt(pos.getX(), pos.getZ(), seed) ?
-              Formats.SLIME_CHUNK_YES_FORMAT.getStringValue() :
-              Formats.SLIME_CHUNK_NO_FORMAT.getStringValue()
-            )
+            va("result", MiscUtils.canSlimeSpawnAt(pos.getX(), pos.getZ(), seed) ? Formats.SLIME_CHUNK_YES_FORMAT.getStringValue() : Formats.SLIME_CHUNK_NO_FORMAT.getStringValue())
           );
         }
         else
@@ -484,44 +558,43 @@ public class ColorfulLines
 
       case LOOKING_AT_ENTITY ->
       {
-        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.ENTITY)
-        {
-          Entity lookedEntity = mc.crosshairPickEntity;
-          if (lookedEntity instanceof LivingEntity living)
-            yield line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
-                    va("entity", lookedEntity.getName().getString()),
-                    va("hp", living.getHealth()),
-                    va("maxhp", living.getMaxHealth())
-            );
-          else
-            yield line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT, va("entity", Objects.requireNonNull(lookedEntity).getName().getString()));
-        }
-        else
+        if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.ENTITY)
           yield null;
+
+        Entity lookedEntity = mc.crosshairPickEntity;
+        if (lookedEntity instanceof LivingEntity living)
+          yield line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
+            va("entity", lookedEntity.getName().getString()),
+            va("hp", living.getHealth()),
+            va("maxhp", living.getMaxHealth())
+          );
+        else
+          yield line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT, va("entity", Objects.requireNonNull(lookedEntity).getName().getString()));
       }
 
       case ENTITY_REG_NAME ->
       {
-        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.ENTITY)
-        {
-          Entity lookedEntity = ((EntityHitResult) mc.hitResult).getEntity();
-          ResourceLocation resourceLocation = EntityType.getKey(lookedEntity.getType());
-          yield line(Formats.ENTITY_REG_NAME_FORMAT, va("name", resourceLocation.toString()));
-        }
-        else
+        if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.ENTITY)
           yield null;
+
+        Entity lookedEntity = ((EntityHitResult) mc.hitResult).getEntity();
+        ResourceLocation resourceLocation = EntityType.getKey(lookedEntity.getType());
+        yield line(Formats.ENTITY_REG_NAME_FORMAT, va("name", resourceLocation.toString()));
       }
 
-      case LOOKING_AT_BLOCK, LOOKING_AT_BLOCK_CHUNK -> {
-        // Don't add the same line multiple times
+      case LOOKING_AT_BLOCK, LOOKING_AT_BLOCK_CHUNK ->
+      {
         if (addedTypes.contains(InfoToggle.LOOKING_AT_BLOCK) || addedTypes.contains(InfoToggle.LOOKING_AT_BLOCK_CHUNK))
           yield null;
-        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK) {
+
+        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK)
+        {
           BlockPos lookPos = ((BlockHitResult)mc.hitResult).getBlockPos();
           StringBuilder str5 = new StringBuilder(128);
           str5.append("[");
           boolean hasOther3 = InfoToggle.LOOKING_AT_BLOCK.getBooleanValue();
-          if (hasOther3) {
+          if (hasOther3)
+          {
             str5.append(line(Formats.LOOKING_AT_BLOCK_FORMAT,
               va("x", lookPos.getX()),
               va("y", lookPos.getY()),
@@ -530,7 +603,8 @@ public class ColorfulLines
             addedTypes.add(InfoToggle.LOOKING_AT_BLOCK);
           }
 
-          if (InfoToggle.LOOKING_AT_BLOCK_CHUNK.getBooleanValue()) {
+          if (InfoToggle.LOOKING_AT_BLOCK_CHUNK.getBooleanValue())
+          {
             if (hasOther3) str5.append(",");
             str5.append(line(Formats.LOOKING_AT_BLOCK_CHUNK_FORMAT,
               va("x", lookPos.getX()),
@@ -549,11 +623,6 @@ public class ColorfulLines
       }
 
       case BLOCK_PROPS -> "TODO";
-
-      case FURNACE_XP -> "TODO";
-      case HORSE_SPEED -> "TODO";
-      case HORSE_JUMP -> "TODO";
-      case SPEED_HV -> "TODO";
     };
   }
 
@@ -565,7 +634,7 @@ public class ColorfulLines
       BlockState state = Objects.requireNonNull(mc.level).getBlockState(posLooking);
       ResourceLocation resourceLocation = Registry.BLOCK.getKey(state.getBlock());
 
-      line(Formats.BLOCK_PROPS_HEADING_FORMAT, va("name", resourceLocation.toString()));
+      line(Formats.BLOCK_PROPS_HEADING_FORMAT, va("name", resourceLocation.toString())); // TODO - requires addLine
       String separator = line(Formats.BLOCK_PROPS_SEPARATOR_FORMAT);
 
       Collection<net.minecraft.world.level.block.state.properties.Property<?>> properties = state.getProperties();
@@ -577,25 +646,25 @@ public class ColorfulLines
             line(value.equals(Boolean.TRUE) ? Formats.BLOCK_PROPS_BOOLEAN_TRUE_FORMAT : Formats.BLOCK_PROPS_BOOLEAN_FALSE_FORMAT,
               va("prop", property.getName()),
               va("separator", separator)
-            );
+            ); // TODO - requires addLine
           else if (property instanceof DirectionProperty)
             line(Formats.BLOCK_PROPS_DIRECTION_FORMAT,
               va("prop", property.getName()),
               va("separator", separator),
               va("value", value.toString())
-            );
+            ); // TODO - requires addLine
           else if (property instanceof IntegerProperty)
             line(Formats.BLOCK_PROPS_INT_FORMAT,
               va("prop", property.getName()),
               va("separator", separator),
               va("value", value.toString())
-            );
+            ); // TODO - requires addLine
           else
             line(Formats.BLOCK_PROPS_STRING_FORMAT,
               va("prop", property.getName()),
               va("separator", separator),
               va("value", value.toString())
-            );
+            ); // TODO - requires addLine
         }
     }
   }
