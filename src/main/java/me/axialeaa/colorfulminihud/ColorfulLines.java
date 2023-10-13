@@ -683,13 +683,12 @@ public class ColorfulLines
               value.equals(Boolean.TRUE) ? Formats.BLOCK_PROPS_BOOLEAN_TRUE_FORMAT : Formats.BLOCK_PROPS_BOOLEAN_FALSE_FORMAT :
             property instanceof DirectionProperty ?
               Formats.BLOCK_PROPS_DIRECTION_FORMAT :
-            property instanceof DirectionProperty ?
+            property instanceof IntegerProperty ?
               Formats.BLOCK_PROPS_INT_FORMAT :
-            property instanceof DirectionProperty ?
               Formats.BLOCK_PROPS_STRING_FORMAT,
               va("value", value.toString()));
 
-          lines.add(line(Formats.BLOCK_PROPS,
+          lines.add(line(Formats.BLOCK_PROPS_FORMAT,
             va("prop", property.getName()),
             va("value", value2)));
         }
