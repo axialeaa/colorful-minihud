@@ -78,7 +78,7 @@ public class Formats
     "\"%c\"", "Format of infoChunkSectionsLine"),
 
     CHUNK_UPDATES_FORMAT             = new ConfigString("infoChunkUpdatesFormat",
-    "\"\"", "Format of infoChunkUpdates"),
+    "\"TODO\"", "Format of infoChunkUpdates"),
 
     COORDINATES_FORMAT               = new ConfigString("infoCoordinatesFormat",
     "\"XYZ: %x / %y / %z\"", "Format of infoCoordinates, change precision by changing the numbers"),
@@ -204,7 +204,7 @@ public class Formats
     "\"Speed: xz: %xz y: %y m/s\"", "Format of infoSpeedHV"),
 
     TILE_ENTITIES_FORMAT             = new ConfigString("infoTileEntitiesFormat",
-    "\"Client world TE - L: %loaded, T: %ticking\"", "Format of infoTileEntities"),
+    "\"Client world TE - L: %loaded, T: %ticking - TODO\"", "Format of infoTileEntities"),
 
     TIME_DAY_MODULO_FORMAT           = new ConfigString("infoTimeDayModuloFormat",
     "\"Day time %% %mod: %time\"", "Format of infoTimeDayModulo"),
