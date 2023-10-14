@@ -1,12 +1,20 @@
 package me.axialeaa.colorfulminihud.config;
 
-import com.google.common.collect.ImmutableList;
+import java.io.File;
 
+import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import fi.dy.masa.malilib.config.ConfigUtils;
+import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.IConfigValue;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigString;
+import fi.dy.masa.malilib.util.FileUtils;
+import fi.dy.masa.malilib.util.JsonUtils;
 
-public class Formats
+public class Formats implements IConfigHandler
 {
   public static final ConfigColor
     COLORFG = new ConfigColor("ColorFG", "#00F8F8F2", "Variable color FG"),
@@ -287,4 +295,33 @@ public class Formats
     TIME_WORLD_FORMAT,
     TIME_WORLD_FORMATTED_FORMAT
   );
+
+  private static final String CONFIG_FILE_NAME = "colorfulminihud.json";
+
+  @Override
+  public void load()
+  {
+    File configFile = new File(FileUtils.getConfigDirectory(), CONFIG_FILE_NAME);
+    if(!configFile.exists() || !configFile.isFile() || !configFile.canRead())
+      return;
+
+    JsonElement element = JsonUtils.parseJsonFile(configFile);
+    if(element == null || !element.isJsonObject())
+      return;
+
+    JsonObject root = element.getAsJsonObject();
+    ConfigUtils.readConfigBase(root, "Formats", Formats.OPTIONS);
+  }
+
+  @Override
+  public void save()
+  {
+    File dir = FileUtils.getConfigDirectory();
+    if(!(dir.exists() && dir.isDirectory()) && !dir.mkdirs())
+      return;
+
+    JsonObject root = new JsonObject();
+    ConfigUtils.writeConfigBase(root, "Formats", Formats.OPTIONS);
+    JsonUtils.writeJsonToFile(root, new File(dir, CONFIG_FILE_NAME));
+  }
 }
