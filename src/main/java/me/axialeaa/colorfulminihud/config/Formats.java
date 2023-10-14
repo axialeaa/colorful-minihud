@@ -17,8 +17,6 @@ import java.io.File;
 public class Formats implements IConfigHandler
 {
   public static final ConfigColor
-    COLORFG = new ConfigColor("ColorFG", "#00F8F8F2", "Variable color FG"),
-    COLORBG = new ConfigColor("ColorBG", "#00282A36", "Variable color BG"),
     COLOR0 = new ConfigColor("Color0", "#0021222C", "Variable color 0"),
     COLOR1 = new ConfigColor("Color1", "#00FF5555", "Variable color 1"),
     COLOR2 = new ConfigColor("Color2", "#0050FA7B", "Variable color 2"),
@@ -42,7 +40,7 @@ public class Formats implements IConfigHandler
 
   public static final ConfigString
     BEE_COUNT_FORMAT                 = new ConfigString("infoBeeCountFormat",
-    "\"Bees: \", %#aqua\"%bees\"", "Format of infoBeeCount"),
+    "\"Bees: \", #aqua\"%bees\"", "Format of infoBeeCount"),
 
     BIOME_FORMAT                     = new ConfigString("infoBiomeFormat",
     "\"Biome: %biome\"", "Format of infoBiome"),
@@ -66,16 +64,16 @@ public class Formats implements IConfigHandler
     "\"%block\"", "Format of the heading of infoBlockProperties"),
 
     BLOCK_PROPS_BOOLEAN_TRUE_FORMAT  = new ConfigString("infoBlockPropertiesBooleanTrueFormat",
-    "%#green\"TRUE\"", "Format of boolean properties in infoBlockProperties when they're true"),
+    "#green\"TRUE\"", "Format of boolean properties in infoBlockProperties when they're true"),
 
     BLOCK_PROPS_BOOLEAN_FALSE_FORMAT = new ConfigString("infoBlockPropertiesBooleanFalseFormat",
-    "%#red\"FALSE\"", "Format of boolean properties in infoBlockProperties when they're false"),
+    "#red\"FALSE\"", "Format of boolean properties in infoBlockProperties when they're false"),
 
     BLOCK_PROPS_DIRECTION_FORMAT     = new ConfigString("infoBlockPropertiesDirectionFormat",
-    "%#gold\"%value\"", "Format of direction properties in infoBlockProperties"),
+    "#gold\"%value\"", "Format of direction properties in infoBlockProperties"),
 
     BLOCK_PROPS_INT_FORMAT           = new ConfigString("infoBlockPropertiesIntFormat",
-    "%#aqua\"%value\"", "Format of int properties in infoBlockProperties"),
+    "#aqua\"%value\"", "Format of int properties in infoBlockProperties"),
 
     BLOCK_PROPS_STRING_FORMAT        = new ConfigString("infoBlockPropertiesStringFormat",
     "\"%value\"", "Format of String properties in infoBlockProperties"),
@@ -138,10 +136,10 @@ public class Formats implements IConfigHandler
     "\"%fps fps\"", "Format of infoFPS"),
 
     FURNACE_XP_FORMAT                = new ConfigString("infoFurnaceXpFormat",
-    "\"Furnace XP: \", %#aqua\"%xp\"", "Format of infoFurnaceXp"),
+    "\"Furnace XP: \", #aqua\"%xp\"", "Format of infoFurnaceXp"),
 
     HONEY_LEVEL_FORMAT               = new ConfigString("infoHoneyLevelFormat",
-    "\"Honey: \", %#aqua\"%honey\"", "Format of infoHoneyLevel"),
+    "\"Honey: \", #aqua\"%honey\"", "Format of infoHoneyLevel"),
 
     HORSE_JUMP_FORMAT                = new ConfigString("infoHorseJumpFormat",
     "\"Horse Jump: %jump m\"", "Format of infoHorseJump"),
@@ -207,10 +205,10 @@ public class Formats implements IConfigHandler
     "\"Slime chunk: \", %result", "Format of infoSlimeChunk"),
 
     SLIME_CHUNK_YES_FORMAT           = new ConfigString("infoSlimeChunkYesFormat",
-    "%#green\"YES\"", "Format of the infoSlimeChunk result when it's positive"),
+    "#green\"YES\"", "Format of the infoSlimeChunk result when it's positive"),
 
     SLIME_CHUNK_NO_FORMAT            = new ConfigString("infoSlimeChunkNoFormat",
-    "%#red\"NO\"", "Format of the infoSlimeChunk result when it's negative"),
+    "#red\"NO\"", "Format of the infoSlimeChunk result when it's negative"),
 
     SLIME_CHUNK_NO_SEED_FORMAT       = new ConfigString("infoSlimeChunkNoSeedFormat",
     "\"<world seed not known>\"", "Format of infoSlimeChunk when there's no seed"),
@@ -243,6 +241,23 @@ public class Formats implements IConfigHandler
     "\"MC time: (day %day) %hour:%min:xx\"", "The format string for the Minecraft time.\nThe supported placeholders are: %DAY_1, %DAY, %HOUR, %MIN, %SEC.\n%DAY_1 starts the day counter from 1, %DAY starts from 0.");
 
   public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
+    COLOR0,
+    COLOR1,
+    COLOR2,
+    COLOR3,
+    COLOR4,
+    COLOR5,
+    COLOR6,
+    COLOR7,
+    COLOR8,
+    COLOR9,
+    COLOR10,
+    COLOR11,
+    COLOR12,
+    COLOR13,
+    COLOR14,
+    COLOR15,
+
     BEE_COUNT_FORMAT,
     BIOME_FORMAT,
     BIOME_REG_NAME_FORMAT,
