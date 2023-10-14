@@ -192,11 +192,29 @@ public class Formats implements IConfigHandler
     SEPARATOR_FORMAT                 = new ConfigString("infoSeparatorFormat",
     " / ", "Format of the separators used for some compound info lines"),
 
+    TPS_BELOW_20_FORMAT              = new ConfigString("tpsBelow40Format",
+    "#green\"%mspt\"", "Format of infoServerTPS tps when it is below 40"),
+
+    TPS_ABOVE_20_FORMAT              = new ConfigString("tpsAbove50Format",
+    "#red\"%mspt\"", "Format of infoServerTPS tps when it is below 40"),
+
+    MSPT_BELOW_40_FORMAT             = new ConfigString("msptBelow40Format",
+    "#green\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+
+    MSPT_40_45_FORMAT                = new ConfigString("mspt40to45Format",
+    "#yellow\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+
+    MSPT_45_50_FORMAT                = new ConfigString("mspt45to50Format",
+    "#gold\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+
+    MSPT_ABOVE_50_FORMAT             = new ConfigString("msptAbove50Format",
+    "#red\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+
     SERVER_TPS_VANILLA_FORMAT        = new ConfigString("infoServerTPSVanillaFormat",
-    "\"Server TPS: %preTps%tps%rst (MSPT [est]: %preMspt%mspt%rst)\"", "Format of infoServerTPS for vanilla servers"),
+    "\"Server TPS: \", %tps, \" (MSPT [est]: \", %mspt, \")\"", "Format of infoServerTPS for vanilla servers"),
 
     SERVER_TPS_CARPET_FORMAT         = new ConfigString("infoServerTPSCarpetFormat",
-    "\"Server TPS: %preTps%tps%rst MSPT: %preMspt%mspt%rst\"", "Format of infoServerTPS for carpet servers"),
+    "\"Server TPS: \", %tps, \" MSPT: \", %mspt", "Format of infoServerTPS for carpet servers"),
 
     SERVER_TPS_NULL_FORMAT           = new ConfigString("infoServerTPSNullFormat",
     "\"Server TPS: <no valid data>\"", "Format of infoServerTPS when info is unavailable"),
