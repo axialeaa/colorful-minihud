@@ -106,7 +106,7 @@ public class ColorfulLines
 
   private static String line(ConfigString config, Variable<?>... vars)
   {
-    String text = ("[" + config.getStringValue() + "]")
+    String text = ("[\"\"" + config.getStringValue() + "]")
       .replace("#0", Formats.COLOR0.getStringValue())
       .replace("#1", Formats.COLOR1.getStringValue())
       .replace("#2", Formats.COLOR2.getStringValue())
