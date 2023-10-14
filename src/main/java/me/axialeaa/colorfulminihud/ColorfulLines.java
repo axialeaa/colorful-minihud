@@ -502,30 +502,24 @@ public class ColorfulLines
 
       double tps = data.getServerTPS();
       double mspt = data.getServerMSPT();
-      String preTps = tps >= 20d ? GuiBase.TXT_GREEN : GuiBase.TXT_RED;
 
-      if(data.isCarpetServer() || mc.isLocalServer())
-      {
-        String preMspt = mspt <= 40 ? GuiBase.TXT_GREEN :
-          mspt <= 45 ? GuiBase.TXT_YELLOW :
-          mspt <= 50 ? GuiBase.TXT_GOLD :
-          GuiBase.TXT_RED;
-        lines.add(line(Formats.SERVER_TPS_CARPET_FORMAT,
-          var("preTps", preTps),
-          var("tps", ".1f", tps),
-          var("rst", GuiBase.TXT_RST),
-          var("preMspt", preMspt),
-          var("mspt", ".1f", mspt)));
-        return;
-      }
+      String msptString = line(
+        mspt <= 40 ? Formats.MSPT_BELOW_40_FORMAT :
+        mspt <= 45 ? Formats.MSPT_40_45_FORMAT :
+        mspt <= 50 ? Formats.MSPT_45_50_FORMAT :
+        Formats.MSPT_ABOVE_50_FORMAT,
+        var("mspt", ".1f", mspt));
 
-      String preMspt = mspt <= 51 ? GuiBase.TXT_GREEN : GuiBase.TXT_RED;
-      lines.add(line(Formats.SERVER_TPS_VANILLA_FORMAT,
-        var("preTps", preTps),
-        var("tps", ".1f", tps),
-        var("rst", GuiBase.TXT_RST),
-        var("preMspt", preMspt),
-        var("mspt", ".1f", mspt)));
+      String tpsString = line(
+        tps >= 20 ? Formats.TPS_ABOVE_20_FORMAT :
+        Formats.TPS_BELOW_20_FORMAT,
+        var("tps", ".1f", tps));
+
+      lines.add(line(data.isCarpetServer() || mc.isLocalServer() ?
+        Formats.SERVER_TPS_CARPET_FORMAT :
+        Formats.SERVER_TPS_VANILLA_FORMAT,
+        var("tps", tpsString),
+        var("mspt", msptString)));
     }),
 
     entry(InfoToggle.PING, (List<String> lines, Set<InfoToggle> addedTypes) ->
