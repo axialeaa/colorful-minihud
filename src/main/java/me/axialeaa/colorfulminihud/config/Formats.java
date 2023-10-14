@@ -57,8 +57,8 @@ public class Formats implements IConfigHandler
     BLOCK_POS_FORMAT                 = new ConfigString("infoBlockPositionFormat",
     "\"Block: %x, %y, %z\"", "Format of infoBlockPosition"),
 
-    BLOCK_PROPS_FORMAT               = new ConfigString("infoBlockPropertiesFormat",
-    "\"%prop: \", %value", "Format of infoBlockProperties"),
+    BLOCK_PROPERTIES_FORMAT          = new ConfigString("infoBlockPropertiesFormat",
+    "\"%property: \", %value", "Format of infoBlockProperties"),
 
     BLOCK_PROPS_HEADING_FORMAT       = new ConfigString("infoBlockPropertiesHeadingFormat",
     "\"%block\"", "Format of the heading of infoBlockProperties"),
@@ -264,7 +264,7 @@ public class Formats implements IConfigHandler
     BLOCK_BREAK_SPEED_FORMAT,
     BLOCK_IN_CHUNK_FORMAT,
     BLOCK_POS_FORMAT,
-    BLOCK_PROPS_FORMAT,
+    BLOCK_PROPERTIES_FORMAT,
     BLOCK_PROPS_HEADING_FORMAT,
     BLOCK_PROPS_BOOLEAN_TRUE_FORMAT,
     BLOCK_PROPS_BOOLEAN_FALSE_FORMAT,

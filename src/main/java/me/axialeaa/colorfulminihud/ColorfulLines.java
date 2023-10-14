@@ -187,6 +187,10 @@ public class ColorfulLines
     return new Variable<>(key, "f", value);
   }
 
+  private static Variable<String> separator(boolean condition) {
+    return var("separator", condition ? Formats.SEPARATOR_FORMAT.getStringValue() : "");
+  }
+
   private static final BiConsumer<List<String>, Set<InfoToggle>> COORDINATES_DIMENSION = (List<String> lines, Set<InfoToggle> addedTypes) ->
   {
     if(addedTypes.contains(InfoToggle.COORDINATES) || addedTypes.contains(InfoToggle.COORDINATES_SCALED) || addedTypes.contains(InfoToggle.DIMENSION))
@@ -217,7 +221,7 @@ public class ColorfulLines
         str.append(line(isNether ?
             Formats.COORDINATES_SCALED_OVERWORLD_FORMAT :
             Formats.COORDINATES_SCALED_NETHER_FORMAT,
-          var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""), // if a preceding entry is toggled, add a separator before the main info
+          separator(hasOther), // if a preceding entry is toggled, add a separator before the main info
           var("x", ".2f", x),
           var("y", ".4f", y),
           var("z", ".2f", z)));
@@ -230,8 +234,8 @@ public class ColorfulLines
       if(hasOther)
         str.append(",");
       str.append(line(Formats.DIMENSION_FORMAT,
-        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-        var("dim", Objects.requireNonNull(level).dimension().location().toString())));
+        separator(hasOther),
+        var("dimension", Objects.requireNonNull(level).dimension().location().toString())));
       addedTypes.add(InfoToggle.DIMENSION);
       // we don't need to reassign hasOther here because this is the last entry in the compound; we don't need to separate this from anything in front
     }
@@ -262,10 +266,10 @@ public class ColorfulLines
       if(hasOther)
         str1.append(",");
       str1.append(line(Formats.CHUNK_POS_FORMAT,
-        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-        var("x", chunkPos.x),
-        var("y", pos.getY() >> 4),
-        var("z", chunkPos.z)));
+        separator(hasOther),
+        var("chunkX", chunkPos.x),
+        var("chunkY", pos.getY() >> 4),
+        var("chunkZ", chunkPos.z)));
       addedTypes.add(InfoToggle.CHUNK_POS);
       hasOther = true;
     }
@@ -275,7 +279,7 @@ public class ColorfulLines
       if(hasOther)
         str1.append(",");
       str1.append(line(Formats.REGION_FILE_FORMAT,
-        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        separator(hasOther),
         var("x", pos.getX() >> 9),
         var("z", pos.getZ() >> 9)));
       addedTypes.add(InfoToggle.REGION_FILE);
@@ -327,7 +331,7 @@ public class ColorfulLines
     if(InfoToggle.ENTITIES_CLIENT_WORLD.getBooleanValue())
     {
       str.append(line(Formats.ENTITIES_CLIENT_FORMAT,
-        var("e", Objects.requireNonNull(mc.level).getEntityCount())));
+        var("count", Objects.requireNonNull(mc.level).getEntityCount())));
       addedTypes.add(InfoToggle.ENTITIES_CLIENT_WORLD);
       hasOther = true;
     }
@@ -340,8 +344,8 @@ public class ColorfulLines
         if(hasOther)
           str.append(",");
         str.append(line(Formats.ENTITIES_SERVER_FORMAT,
-          var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-          var("e", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
+          separator(hasOther),
+          var("count", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
         addedTypes.add(InfoToggle.ENTITIES);
         hasOther = true; // we need to reassign hasOther here in case if(world instanceof ServerLevel) returns false
       }
@@ -379,13 +383,13 @@ public class ColorfulLines
         if(hasOther)
           str.append(",");
         str.append(line(Formats.LOOKING_AT_BLOCK_CHUNK_FORMAT,
-          var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+          separator(hasOther),
           var("x", lookPos.getX()),
           var("y", lookPos.getY()),
           var("z", lookPos.getZ()),
-          var("cx", lookPos.getX() >> 4),
-          var("cy", lookPos.getY() >> 4),
-          var("cz", lookPos.getZ() >> 4)
+          var("chunkX", lookPos.getX() >> 4),
+          var("chunkY", lookPos.getY() >> 4),
+          var("chunkZ", lookPos.getZ() >> 4)
         ));
         addedTypes.add(InfoToggle.LOOKING_AT_BLOCK_CHUNK);
       }
@@ -415,7 +419,7 @@ public class ColorfulLines
       if(hasOther)
         str.append(",");
       str.append(line(Formats.ROTATION_PITCH_FORMAT,
-        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        separator(hasOther),
         var("pitch", Mth.wrapDegrees(player.getXRot()))));
       addedTypes.add(InfoToggle.ROTATION_PITCH);
       hasOther = true;
@@ -427,7 +431,7 @@ public class ColorfulLines
         str.append(",");
       double dist1 = Math.sqrt(dx*dx + dy*dy + dz*dz);
       str.append(line(Formats.SPEED_FORMAT,
-        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        separator(hasOther),
         var("speed", dist1 * 20)));
       addedTypes.add(InfoToggle.SPEED);
     }
@@ -446,11 +450,11 @@ public class ColorfulLines
       long memFree = Runtime.getRuntime().freeMemory();
       long memUsed = memTotal - memFree;
       lines.add(line(Formats.MEMORY_USAGE_FORMAT,
-        var("pused", "2d", memUsed * 100L / memMax),
-        var("pallocated", "2d", memTotal * 100L / memMax),
+        var("pctUsed", "2d", memUsed * 100L / memMax),
+        var("pctAllocated", "2d", memTotal * 100L / memMax),
         var("used", "3d", MiscUtils.bytesToMb(memUsed)),
         var("max", "3d", MiscUtils.bytesToMb(memMax)),
-        var("total", "3d", MiscUtils.bytesToMb(memTotal))));
+        var("allocated", "3d", MiscUtils.bytesToMb(memTotal))));
     }),
 
     entry(InfoToggle.TIME_REAL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TIME_REAL_FORMAT,
@@ -466,8 +470,8 @@ public class ColorfulLines
       long day = timeDay / 24000;
       int dayTicks = (int)(timeDay % 24000);
       lines.add(line(Formats.TIME_WORLD_FORMATTED_FORMAT,
-        var("day", day),
-        var("day_1", day + 1),
+        var("dayZeroBased", day),
+        var("dayOneBased", day + 1),
         var("hour", "02d", (dayTicks / 1000 + 6) % 24),
         var("min", "02d", (int)(dayTicks * 0.06) % 60),
         var("sec", "02d", (int)(dayTicks * 3.6) % 60)));
@@ -548,24 +552,24 @@ public class ColorfulLines
       var("x", pos.getX() & 0xf),
       var("y", pos.getY() & 0xf),
       var("z", pos.getZ() & 0xf),
-      var("cx", chunkPos.x),
-      var("cy", pos.getY() >> 4),
-      var("cz", chunkPos.z)))),
+      var("chunkX", chunkPos.x),
+      var("chunkY", pos.getY() >> 4),
+      var("chunkZ", chunkPos.z)))),
 
     entry(InfoToggle.BLOCK_BREAK_SPEED, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_BREAK_SPEED_FORMAT,
-      var("bbs", ".2f", data.getBlockBreakingSpeed())))),
+      var("speed", ".2f", data.getBlockBreakingSpeed())))),
 
     entry(InfoToggle.DISTANCE, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       Vec3 ref = data.getDistanceReferencePoint();
       lines.add(line(Formats.DISTANCE_FORMAT,
-        var("d", ".2f", Math.sqrt(ref.distanceToSqr(x, y, z))),
-        var("dx", ".2f", x - ref.x),
-        var("dy", ".2f", y - ref.y),
-        var("dz", ".2f", z - ref.z),
-        var("rx", ".2f", ref.x),
-        var("ry", ".2f", ref.y),
-        var("rz", ".2f", ref.z)));
+        var("dist", ".2f", Math.sqrt(ref.distanceToSqr(x, y, z))),
+        var("distX", ".2f", x - ref.x),
+        var("distY", ".2f", y - ref.y),
+        var("distZ", ".2f", z - ref.z),
+        var("refX", ".2f", ref.x),
+        var("refY", ".2f", ref.y),
+        var("refZ", ".2f", ref.z)));
     }),
 
     entry(InfoToggle.FACING, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -580,8 +584,8 @@ public class ColorfulLines
         default -> "Invalid direction";
       };
       lines.add(line(Formats.FACING_FORMAT,
-        var("dir", facing.toString()),
-        var("coord", str)
+        var("cardinal", facing.toString()),
+        var("cartesian", str)
       ));
     }),
 
@@ -611,21 +615,21 @@ public class ColorfulLines
     {
       if(targetedBlockEntity instanceof BeehiveBlockEntity bbe)
         lines.add(line(Formats.BEE_COUNT_FORMAT,
-          var("bees", bbe.getOccupantCount())));
+          var("count", bbe.getOccupantCount())));
     }),
 
     entry(InfoToggle.FURNACE_XP, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       if(targetedBlockEntity instanceof AbstractFurnaceBlockEntity furnace)
         lines.add(line(Formats.FURNACE_XP_FORMAT,
-          var("xp", MiscUtils.getFurnaceXpAmount(furnace))));
+          var("count", MiscUtils.getFurnaceXpAmount(furnace))));
     }),
 
     entry(InfoToggle.HONEY_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       if(targetedBlockState != null && targetedBlockState.getBlock() instanceof BeehiveBlock)
         lines.add(line(Formats.HONEY_LEVEL_FORMAT,
-          var("honey", BeehiveBlockEntity.getHoneyLevel(targetedBlockState))));
+          var("level", BeehiveBlockEntity.getHoneyLevel(targetedBlockState))));
     }),
 
     entry(InfoToggle.ROTATION_YAW, ROTATION_SPEED),
@@ -634,8 +638,8 @@ public class ColorfulLines
 
     entry(InfoToggle.SPEED_HV, (List<String> lines, Set<InfoToggle> addedTypes) ->
       lines.add(line(Formats.SPEED_HV_FORMAT,
-        var("xz", ".3f", Math.sqrt(dx*dx + dz*dz) * 20.0),
-        var("y", ".3f", dy * 20.0)))),
+        var("h", ".3f", Math.sqrt(dx*dx + dz*dz) * 20.0),
+        var("v", ".3f", dy * 20.0)))),
 
     entry(InfoToggle.SPEED_AXIS, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.SPEED_AXIS_FORMAT,
       var("x", dx * 20),
@@ -646,10 +650,10 @@ public class ColorfulLines
     entry(InfoToggle.HORSE_JUMP, HORSE),
 
     entry(InfoToggle.CHUNK_SECTIONS, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_SECTIONS_FORMAT,
-      var("c", ((IMixinWorldRenderer)mc.levelRenderer).getRenderedChunksInvoker())))),
+      var("count", ((IMixinWorldRenderer)mc.levelRenderer).getRenderedChunksInvoker())))),
 
     entry(InfoToggle.CHUNK_SECTIONS_FULL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_SECTIONS_FULL_FORMAT,
-      var("c", mc.levelRenderer.getChunkStatistics())))),
+      var("count", mc.levelRenderer.getChunkStatistics())))),
 
     entry(InfoToggle.CHUNK_UPDATES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_UPDATES_FORMAT))),
 
@@ -659,17 +663,17 @@ public class ColorfulLines
       Level levelServer = WorldUtils.getBestWorld(mc);
       if(levelServer == null || levelServer != level)
         lines.add(line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT,
-          var("client", chunksClient)));
+          var("stats", chunksClient)));
 
       ServerChunkCache cache = (ServerChunkCache)Objects.requireNonNull(levelServer).getChunkSource();
       lines.add(line(Formats.LOADED_CHUNKS_COUNT_SERVER_FORMAT,
-        var("chunks", cache.getLoadedChunksCount()),
+        var("loaded", cache.getLoadedChunksCount()),
         var("total", cache.getTickingGenerated()),
-        var("client", chunksClient)));
+        var("stats", chunksClient)));
     }),
 
     entry(InfoToggle.PARTICLE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.PARTICLE_COUNT_FORMAT,
-      var("p", mc.particleEngine.countParticles())))),
+      var("count", mc.particleEngine.countParticles())))),
 
     entry(InfoToggle.DIFFICULTY, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
@@ -703,7 +707,7 @@ public class ColorfulLines
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
       lines.add(line(Formats.BIOME_REG_NAME_FORMAT,
-        var("name", resourceLocation != null ? resourceLocation.toString() : "?")));
+        var("regName", resourceLocation != null ? resourceLocation.toString() : "?")));
     }),
 
     entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TILE_ENTITIES_FORMAT,
@@ -721,12 +725,12 @@ public class ColorfulLines
       if(data.isWorldSeedKnown(level))
       {
         long seed = data.getWorldSeed(level);
-        lines.add(line(Formats.SLIME_CHUNK_FORMAT,
-          var("result", MiscUtils.canSlimeSpawnAt(pos.getX(), pos.getZ(), seed) ? Formats.SLIME_CHUNK_YES_FORMAT.getStringValue() : Formats.SLIME_CHUNK_NO_FORMAT.getStringValue())));
+        lines.add(line(MiscUtils.canSlimeSpawnAt(pos.getX(), pos.getZ(), seed) ?
+          Formats.SLIME_CHUNK_YES_FORMAT :
+          Formats.SLIME_CHUNK_NO_FORMAT));
       }
       else
-        lines.add(line(Formats.SLIME_CHUNK_FORMAT,
-          var("result", Formats.SLIME_CHUNK_NO_SEED_FORMAT.getStringValue())));
+        lines.add(line(Formats.SLIME_CHUNK_NO_SEED_FORMAT));
     }),
 
     entry(InfoToggle.LOOKING_AT_ENTITY, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -738,8 +742,8 @@ public class ColorfulLines
       lines.add(lookedEntity instanceof LivingEntity living ?
         line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
           var("entity", lookedEntity.getName().getString()),
-          var("hp", living.getHealth()),
-          var("maxhp", living.getMaxHealth())) :
+          var("health", living.getHealth()),
+          var("maxHealth", living.getMaxHealth())) :
         line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
           var("entity", Objects.requireNonNull(lookedEntity).getName().getString())));
     }),
@@ -752,7 +756,7 @@ public class ColorfulLines
       Entity lookedEntity = ((EntityHitResult) mc.hitResult).getEntity();
       ResourceLocation resourceLocation = EntityType.getKey(lookedEntity.getType());
       lines.add(line(Formats.ENTITY_REG_NAME_FORMAT,
-        var("name", resourceLocation.toString())));
+        var("regName", resourceLocation.toString())));
     }),
 
     entry(InfoToggle.LOOKING_AT_BLOCK, LOOKING_BLOCK_CHUNK),
@@ -784,8 +788,8 @@ public class ColorfulLines
               Formats.BLOCK_PROPS_STRING_FORMAT,
               var("value", valueForFormat.toString()));
 
-          lines.add(line(Formats.BLOCK_PROPS_FORMAT,
-            var("prop", property.getName()),
+          lines.add(line(Formats.BLOCK_PROPERTIES_FORMAT,
+            var("property", property.getName()),
             var("value", valueForReplace)));
         }
       }
