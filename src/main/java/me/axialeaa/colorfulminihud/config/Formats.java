@@ -1,7 +1,6 @@
 package me.axialeaa.colorfulminihud.config;
 
 import com.google.common.collect.ImmutableList;
-
 import fi.dy.masa.malilib.config.IConfigValue;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigString;
@@ -12,21 +11,25 @@ public class Formats
     COLORFG = new ConfigColor("ColorFG", "#00F8F8F2", "Variable color FG"),
     COLORBG = new ConfigColor("ColorBG", "#00282A36", "Variable color BG"),
     COLOR0 = new ConfigColor("Color0", "#00000000", "Variable color 0"),
-    COLOR1 = new ConfigColor("Color1", "#00FF5555", "Variable color 0"),
-    COLOR2 = new ConfigColor("Color2", "#0050FA7B", "Variable color 0"),
-    COLOR3 = new ConfigColor("Color3", "#00F1FA8C", "Variable color 0"),
-    COLOR4 = new ConfigColor("Color4", "#00BD93F9", "Variable color 0"),
-    COLOR5 = new ConfigColor("Color5", "#00FF79C6", "Variable color 0"),
-    COLOR6 = new ConfigColor("Color6", "#008BE9FD", "Variable color 0"),
-    COLOR7 = new ConfigColor("Color7", "#00BFBFBF", "Variable color 0"),
-    COLOR8 = new ConfigColor("Color8", "#004D4D4D", "Variable color 0"),
-    COLOR9 = new ConfigColor("Color9", "#00FF6E67", "Variable color 0"),
-    COLOR10 = new ConfigColor("Color10", "#005AF78E", "Variable color 0"),
-    COLOR11 = new ConfigColor("Color11", "#00F4F99D", "Variable color 0"),
-    COLOR12 = new ConfigColor("Color12", "#00CAA9FA", "Variable color 0"),
-    COLOR13 = new ConfigColor("Color13", "#00FF92D0", "Variable color 0"),
-    COLOR14 = new ConfigColor("Color14", "#009AEDFE", "Variable color 0"),
-    COLOR15 = new ConfigColor("Color15", "#00E6E6E6", "Variable color 0");
+    COLOR1 = new ConfigColor("Color1", "#00FF5555", "Variable color 1"),
+    COLOR2 = new ConfigColor("Color2", "#0050FA7B", "Variable color 2"),
+    COLOR3 = new ConfigColor("Color3", "#00F1FA8C", "Variable color 3"),
+    COLOR4 = new ConfigColor("Color4", "#00BD93F9", "Variable color 4"),
+    COLOR5 = new ConfigColor("Color5", "#00FF79C6", "Variable color 5"),
+    COLOR6 = new ConfigColor("Color6", "#008BE9FD", "Variable color 6"),
+    COLOR7 = new ConfigColor("Color7", "#00BFBFBF", "Variable color 7"),
+    COLOR8 = new ConfigColor("Color8", "#004D4D4D", "Variable color 8"),
+    COLOR9 = new ConfigColor("Color9", "#00FF6E67", "Variable color 9"),
+    COLOR10 = new ConfigColor("Color10", "#005AF78E", "Variable color 10"),
+    COLOR11 = new ConfigColor("Color11", "#00F4F99D", "Variable color 11"),
+    COLOR12 = new ConfigColor("Color12", "#00CAA9FA", "Variable color 12"),
+    COLOR13 = new ConfigColor("Color13", "#00FF92D0", "Variable color 13"),
+    COLOR14 = new ConfigColor("Color14", "#009AEDFE", "Variable color 14"),
+    COLOR15 = new ConfigColor("Color15", "#00E6E6E6", "Variable color 15");
+//    COLOROPTIMUM = new ConfigColor("ColorOptimal", ChatFormatting.GREEN.toString(), "The color used for optimal TPS, MSPT and FPS values"),
+//    COLORGOOD = new ConfigColor("ColorGood", ChatFormatting.YELLOW.toString(), "The color used for good TPS, MSPT and FPS values"),
+//    COLORLACKING = new ConfigColor("ColorLacking", ChatFormatting.GOLD.toString(), "The color used for lacking TPS, MSPT and FPS values"),
+//    COLORPOOR = new ConfigColor("ColorPoor", ChatFormatting.RED.toString(), "The color used for poor TPS, MSPT and FPS values");
 
   public static final ConfigString
     BEE_COUNT_FORMAT                 = new ConfigString("infoBeeCountFormat", """
@@ -69,7 +72,7 @@ public class Formats
     "\"%value\"", "Format of String properties in infoBlockProperties"),
 
     CHUNK_POS_FORMAT                 = new ConfigString("infoChunkPositionFormat",
-    "\" / Sub-Chunk: %x, %y, %z\"", "Format of infoChunkPosition"),
+    "\"%separator\", \"Sub-Chunk: %x, %y, %z\"", "Format of infoChunkPosition"),
 
     CHUNK_SECTIONS_FORMAT            = new ConfigString("infoChunkSectionsFormat",
     "\"C: %c\"", "Format of infoChunkSections"),
@@ -83,11 +86,17 @@ public class Formats
     COORDINATES_FORMAT               = new ConfigString("infoCoordinatesFormat",
     "\"XYZ: %x / %y / %z\"", "Format of infoCoordinates, change precision by changing the numbers"),
 
+    COORDINATES_SCALED_NETHER_FORMAT = new ConfigString("infoCoordinatesScaledNetherFormat",
+    "\"%separator\", \"Nether: %x / %y / %z\"", "Format of infoCoordinatesScaled when in the nether"),
+
+    COORDINATES_SCALED_OVERWORLD_FORMAT = new ConfigString("infoCoordinatesScaledOverworldFormat",
+    "\"%separator\", \"Overworld: %x / %y / %z\"", "Format of infoCoordinatesScaled when in the overworld"),
+
     DIFFICULTY_FORMAT                = new ConfigString("infoDifficultyFormat",
     "\"Local Difficulty: %local // %clamped (Day %day)\"", "Format of infoDifficulty"),
 
     DIMENSION_FORMAT                 = new ConfigString("infoDimensionIdFormat",
-    "\" / dim: %dim\"", "Format of infoDimensionId"),
+    "\"%separator\", \"dim: %dim\"", "Format of infoDimensionId"),
 
     DISTANCE_FORMAT                  = new ConfigString("infoDistanceFormat",
     "\"Distance: %d (x: %dx y: %dy z: %dz) [to x: %rx y: %ry z: %rz]\"", "Format of infoDistance"),
@@ -141,7 +150,7 @@ public class Formats
     "\"Looking at block: %x, %y, %z\"", "Format of infoLookingAtBlock"),
 
     LOOKING_AT_BLOCK_CHUNK_FORMAT    = new ConfigString("infoLookingAtBlockInChunkFormat",
-    "\" // Block: %x, %y, %z in Sub-Chunk: %cx, %cy, %cz\"", "Format of infoLookingAtBlockInChunk"),
+    "\"%separator\", \"Block: %x, %y, %z in Sub-Chunk: %cx, %cy, %cz\"", "Format of infoLookingAtBlockInChunk"),
 
     LOOKING_AT_ENTITY_FORMAT         = new ConfigString("infoLookingAtEntityFormat",
     "\"Entity: %entity\"", "Format of infoLookingAtEntity"),
@@ -165,13 +174,16 @@ public class Formats
     "\"Ping: %pingms\"", "Format of infoPing"),
 
     REGION_FILE_FORMAT               = new ConfigString("infoRegionFileFormat",
-    "\" / Region: r.%x.%z\"", "Format of infoRegionFile"),
+    "\"%separator\", \"Region: r.%x.%z\"", "Format of infoRegionFile"),
 
     ROTATION_PITCH_FORMAT            = new ConfigString("infoRotationPitchFormat",
-    "\" / Pitch: %pitch$.1f\"", "Format of infoRotationPitch"),
+    "\"%separator\", \"Pitch: %pitch$.1f\"", "Format of infoRotationPitch"),
 
     ROTATION_YAW_FORMAT              = new ConfigString("infoRotationYawFormat",
     "\"Yaw: %yaw$.1f\"", "Format of infoRotationYaw"),
+
+    SEPARATOR_FORMAT                 = new ConfigString("infoSeparatorFormat",
+    " / ", "Format of the separators used for some compound info lines"),
 
     SERVER_TPS_VANILLA_FORMAT        = new ConfigString("infoServerTPSVanillaFormat",
     "\"Server TPS: %preTps%tps%rst (MSPT [est]: %preMspt%mspt%rst)\"", "Format of infoServerTPS for vanilla servers"),
@@ -195,7 +207,7 @@ public class Formats
     "\"<world seed not known>\"", "Format of infoSlimeChunk when there's no seed"),
 
     SPEED_FORMAT                     = new ConfigString("infoSpeedFormat",
-    "\" / Speed: %speed$.3f m/s\"", "Format of infoSpeed"),
+    "\"%separator\", \"Speed: %speed$.3f m/s\"", "Format of infoSpeed"),
 
     SPEED_AXIS_FORMAT                = new ConfigString("infoSpeedAxisFormat",
     "\"Speed: x: %x$.3f y: %y$.3f z: %z$.3f m/s\"", "Format of infoSpeedAxis"),
@@ -240,6 +252,8 @@ public class Formats
     CHUNK_SECTIONS_FULL_FORMAT,
     CHUNK_UPDATES_FORMAT,
     COORDINATES_FORMAT,
+    COORDINATES_SCALED_NETHER_FORMAT,
+    COORDINATES_SCALED_OVERWORLD_FORMAT,
     DIFFICULTY_FORMAT,
     DIMENSION_FORMAT,
     DISTANCE_FORMAT,
@@ -270,6 +284,7 @@ public class Formats
     REGION_FILE_FORMAT,
     ROTATION_PITCH_FORMAT,
     ROTATION_YAW_FORMAT,
+    SEPARATOR_FORMAT,
     SERVER_TPS_VANILLA_FORMAT,
     SERVER_TPS_CARPET_FORMAT,
     SERVER_TPS_NULL_FORMAT,
@@ -286,5 +301,10 @@ public class Formats
     TIME_TOTAL_MODULO_FORMAT,
     TIME_WORLD_FORMAT,
     TIME_WORLD_FORMATTED_FORMAT
+
+//    COLOROPTIMUM,
+//    COLORGOOD,
+//    COLORLACKING,
+//    COLORPOOR
   );
 }

@@ -54,7 +54,6 @@ import java.util.function.BiConsumer;
 
 import static java.util.Map.entry;
 
-@SuppressWarnings("unused")
 public class ColorfulLines
 {
   private static final IRenderHandler accessor = (IRenderHandler)RenderHandler.getInstance();
@@ -161,12 +160,13 @@ public class ColorfulLines
 
   private static final BiConsumer<List<String>, Set<InfoToggle>> COORDINATES_DIMENSION = (List<String> lines, Set<InfoToggle> addedTypes) ->
   {
-    if(addedTypes.contains(InfoToggle.COORDINATES) || addedTypes.contains(InfoToggle.DIMENSION))
+    if(addedTypes.contains(InfoToggle.COORDINATES) || addedTypes.contains(InfoToggle.COORDINATES_SCALED) || addedTypes.contains(InfoToggle.DIMENSION))
       return;
 
     StringBuilder str = new StringBuilder(128);
     str.append("[");
-    if(InfoToggle.COORDINATES.getBooleanValue())
+    boolean hasOther4 = InfoToggle.COORDINATES.getBooleanValue();
+    if(hasOther4)
     {
       str.append(line(Formats.COORDINATES_FORMAT,
         va("x", ".2f", x),
@@ -174,11 +174,37 @@ public class ColorfulLines
         va("z", ".2f", z)));
       addedTypes.add(InfoToggle.COORDINATES);
     }
+    if (InfoToggle.COORDINATES_SCALED.getBooleanValue() && (level.dimension() == Level.NETHER || level.dimension() == Level.OVERWORLD))
+    {
+      boolean isNether = level.dimension() == Level.NETHER;
+      double dist = isNether ? 8.0 : 0.125;
+      x *= dist;
+      z *= dist;
+      if(hasOther4)
+        str.append(",");
+      if (isNether)
+        str.append(line(Formats.COORDINATES_SCALED_OVERWORLD_FORMAT,
+          va("separator", hasOther4 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+          va("x", ".2f", x),
+          va("y", ".4f", y),
+          va("z", ".2f", z)));
+      else
+        str.append(line(Formats.COORDINATES_SCALED_NETHER_FORMAT,
+          va("separator", hasOther4 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+          va("x", ".2f", x),
+          va("y", ".4f", y),
+          va("z", ".2f", z)));
+      addedTypes.add(InfoToggle.COORDINATES_SCALED);
+      hasOther4 = true;
+    }
+
     if(InfoToggle.DIMENSION.getBooleanValue())
     {
-      if(InfoToggle.COORDINATES.getBooleanValue())
+      if(hasOther4)
         str.append(",");
-      str.append(line(Formats.DIMENSION_FORMAT, va("dim", Objects.requireNonNull(level).dimension().location().toString())));
+      str.append(line(Formats.DIMENSION_FORMAT,
+        va("separator", hasOther4 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        va("dim", Objects.requireNonNull(level).dimension().location().toString())));
       addedTypes.add(InfoToggle.DIMENSION);
     }
     lines.add(str.append("]").toString());
@@ -203,19 +229,21 @@ public class ColorfulLines
     {
       if(hasOther)
         str1.append(",");
-      hasOther = true;
 
       str1.append(line(Formats.CHUNK_POS_FORMAT,
+        va("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
         va("x", chunkPos.x),
         va("y", pos.getY() >> 4),
         va("z", chunkPos.z)));
       addedTypes.add(InfoToggle.CHUNK_POS);
+      hasOther = true;
     }
     if(InfoToggle.REGION_FILE.getBooleanValue())
     {
       if(hasOther)
         str1.append(",");
       str1.append(line(Formats.REGION_FILE_FORMAT,
+        va("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
         va("x", pos.getX() >> 9),
         va("z", pos.getZ() >> 9)));
       addedTypes.add(InfoToggle.REGION_FILE);
@@ -263,7 +291,8 @@ public class ColorfulLines
     boolean hasOther2 = InfoToggle.ENTITIES_CLIENT_WORLD.getBooleanValue();
     if(hasOther2)
     {
-      str.append(line(Formats.ENTITIES_CLIENT_FORMAT, va("e", Objects.requireNonNull(mc.level).getEntityCount())));
+      str.append(line(Formats.ENTITIES_CLIENT_FORMAT,
+        va("e", Objects.requireNonNull(mc.level).getEntityCount())));
       addedTypes.add(InfoToggle.ENTITIES_CLIENT_WORLD);
     }
     if(InfoToggle.ENTITIES.getBooleanValue() && mc.hasSingleplayerServer())
@@ -273,7 +302,9 @@ public class ColorfulLines
       {
         if(hasOther2)
           str.append(",");
-        str.append(line(Formats.ENTITIES_SERVER_FORMAT, va("e", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
+        str.append(line(Formats.ENTITIES_SERVER_FORMAT,
+          va("separator", hasOther2 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+          va("e", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
         addedTypes.add(InfoToggle.ENTITIES);
         hasOther2 = true;
       }
@@ -305,8 +336,10 @@ public class ColorfulLines
 
       if(InfoToggle.LOOKING_AT_BLOCK_CHUNK.getBooleanValue())
       {
-        if(hasOther3) str.append(",");
+        if(hasOther3)
+          str.append(",");
         str.append(line(Formats.LOOKING_AT_BLOCK_CHUNK_FORMAT,
+          va("separator", hasOther3 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
           va("x", lookPos.getX()),
           va("y", lookPos.getY()),
           va("z", lookPos.getZ()),
@@ -337,16 +370,20 @@ public class ColorfulLines
     {
       if(hasOther1)
         str.append(",");
-      hasOther1 = true;
-      str.append(line(Formats.ROTATION_PITCH_FORMAT, va("pitch", Mth.wrapDegrees(player.getXRot()))));
+      str.append(line(Formats.ROTATION_PITCH_FORMAT,
+        va("separator", hasOther1 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        va("pitch", Mth.wrapDegrees(player.getXRot()))));
       addedTypes.add(InfoToggle.ROTATION_PITCH);
+      hasOther1 = true;
     }
     if(InfoToggle.SPEED.getBooleanValue())
     {
       if(hasOther1)
         str.append(",");
       double dist1 = Math.sqrt(dx*dx + dy*dy + dz*dz);
-      str.append(line(Formats.SPEED_FORMAT, va("speed", dist1 * 20)));
+      str.append(line(Formats.SPEED_FORMAT,
+        va("separator", hasOther1 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        va("speed", dist1 * 20)));
       addedTypes.add(InfoToggle.SPEED);
     }
     lines.add(str.append("]").toString());
@@ -451,11 +488,7 @@ public class ColorfulLines
         lines.add(line(Formats.PING_FORMAT, va("ping", info.getLatency())));
     }),
 
-    entry(InfoToggle.COORDINATES_SCALED, (List<String> lines, Set<InfoToggle> addedTypes) ->
-    {
-      //TODO - will be merged with the below case;
-    }),
-
+    entry(InfoToggle.COORDINATES_SCALED, COORDINATES_DIMENSION),
     entry(InfoToggle.COORDINATES, COORDINATES_DIMENSION),
     entry(InfoToggle.DIMENSION, COORDINATES_DIMENSION),
 
