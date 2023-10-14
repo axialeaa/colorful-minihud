@@ -106,25 +106,23 @@ public class ColorfulLines
 
   private static String line(ConfigString config, Variable<?>... vars)
   {
-    String text = ("[" + config.getStringValue() + "]")
-      .replace("#colorFG", Formats.COLORFG.getStringValue())
-      .replace("#colorBG", Formats.COLORBG.getStringValue())
-      .replace("#color0", Formats.COLOR0.getStringValue())
-      .replace("#color1", Formats.COLOR1.getStringValue())
-      .replace("#color2", Formats.COLOR2.getStringValue())
-      .replace("#color3", Formats.COLOR3.getStringValue())
-      .replace("#color4", Formats.COLOR4.getStringValue())
-      .replace("#color5", Formats.COLOR5.getStringValue())
-      .replace("#color6", Formats.COLOR6.getStringValue())
-      .replace("#color7", Formats.COLOR7.getStringValue())
-      .replace("#color8", Formats.COLOR8.getStringValue())
-      .replace("#color9", Formats.COLOR9.getStringValue())
-      .replace("#color10", Formats.COLOR10.getStringValue())
-      .replace("#color11", Formats.COLOR11.getStringValue())
-      .replace("#color12", Formats.COLOR12.getStringValue())
-      .replace("#color13", Formats.COLOR13.getStringValue())
-      .replace("#color14", Formats.COLOR14.getStringValue())
-      .replace("#color15", Formats.COLOR15.getStringValue())
+    String text = ("[\"\"" + config.getStringValue() + "]")
+      .replace("#0", Formats.COLOR0.getStringValue())
+      .replace("#1", Formats.COLOR1.getStringValue())
+      .replace("#2", Formats.COLOR2.getStringValue())
+      .replace("#3", Formats.COLOR3.getStringValue())
+      .replace("#4", Formats.COLOR4.getStringValue())
+      .replace("#5", Formats.COLOR5.getStringValue())
+      .replace("#6", Formats.COLOR6.getStringValue())
+      .replace("#7", Formats.COLOR7.getStringValue())
+      .replace("#8", Formats.COLOR8.getStringValue())
+      .replace("#9", Formats.COLOR9.getStringValue())
+      .replace("#10", Formats.COLOR10.getStringValue())
+      .replace("#11", Formats.COLOR11.getStringValue())
+      .replace("#12", Formats.COLOR12.getStringValue())
+      .replace("#13", Formats.COLOR13.getStringValue())
+      .replace("#14", Formats.COLOR14.getStringValue())
+      .replace("#15", Formats.COLOR15.getStringValue())
 
       .replace("#black",        "#000000")
       .replace("#dark_red",     "#AA0000")
@@ -144,8 +142,8 @@ public class ColorfulLines
       .replace("#aqua",         "#55FFFF")
       .replace("#white",        "#FFFFFF");
 
-    // Replaces %#abcdef"stuff" with {"color":"abcdef","text":"stuff"}
-    text = text.replaceAll("(?<=[^%])%(#[a-fA-F\\d]{6,8})(\".*?[^\\\\]?\")",
+    // Replaces #abcdef"stuff" with {"color":"abcdef","text":"stuff"}
+    text = text.replaceAll("(#[a-fA-F\\d]{6,8})(\".*?(?<!\\\\)\")",
       "{\"color\":\"$1\",\"text\":$2}");
 
     Object[] values = new Object[vars.length];
