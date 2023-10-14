@@ -224,7 +224,7 @@ public class ColorfulLines
           var("y", ".4f", y),
           var("z", ".2f", z)));
       addedTypes.add(InfoToggle.COORDINATES_SCALED);
-      hasOther = true; // something follows this as well, so we need this to return true
+      hasOther = true; // the dimension info toggle follows this, so we need to reassign hasOther here too
     }
 
     if(InfoToggle.DIMENSION.getBooleanValue())
