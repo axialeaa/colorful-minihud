@@ -52,6 +52,8 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Map.entry;
 
@@ -103,7 +105,48 @@ public class ColorfulLines
 
   private static String line(ConfigString config, Variable<?>... vars)
   {
-    String text = config.getStringValue();
+    String text = ("[" + config.getStringValue() + "]")
+      .replace("#colorFG", Formats.COLORFG.getStringValue())
+      .replace("#colorBG", Formats.COLORBG.getStringValue())
+      .replace("#color0", Formats.COLOR0.getStringValue())
+      .replace("#color1", Formats.COLOR1.getStringValue())
+      .replace("#color2", Formats.COLOR2.getStringValue())
+      .replace("#color3", Formats.COLOR3.getStringValue())
+      .replace("#color4", Formats.COLOR4.getStringValue())
+      .replace("#color5", Formats.COLOR5.getStringValue())
+      .replace("#color6", Formats.COLOR6.getStringValue())
+      .replace("#color7", Formats.COLOR7.getStringValue())
+      .replace("#color8", Formats.COLOR8.getStringValue())
+      .replace("#color9", Formats.COLOR9.getStringValue())
+      .replace("#color10", Formats.COLOR10.getStringValue())
+      .replace("#color11", Formats.COLOR11.getStringValue())
+      .replace("#color12", Formats.COLOR12.getStringValue())
+      .replace("#color13", Formats.COLOR13.getStringValue())
+      .replace("#color14", Formats.COLOR14.getStringValue())
+      .replace("#color15", Formats.COLOR15.getStringValue())
+
+      .replace("#black",        "#000000")
+      .replace("#dark_red",     "#AA0000")
+      .replace("#dark_green",   "#00AA00")
+      .replace("#gold",         "#FFAA00")
+      .replace("#dark_blue",    "#0000AA")
+      .replace("#dark_purple",  "#AA00AA")
+      .replace("#dark_aqua",    "#00AAAA")
+      .replace("#gray",         "#AAAAAA")
+
+      .replace("#dark_gray",    "#555555")
+      .replace("#red",          "#FF5555")
+      .replace("#green",        "#55FF55")
+      .replace("#yellow",       "#FFFF55")
+      .replace("#blue",         "#5555FF")
+      .replace("#light_purple", "#FF55FF")
+      .replace("#aqua",         "#55FFFF")
+      .replace("#white",        "#FFFFFF");
+
+    // Replaces %#abcdef"stuff" with {"color":"abcdef","text":"stuff"}
+    text = text.replaceAll("(?<=[^%])%(#[a-fA-F\\d]{6,8})(\".*?[^\\\\]?\")",
+      "{\"color\":\"$1\",\"text\":$2}");
+
     Object[] values = new Object[vars.length];
     int i = 0;
     for(Variable<?> var : vars)
@@ -111,25 +154,6 @@ public class ColorfulLines
       values[i] = var.value;
       text = var.apply(text, ++i);
     }
-
-    text = text.replace("%colorFG", Formats.COLORFG.getStringValue())
-      .replace("%colorBG", Formats.COLORBG.getStringValue())
-      .replace("%color0", Formats.COLOR0.getStringValue())
-      .replace("%color1", Formats.COLOR1.getStringValue())
-      .replace("%color2", Formats.COLOR2.getStringValue())
-      .replace("%color3", Formats.COLOR3.getStringValue())
-      .replace("%color4", Formats.COLOR4.getStringValue())
-      .replace("%color5", Formats.COLOR5.getStringValue())
-      .replace("%color6", Formats.COLOR6.getStringValue())
-      .replace("%color7", Formats.COLOR7.getStringValue())
-      .replace("%color8", Formats.COLOR8.getStringValue())
-      .replace("%color9", Formats.COLOR9.getStringValue())
-      .replace("%color10", Formats.COLOR10.getStringValue())
-      .replace("%color11", Formats.COLOR11.getStringValue())
-      .replace("%color12", Formats.COLOR12.getStringValue())
-      .replace("%color13", Formats.COLOR13.getStringValue())
-      .replace("%color14", Formats.COLOR14.getStringValue())
-      .replace("%color15", Formats.COLOR15.getStringValue());
 
     return String.format(text, values);
   }

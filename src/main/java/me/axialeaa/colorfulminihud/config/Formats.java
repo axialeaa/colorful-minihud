@@ -19,30 +19,30 @@ public class Formats implements IConfigHandler
   public static final ConfigColor
     COLORFG = new ConfigColor("ColorFG", "#00F8F8F2", "Variable color FG"),
     COLORBG = new ConfigColor("ColorBG", "#00282A36", "Variable color BG"),
-    COLOR0 = new ConfigColor("Color0", "#00000000", "Variable color 0"),
+    COLOR0 = new ConfigColor("Color0", "#0021222C", "Variable color 0"),
     COLOR1 = new ConfigColor("Color1", "#00FF5555", "Variable color 1"),
     COLOR2 = new ConfigColor("Color2", "#0050FA7B", "Variable color 2"),
     COLOR3 = new ConfigColor("Color3", "#00F1FA8C", "Variable color 3"),
     COLOR4 = new ConfigColor("Color4", "#00BD93F9", "Variable color 4"),
     COLOR5 = new ConfigColor("Color5", "#00FF79C6", "Variable color 5"),
     COLOR6 = new ConfigColor("Color6", "#008BE9FD", "Variable color 6"),
-    COLOR7 = new ConfigColor("Color7", "#00BFBFBF", "Variable color 7"),
-    COLOR8 = new ConfigColor("Color8", "#004D4D4D", "Variable color 8"),
-    COLOR9 = new ConfigColor("Color9", "#00FF6E67", "Variable color 9"),
-    COLOR10 = new ConfigColor("Color10", "#005AF78E", "Variable color 10"),
-    COLOR11 = new ConfigColor("Color11", "#00F4F99D", "Variable color 11"),
-    COLOR12 = new ConfigColor("Color12", "#00CAA9FA", "Variable color 12"),
-    COLOR13 = new ConfigColor("Color13", "#00FF92D0", "Variable color 13"),
-    COLOR14 = new ConfigColor("Color14", "#009AEDFE", "Variable color 14"),
-    COLOR15 = new ConfigColor("Color15", "#00E6E6E6", "Variable color 15");
+    COLOR7 = new ConfigColor("Color7", "#00F8F8F2", "Variable color 7"),
+    COLOR8 = new ConfigColor("Color8", "#006272A4", "Variable color 8"),
+    COLOR9 = new ConfigColor("Color9", "#00FF6E6E", "Variable color 9"),
+    COLOR10 = new ConfigColor("Color10", "#0069FF94", "Variable color 10"),
+    COLOR11 = new ConfigColor("Color11", "#00FFFFA5", "Variable color 11"),
+    COLOR12 = new ConfigColor("Color12", "#00D6ACFF", "Variable color 12"),
+    COLOR13 = new ConfigColor("Color13", "#00FF92DF", "Variable color 13"),
+    COLOR14 = new ConfigColor("Color14", "#00A4FFFF", "Variable color 14"),
+    COLOR15 = new ConfigColor("Color15", "#00FFFFFF", "Variable color 15");
 //    COLOROPTIMUM = new ConfigColor("ColorOptimal", ChatFormatting.GREEN.toString(), "The color used for optimal TPS, MSPT and FPS values"),
 //    COLORGOOD = new ConfigColor("ColorGood", ChatFormatting.YELLOW.toString(), "The color used for good TPS, MSPT and FPS values"),
 //    COLORLACKING = new ConfigColor("ColorLacking", ChatFormatting.GOLD.toString(), "The color used for lacking TPS, MSPT and FPS values"),
 //    COLORPOOR = new ConfigColor("ColorPoor", ChatFormatting.RED.toString(), "The color used for poor TPS, MSPT and FPS values");
 
   public static final ConfigString
-    BEE_COUNT_FORMAT                 = new ConfigString("infoBeeCountFormat", """
-    ["Bees: ", {"color":"aqua","text":"%bees"}]""", "Format of infoBeeCount"),
+    BEE_COUNT_FORMAT                 = new ConfigString("infoBeeCountFormat",
+    "\"Bees: \", %#aqua\"%bees\"", "Format of infoBeeCount"),
 
     BIOME_FORMAT                     = new ConfigString("infoBiomeFormat",
     "\"Biome: %biome\"", "Format of infoBiome"),
@@ -60,22 +60,22 @@ public class Formats implements IConfigHandler
     "\"Block: %x, %y, %z\"", "Format of infoBlockPosition"),
 
     BLOCK_PROPS_FORMAT     = new ConfigString("infoBlockPropertiesSeparatorFormat",
-    "[\"%prop: \", %value]", "Format of infoBlockProperties"),
+    "\"%prop: \", %value", "Format of infoBlockProperties"),
 
     BLOCK_PROPS_HEADING_FORMAT       = new ConfigString("infoBlockPropertiesHeadingFormat",
     "\"%block\"", "Format of the heading of infoBlockProperties"),
 
-    BLOCK_PROPS_BOOLEAN_TRUE_FORMAT  = new ConfigString("infoBlockPropertiesBooleanTrueFormat", """
-    {"color":"green","text":"TRUE"}""", "Format of boolean properties in infoBlockProperties when they're true"),
+    BLOCK_PROPS_BOOLEAN_TRUE_FORMAT  = new ConfigString("infoBlockPropertiesBooleanTrueFormat",
+    "%#green\"TRUE\"", "Format of boolean properties in infoBlockProperties when they're true"),
 
-    BLOCK_PROPS_BOOLEAN_FALSE_FORMAT = new ConfigString("infoBlockPropertiesBooleanFalseFormat", """
-    {"color":"red","text":"FALSE"}""", "Format of boolean properties in infoBlockProperties when they're false"),
+    BLOCK_PROPS_BOOLEAN_FALSE_FORMAT = new ConfigString("infoBlockPropertiesBooleanFalseFormat",
+    "%#red\"FALSE\"", "Format of boolean properties in infoBlockProperties when they're false"),
 
-    BLOCK_PROPS_DIRECTION_FORMAT     = new ConfigString("infoBlockPropertiesDirectionFormat", """
-    {"color":"gold","text":"%value"}""", "Format of direction properties in infoBlockProperties"),
+    BLOCK_PROPS_DIRECTION_FORMAT     = new ConfigString("infoBlockPropertiesDirectionFormat",
+    "%#gold\"%value\"", "Format of direction properties in infoBlockProperties"),
 
-    BLOCK_PROPS_INT_FORMAT           = new ConfigString("infoBlockPropertiesIntFormat", """
-    {"color":"aqua","text":"%value"}""", "Format of int properties in infoBlockProperties"),
+    BLOCK_PROPS_INT_FORMAT           = new ConfigString("infoBlockPropertiesIntFormat",
+    "%#aqua\"%value\"", "Format of int properties in infoBlockProperties"),
 
     BLOCK_PROPS_STRING_FORMAT        = new ConfigString("infoBlockPropertiesStringFormat",
     "\"%value\"", "Format of String properties in infoBlockProperties"),
@@ -120,7 +120,7 @@ public class Formats implements IConfigHandler
     "\"Entity reg name: %name\"", "Format of infoEntityRegistryName"),
 
     FACING_FORMAT                    = new ConfigString("infoFacingFormat",
-    "[\"Facing: %dir (\", %coord, \")\"]", "Format of infoFacing"),
+    "\"Facing: %dir (\", %coord, \")\"", "Format of infoFacing"),
 
     FACING_PX_FORMAT                 = new ConfigString("infoFacingPosXFormat",
     "\"Positive X\"", "Text for infoFacing when facing positive X"),
@@ -137,11 +137,11 @@ public class Formats implements IConfigHandler
     FPS_FORMAT                       = new ConfigString("infoFPSFormat",
     "\"%fps fps\"", "Format of infoFPS"),
 
-    FURNACE_XP_FORMAT                = new ConfigString("infoFurnaceXpFormat", """
-    ["Furnace XP: ", {"color":"aqua","text":"%xp"}]""", "Format of infoFurnaceXp"),
+    FURNACE_XP_FORMAT                = new ConfigString("infoFurnaceXpFormat",
+    "\"Furnace XP: \", %#aqua\"%xp\"", "Format of infoFurnaceXp"),
 
-    HONEY_LEVEL_FORMAT               = new ConfigString("infoHoneyLevelFormat", """
-    [""Honey: ", {"color":"aqua","text":"%honey"}]""", "Format of infoHoneyLevel"),
+    HONEY_LEVEL_FORMAT               = new ConfigString("infoHoneyLevelFormat",
+    "\"Honey: \", %#aqua\"%honey\"", "Format of infoHoneyLevel"),
 
     HORSE_JUMP_FORMAT                = new ConfigString("infoHorseJumpFormat",
     "\"Horse Jump: %jump m\"", "Format of infoHorseJump"),
@@ -204,13 +204,13 @@ public class Formats implements IConfigHandler
     "\"Server TPS: <no valid data>\"", "Format of infoServerTPS when info is unavailable"),
 
     SLIME_CHUNK_FORMAT               = new ConfigString("infoSlimeChunkFormat",
-    "[\"Slime chunk: \", %result]", "Format of infoSlimeChunk"),
+    "\"Slime chunk: \", %result", "Format of infoSlimeChunk"),
 
-    SLIME_CHUNK_YES_FORMAT           = new ConfigString("infoSlimeChunkYesFormat", "{\"color\":\"green\",\"text\":\"" +
-    "\"YES\"", "Format of the infoSlimeChunk result when it's positive"),
+    SLIME_CHUNK_YES_FORMAT           = new ConfigString("infoSlimeChunkYesFormat",
+    "%#green\"YES\"", "Format of the infoSlimeChunk result when it's positive"),
 
-    SLIME_CHUNK_NO_FORMAT            = new ConfigString("infoSlimeChunkNoFormat", "{\"color\":\"red\",\"text\":\"" +
-    "\"NO\"", "Format of the infoSlimeChunk result when it's negative"),
+    SLIME_CHUNK_NO_FORMAT            = new ConfigString("infoSlimeChunkNoFormat",
+    "%#red\"NO\"", "Format of the infoSlimeChunk result when it's negative"),
 
     SLIME_CHUNK_NO_SEED_FORMAT       = new ConfigString("infoSlimeChunkNoSeedFormat",
     "\"<world seed not known>\"", "Format of infoSlimeChunk when there's no seed"),
