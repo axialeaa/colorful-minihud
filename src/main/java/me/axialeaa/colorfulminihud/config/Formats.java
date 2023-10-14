@@ -57,7 +57,7 @@ public class Formats implements IConfigHandler
     BLOCK_POS_FORMAT                 = new ConfigString("infoBlockPositionFormat",
     "\"Block: %x, %y, %z\"", "Format of infoBlockPosition"),
 
-    BLOCK_PROPS_FORMAT     = new ConfigString("infoBlockPropertiesSeparatorFormat",
+    BLOCK_PROPS_FORMAT     = new ConfigString("infoBlockPropertiesFormat",
     "\"%prop: \", %value", "Format of infoBlockProperties"),
 
     BLOCK_PROPS_HEADING_FORMAT       = new ConfigString("infoBlockPropertiesHeadingFormat",
