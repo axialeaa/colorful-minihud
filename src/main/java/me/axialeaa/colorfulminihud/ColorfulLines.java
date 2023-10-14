@@ -6,7 +6,6 @@ import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
-import fi.dy.masa.minihud.event.RenderHandler;
 import fi.dy.masa.minihud.mixin.IMixinServerWorld;
 import fi.dy.masa.minihud.mixin.IMixinWorldRenderer;
 import fi.dy.masa.minihud.util.DataStorage;
@@ -52,8 +51,6 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.util.Map.entry;
 
@@ -82,11 +79,15 @@ public class ColorfulLines
     ColorfulLines.x = x;
     ColorfulLines.y = y;
     ColorfulLines.z = z;
-    dx = x - player.xOld; dy = y - player.yOld; dz = z - player.zOld;
+    dx = x - player.xOld;
+    dy = y - player.yOld;
+    dz = z - player.zOld;
     ColorfulLines.pos = pos;
     ColorfulLines.chunkPos = chunkPos;
     ColorfulLines.clientChunk = clientChunk;
     ColorfulLines.serverChunk = serverChunk;
+    ColorfulLines.targetedBlockState = targetedBlockState;
+    ColorfulLines.targetedBlockEntity = targetedBlockEntity;
   }
 
   public static void addLine(InfoToggle type, List<String> lines, Set<InfoToggle> addedTypes)
@@ -158,32 +159,32 @@ public class ColorfulLines
     return String.format(text, values);
   }
 
-  private static <T> Variable<T> va(String key, String defaultFormat, T value)
+  private static <T> Variable<T> var(String key, String defaultFormat, T value)
   {
     return new Variable<>(key, defaultFormat, value);
   }
 
-  private static Variable<String> va(String key, String value)
+  private static Variable<String> var(String key, String value)
   {
     return new Variable<>(key, "s", value);
   }
 
-  private static Variable<Integer> va(String key, int value)
+  private static Variable<Integer> var(String key, int value)
   {
     return new Variable<>(key, "d", value);
   }
 
-  private static Variable<Long> va(String key, long value)
+  private static Variable<Long> var(String key, long value)
   {
     return new Variable<>(key, "d", value);
   }
 
-  private static Variable<Float> va(String key, float value)
+  private static Variable<Float> var(String key, float value)
   {
     return new Variable<>(key, "f", value);
   }
 
-  private static Variable<Double> va(String key, double value)
+  private static Variable<Double> var(String key, double value)
   {
     return new Variable<>(key, "f", value);
   }
@@ -195,47 +196,46 @@ public class ColorfulLines
 
     StringBuilder str = new StringBuilder(128);
     str.append("[");
-    boolean hasOther4 = InfoToggle.COORDINATES.getBooleanValue();
-    if(hasOther4)
+    boolean hasOther = false; // initialize the variable. if nothing is toggled, this will never change
+
+    if(InfoToggle.COORDINATES.getBooleanValue())
     {
       str.append(line(Formats.COORDINATES_FORMAT,
-        va("x", ".2f", x),
-        va("y", ".4f", y),
-        va("z", ".2f", z)));
+        var("x", ".2f", x),
+        var("y", ".4f", y),
+        var("z", ".2f", z)));
       addedTypes.add(InfoToggle.COORDINATES);
+      hasOther = true; // after each entry that can have something following it, reassign hasOther so we can check for it later on
     }
-    if (InfoToggle.COORDINATES_SCALED.getBooleanValue() && (level.dimension() == Level.NETHER || level.dimension() == Level.OVERWORLD))
+
+    if(InfoToggle.COORDINATES_SCALED.getBooleanValue() && (level.dimension() == Level.NETHER || level.dimension() == Level.OVERWORLD))
     {
+      if(hasOther)
+        str.append(","); // to correct the json structure, we need to separate compound line entries with commas
       boolean isNether = level.dimension() == Level.NETHER;
       double dist = isNether ? 8.0 : 0.125;
       x *= dist;
       z *= dist;
-      if(hasOther4)
-        str.append(",");
-      if (isNether)
-        str.append(line(Formats.COORDINATES_SCALED_OVERWORLD_FORMAT,
-          va("separator", hasOther4 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-          va("x", ".2f", x),
-          va("y", ".4f", y),
-          va("z", ".2f", z)));
-      else
-        str.append(line(Formats.COORDINATES_SCALED_NETHER_FORMAT,
-          va("separator", hasOther4 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-          va("x", ".2f", x),
-          va("y", ".4f", y),
-          va("z", ".2f", z)));
+        str.append(line(isNether ?
+            Formats.COORDINATES_SCALED_OVERWORLD_FORMAT :
+            Formats.COORDINATES_SCALED_NETHER_FORMAT,
+          var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""), // if a preceding entry is toggled, add a separator before the main info
+          var("x", ".2f", x),
+          var("y", ".4f", y),
+          var("z", ".2f", z)));
       addedTypes.add(InfoToggle.COORDINATES_SCALED);
-      hasOther4 = true;
+      hasOther = true; // something follows this as well, so we need this to return true
     }
 
     if(InfoToggle.DIMENSION.getBooleanValue())
     {
-      if(hasOther4)
+      if(hasOther)
         str.append(",");
       str.append(line(Formats.DIMENSION_FORMAT,
-        va("separator", hasOther4 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-        va("dim", Objects.requireNonNull(level).dimension().location().toString())));
+        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        var("dim", Objects.requireNonNull(level).dimension().location().toString())));
       addedTypes.add(InfoToggle.DIMENSION);
+      // we don't need to reassign hasOther here because this is the last entry in the compound; we don't need to separate this from anything in front
     }
     lines.add(str.append("]").toString());
   };
@@ -247,35 +247,39 @@ public class ColorfulLines
 
     StringBuilder str1 = new StringBuilder(256);
     str1.append("[");
-    boolean hasOther = InfoToggle.BLOCK_POS.getBooleanValue();
-    if(hasOther)
+    boolean hasOther = false;
+
+    if(InfoToggle.BLOCK_POS.getBooleanValue())
     {
       str1.append(line(Formats.BLOCK_POS_FORMAT,
-        va("x", pos.getX()),
-        va("y", pos.getY()), va("z", pos.getZ())));
+        var("x", pos.getX()),
+        var("y", pos.getY()),
+        var("z", pos.getZ())));
       addedTypes.add(InfoToggle.BLOCK_POS);
+      hasOther = true;
     }
+
     if(InfoToggle.CHUNK_POS.getBooleanValue())
     {
       if(hasOther)
         str1.append(",");
-
       str1.append(line(Formats.CHUNK_POS_FORMAT,
-        va("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-        va("x", chunkPos.x),
-        va("y", pos.getY() >> 4),
-        va("z", chunkPos.z)));
+        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        var("x", chunkPos.x),
+        var("y", pos.getY() >> 4),
+        var("z", chunkPos.z)));
       addedTypes.add(InfoToggle.CHUNK_POS);
       hasOther = true;
     }
+
     if(InfoToggle.REGION_FILE.getBooleanValue())
     {
       if(hasOther)
         str1.append(",");
       str1.append(line(Formats.REGION_FILE_FORMAT,
-        va("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-        va("x", pos.getX() >> 9),
-        va("z", pos.getZ() >> 9)));
+        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        var("x", pos.getX() >> 9),
+        var("z", pos.getZ() >> 9)));
       addedTypes.add(InfoToggle.REGION_FILE);
     }
     lines.add(str1.append("]").toString());
@@ -296,14 +300,16 @@ public class ColorfulLines
       {
         float horseSpeed = horse.getSpeed();
         horseSpeed *= 42.163F;
-        lines.add(line(Formats.HORSE_SPEED_FORMAT, va("speed", ".3f", horseSpeed)));
+        lines.add(line(Formats.HORSE_SPEED_FORMAT,
+          var("speed", ".3f", horseSpeed)));
       }
 
       if(InfoToggle.HORSE_JUMP.getBooleanValue())
       {
         double jump = horse.getCustomJump();
         double calculatedJumpHeight = -0.1817584952 * jump*jump*jump + 3.689713992 * jump*jump + 2.128599134 * jump - 0.343930367;
-        lines.add(line(Formats.HORSE_JUMP_FORMAT, va("jump", ".3f", calculatedJumpHeight)));
+        lines.add(line(Formats.HORSE_JUMP_FORMAT,
+          var("jump", ".3f", calculatedJumpHeight)));
       }
 
       addedTypes.add(InfoToggle.HORSE_SPEED);
@@ -318,28 +324,31 @@ public class ColorfulLines
 
     StringBuilder str = new StringBuilder(128);
     str.append("[");
-    boolean hasOther2 = InfoToggle.ENTITIES_CLIENT_WORLD.getBooleanValue();
-    if(hasOther2)
+    boolean hasOther = false;
+
+    if(InfoToggle.ENTITIES_CLIENT_WORLD.getBooleanValue())
     {
       str.append(line(Formats.ENTITIES_CLIENT_FORMAT,
-        va("e", Objects.requireNonNull(mc.level).getEntityCount())));
+        var("e", Objects.requireNonNull(mc.level).getEntityCount())));
       addedTypes.add(InfoToggle.ENTITIES_CLIENT_WORLD);
+      hasOther = true;
     }
+
     if(InfoToggle.ENTITIES.getBooleanValue() && mc.hasSingleplayerServer())
     {
       Level world = WorldUtils.getBestWorld(mc);
       if(world instanceof ServerLevel)
       {
-        if(hasOther2)
+        if(hasOther)
           str.append(",");
         str.append(line(Formats.ENTITIES_SERVER_FORMAT,
-          va("separator", hasOther2 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-          va("e", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
+          var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+          var("e", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
         addedTypes.add(InfoToggle.ENTITIES);
-        hasOther2 = true;
+        hasOther = true; // we need to reassign hasOther here in case if(world instanceof ServerLevel) returns false
       }
     }
-    if(hasOther2)
+    if(hasOther)
       lines.add(str.append("]").toString());
   };
 
@@ -351,31 +360,34 @@ public class ColorfulLines
     if(mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK)
     {
       BlockPos lookPos = ((BlockHitResult)mc.hitResult).getBlockPos();
+
       StringBuilder str = new StringBuilder(128);
       str.append("[");
-      boolean hasOther3 = InfoToggle.LOOKING_AT_BLOCK.getBooleanValue();
-      if(hasOther3)
+      boolean hasOther = false;
+
+      if(InfoToggle.LOOKING_AT_BLOCK.getBooleanValue())
       {
         str.append(line(Formats.LOOKING_AT_BLOCK_FORMAT,
-          va("x", lookPos.getX()),
-          va("y", lookPos.getY()),
-          va("z", lookPos.getZ())
+          var("x", lookPos.getX()),
+          var("y", lookPos.getY()),
+          var("z", lookPos.getZ())
         ));
         addedTypes.add(InfoToggle.LOOKING_AT_BLOCK);
+        hasOther = true;
       }
 
       if(InfoToggle.LOOKING_AT_BLOCK_CHUNK.getBooleanValue())
       {
-        if(hasOther3)
+        if(hasOther)
           str.append(",");
         str.append(line(Formats.LOOKING_AT_BLOCK_CHUNK_FORMAT,
-          va("separator", hasOther3 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-          va("x", lookPos.getX()),
-          va("y", lookPos.getY()),
-          va("z", lookPos.getZ()),
-          va("cx", lookPos.getX() >> 4),
-          va("cy", lookPos.getY() >> 4),
-          va("cz", lookPos.getZ() >> 4)
+          var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+          var("x", lookPos.getX()),
+          var("y", lookPos.getY()),
+          var("z", lookPos.getZ()),
+          var("cx", lookPos.getX() >> 4),
+          var("cy", lookPos.getY() >> 4),
+          var("cz", lookPos.getZ() >> 4)
         ));
         addedTypes.add(InfoToggle.LOOKING_AT_BLOCK_CHUNK);
       }
@@ -390,30 +402,35 @@ public class ColorfulLines
 
     StringBuilder str = new StringBuilder(128);
     str.append("[");
-    boolean hasOther1 = InfoToggle.ROTATION_YAW.getBooleanValue();
-    if(hasOther1)
+    boolean hasOther = false;
+
+    if(InfoToggle.ROTATION_YAW.getBooleanValue())
     {
-      str.append(line(Formats.ROTATION_YAW_FORMAT, va("yaw", Mth.wrapDegrees(player.getYRot()))));
+      str.append(line(Formats.ROTATION_YAW_FORMAT,
+        var("yaw", Mth.wrapDegrees(player.getYRot()))));
       addedTypes.add(InfoToggle.ROTATION_YAW);
+      hasOther = true;
     }
+
     if(InfoToggle.ROTATION_PITCH.getBooleanValue())
     {
-      if(hasOther1)
+      if(hasOther)
         str.append(",");
       str.append(line(Formats.ROTATION_PITCH_FORMAT,
-        va("separator", hasOther1 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-        va("pitch", Mth.wrapDegrees(player.getXRot()))));
+        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        var("pitch", Mth.wrapDegrees(player.getXRot()))));
       addedTypes.add(InfoToggle.ROTATION_PITCH);
-      hasOther1 = true;
+      hasOther = true;
     }
+
     if(InfoToggle.SPEED.getBooleanValue())
     {
-      if(hasOther1)
+      if(hasOther)
         str.append(",");
       double dist1 = Math.sqrt(dx*dx + dy*dy + dz*dz);
       str.append(line(Formats.SPEED_FORMAT,
-        va("separator", hasOther1 ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
-        va("speed", dist1 * 20)));
+        var("separator", hasOther ? Formats.SEPARATOR_FORMAT.getStringValue() : ""),
+        var("speed", dist1 * 20)));
       addedTypes.add(InfoToggle.SPEED);
     }
     lines.add(str.append("]").toString());
@@ -421,7 +438,8 @@ public class ColorfulLines
 
   private static final Map<InfoToggle, BiConsumer<List<String>, Set<InfoToggle>>> lineMap = Map.ofEntries(
     entry(InfoToggle.FPS, (List<String> lines, Set<InfoToggle> addedTypes) ->
-      lines.add(line(Formats.FPS_FORMAT, va("fps", fps)))),
+      lines.add(line(Formats.FPS_FORMAT,
+        var("fps", fps)))),
 
     entry(InfoToggle.MEMORY_USAGE, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
@@ -430,18 +448,19 @@ public class ColorfulLines
       long memFree = Runtime.getRuntime().freeMemory();
       long memUsed = memTotal - memFree;
       lines.add(line(Formats.MEMORY_USAGE_FORMAT,
-        va("pused", "2d", memUsed * 100L / memMax),
-        va("pallocated", "2d", memTotal * 100L / memMax),
-        va("used", "3d", MiscUtils.bytesToMb(memUsed)),
-        va("max", "3d", MiscUtils.bytesToMb(memMax)),
-        va("total", "3d", MiscUtils.bytesToMb(memTotal))));
+        var("pused", "2d", memUsed * 100L / memMax),
+        var("pallocated", "2d", memTotal * 100L / memMax),
+        var("used", "3d", MiscUtils.bytesToMb(memUsed)),
+        var("max", "3d", MiscUtils.bytesToMb(memMax)),
+        var("total", "3d", MiscUtils.bytesToMb(memTotal))));
     }),
 
-    entry(InfoToggle.TIME_REAL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TIME_REAL_FORMAT, va("time", "tk", new Date(System.currentTimeMillis()))))),
+    entry(InfoToggle.TIME_REAL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TIME_REAL_FORMAT,
+      var("time", "tk", new Date(System.currentTimeMillis()))))),
 
     entry(InfoToggle.TIME_WORLD, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TIME_WORLD_FORMAT,
-      va("time", "5d", Objects.requireNonNull(level).getDayTime()),
-      va("total", level.getGameTime())))),
+      var("time", "5d", Objects.requireNonNull(level).getDayTime()),
+      var("total", level.getGameTime())))),
 
     entry(InfoToggle.TIME_WORLD_FORMATTED, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
@@ -449,27 +468,27 @@ public class ColorfulLines
       long day = timeDay / 24000;
       int dayTicks = (int)(timeDay % 24000);
       lines.add(line(Formats.TIME_WORLD_FORMATTED_FORMAT,
-        va("day", day),
-        va("day_1", day + 1),
-        va("hour", "02d", (dayTicks / 1000 + 6) % 24),
-        va("min", "02d", (int)(dayTicks * 0.06) % 60),
-        va("sec", "02d", (int)(dayTicks * 3.6) % 60)));
+        var("day", day),
+        var("day_1", day + 1),
+        var("hour", "02d", (dayTicks / 1000 + 6) % 24),
+        var("min", "02d", (int)(dayTicks * 0.06) % 60),
+        var("sec", "02d", (int)(dayTicks * 3.6) % 60)));
     }),
 
     entry(InfoToggle.TIME_DAY_MODULO, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       int mod = Configs.Generic.TIME_DAY_DIVISOR.getIntegerValue();
       lines.add(line(Formats.TIME_DAY_MODULO_FORMAT,
-        va("mod", mod),
-        va("time", "5d", Objects.requireNonNull(level).getDayTime() % mod)));
+        var("mod", mod),
+        var("time", "5d", Objects.requireNonNull(level).getDayTime() % mod)));
     }),
 
     entry(InfoToggle.TIME_TOTAL_MODULO, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       int mod1 = Configs.Generic.TIME_TOTAL_DIVISOR.getIntegerValue();
       lines.add(line(Formats.TIME_TOTAL_MODULO_FORMAT,
-        va("mod", mod1),
-        va("time", "5d", Objects.requireNonNull(level).getGameTime() % mod1)));
+        var("mod", mod1),
+        var("time", "5d", Objects.requireNonNull(level).getGameTime() % mod1)));
     }),
 
     entry(InfoToggle.SERVER_TPS, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -494,28 +513,29 @@ public class ColorfulLines
           mspt <= 50 ? GuiBase.TXT_GOLD :
           GuiBase.TXT_RED;
         lines.add(line(Formats.SERVER_TPS_CARPET_FORMAT,
-          va("preTps", preTps),
-          va("tps", ".1f", tps),
-          va("rst", GuiBase.TXT_RST),
-          va("preMspt", preMspt),
-          va("mspt", ".1f", mspt)));
+          var("preTps", preTps),
+          var("tps", ".1f", tps),
+          var("rst", GuiBase.TXT_RST),
+          var("preMspt", preMspt),
+          var("mspt", ".1f", mspt)));
         return;
       }
 
       String preMspt = mspt <= 51 ? GuiBase.TXT_GREEN : GuiBase.TXT_RED;
       lines.add(line(Formats.SERVER_TPS_VANILLA_FORMAT,
-        va("preTps", preTps),
-        va("tps", ".1f", tps),
-        va("rst", GuiBase.TXT_RST),
-        va("preMspt", preMspt),
-        va("mspt", ".1f", mspt)));
+        var("preTps", preTps),
+        var("tps", ".1f", tps),
+        var("rst", GuiBase.TXT_RST),
+        var("preMspt", preMspt),
+        var("mspt", ".1f", mspt)));
     }),
 
     entry(InfoToggle.PING, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       PlayerInfo info = player.connection.getPlayerInfo(player.getUUID());
       if(info != null)
-        lines.add(line(Formats.PING_FORMAT, va("ping", info.getLatency())));
+        lines.add(line(Formats.PING_FORMAT,
+          var("ping", info.getLatency())));
     }),
 
     entry(InfoToggle.COORDINATES_SCALED, COORDINATES_DIMENSION),
@@ -527,26 +547,27 @@ public class ColorfulLines
     entry(InfoToggle.REGION_FILE, BLOCK_CHUNK_REGION),
 
     entry(InfoToggle.BLOCK_IN_CHUNK, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_IN_CHUNK_FORMAT,
-      va("x", pos.getX() & 0xf),
-      va("y", pos.getY() & 0xf),
-      va("z", pos.getZ() & 0xf),
-      va("cx", chunkPos.x),
-      va("cy", pos.getY() >> 4),
-      va("cz", chunkPos.z)))),
+      var("x", pos.getX() & 0xf),
+      var("y", pos.getY() & 0xf),
+      var("z", pos.getZ() & 0xf),
+      var("cx", chunkPos.x),
+      var("cy", pos.getY() >> 4),
+      var("cz", chunkPos.z)))),
 
-    entry(InfoToggle.BLOCK_BREAK_SPEED, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_BREAK_SPEED_FORMAT, va("bbs", ".2f", data.getBlockBreakingSpeed())))),
+    entry(InfoToggle.BLOCK_BREAK_SPEED, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_BREAK_SPEED_FORMAT,
+      var("bbs", ".2f", data.getBlockBreakingSpeed())))),
 
     entry(InfoToggle.DISTANCE, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       Vec3 ref = data.getDistanceReferencePoint();
       lines.add(line(Formats.DISTANCE_FORMAT,
-        va("d", ".2f", Math.sqrt(ref.distanceToSqr(x, y, z))),
-        va("dx", ".2f", x - ref.x),
-        va("dy", ".2f", y - ref.y),
-        va("dz", ".2f", z - ref.z),
-        va("rx", ".2f", ref.x),
-        va("ry", ".2f", ref.y),
-        va("rz", ".2f", ref.z)));
+        var("d", ".2f", Math.sqrt(ref.distanceToSqr(x, y, z))),
+        var("dx", ".2f", x - ref.x),
+        var("dy", ".2f", y - ref.y),
+        var("dz", ".2f", z - ref.z),
+        var("rx", ".2f", ref.x),
+        var("ry", ".2f", ref.y),
+        var("rz", ".2f", ref.z)));
     }),
 
     entry(InfoToggle.FACING, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -561,8 +582,8 @@ public class ColorfulLines
         default -> "Invalid direction";
       };
       lines.add(line(Formats.FACING_FORMAT,
-        va("dir", facing.toString()),
-        va("coord", str)
+        var("dir", facing.toString()),
+        var("coord", str)
       ));
     }),
 
@@ -573,39 +594,40 @@ public class ColorfulLines
 
       LevelLightEngine lightEngine = Objects.requireNonNull(level).getChunkSource().getLightEngine();
       lines.add(line(Formats.LIGHT_LEVEL_CLIENT_FORMAT,
-        va("light", lightEngine.getRawBrightness(pos, 0)),
-        va("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
-        va("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
+        var("light", lightEngine.getRawBrightness(pos, 0)),
+        var("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
+        var("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
 
       Level bestLevel = WorldUtils.getBestWorld(mc);
       if(serverChunk == null || serverChunk == clientChunk)
         return;
 
-      lightEngine = bestLevel.getChunkSource().getLightEngine();
+      lightEngine = Objects.requireNonNull(bestLevel).getChunkSource().getLightEngine();
       lines.add(line(Formats.LIGHT_LEVEL_SERVER_FORMAT,
-        va("light", lightEngine.getRawBrightness(pos, 0)),
-        va("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
-        va("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
+        var("light", lightEngine.getRawBrightness(pos, 0)),
+        var("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
+        var("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
     }),
 
     entry(InfoToggle.BEE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      Level bestLevel = WorldUtils.getBestWorld(mc);
       if(targetedBlockEntity instanceof BeehiveBlockEntity bbe)
-        lines.add(line(Formats.BEE_COUNT_FORMAT, va("bees", bbe.getOccupantCount())));
+        lines.add(line(Formats.BEE_COUNT_FORMAT,
+          var("bees", bbe.getOccupantCount())));
     }),
 
     entry(InfoToggle.FURNACE_XP, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      Level bestLevel = WorldUtils.getBestWorld(mc);
       if(targetedBlockEntity instanceof AbstractFurnaceBlockEntity furnace)
-        lines.add(line(Formats.FURNACE_XP_FORMAT, va("xp", MiscUtils.getFurnaceXpAmount(furnace))));
+        lines.add(line(Formats.FURNACE_XP_FORMAT,
+          var("xp", MiscUtils.getFurnaceXpAmount(furnace))));
     }),
 
     entry(InfoToggle.HONEY_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       if(targetedBlockState != null && targetedBlockState.getBlock() instanceof BeehiveBlock)
-        lines.add(line(Formats.HONEY_LEVEL_FORMAT, va("honey", BeehiveBlockEntity.getHoneyLevel(targetedBlockState))));
+        lines.add(line(Formats.HONEY_LEVEL_FORMAT,
+          var("honey", BeehiveBlockEntity.getHoneyLevel(targetedBlockState))));
     }),
 
     entry(InfoToggle.ROTATION_YAW, ROTATION_SPEED),
@@ -614,20 +636,22 @@ public class ColorfulLines
 
     entry(InfoToggle.SPEED_HV, (List<String> lines, Set<InfoToggle> addedTypes) ->
       lines.add(line(Formats.SPEED_HV_FORMAT,
-        va("xz", ".3f", Math.sqrt(dx*dx + dz*dz) * 20.0),
-        va("y", ".3f", dy * 20.0)))),
+        var("xz", ".3f", Math.sqrt(dx*dx + dz*dz) * 20.0),
+        var("y", ".3f", dy * 20.0)))),
 
     entry(InfoToggle.SPEED_AXIS, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.SPEED_AXIS_FORMAT,
-      va("x", dx * 20),
-      va("y", dy * 20),
-      va("z", dz * 20)))),
+      var("x", dx * 20),
+      var("y", dy * 20),
+      var("z", dz * 20)))),
 
     entry(InfoToggle.HORSE_SPEED, HORSE),
     entry(InfoToggle.HORSE_JUMP, HORSE),
 
-    entry(InfoToggle.CHUNK_SECTIONS, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_SECTIONS_FORMAT, va("c", ((IMixinWorldRenderer)mc.levelRenderer).getRenderedChunksInvoker())))),
+    entry(InfoToggle.CHUNK_SECTIONS, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_SECTIONS_FORMAT,
+      var("c", ((IMixinWorldRenderer)mc.levelRenderer).getRenderedChunksInvoker())))),
 
-    entry(InfoToggle.CHUNK_SECTIONS_FULL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_SECTIONS_FULL_FORMAT, va("c", mc.levelRenderer.getChunkStatistics())))),
+    entry(InfoToggle.CHUNK_SECTIONS_FULL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_SECTIONS_FULL_FORMAT,
+      var("c", mc.levelRenderer.getChunkStatistics())))),
 
     entry(InfoToggle.CHUNK_UPDATES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.CHUNK_UPDATES_FORMAT))),
 
@@ -636,16 +660,18 @@ public class ColorfulLines
       String chunksClient = Objects.requireNonNull(level).gatherChunkSourceStats();
       Level levelServer = WorldUtils.getBestWorld(mc);
       if(levelServer == null || levelServer != level)
-        lines.add(line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT, va("client", chunksClient)));
+        lines.add(line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT,
+          var("client", chunksClient)));
 
       ServerChunkCache cache = (ServerChunkCache)Objects.requireNonNull(levelServer).getChunkSource();
       lines.add(line(Formats.LOADED_CHUNKS_COUNT_SERVER_FORMAT,
-        va("chunks", cache.getLoadedChunksCount()),
-        va("total", cache.getTickingGenerated()),
-        va("client", chunksClient)));
+        var("chunks", cache.getLoadedChunksCount()),
+        var("total", cache.getTickingGenerated()),
+        var("client", chunksClient)));
     }),
 
-    entry(InfoToggle.PARTICLE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.PARTICLE_COUNT_FORMAT, va("p", mc.particleEngine.countParticles())))),
+    entry(InfoToggle.PARTICLE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.PARTICLE_COUNT_FORMAT,
+      var("p", mc.particleEngine.countParticles())))),
 
     entry(InfoToggle.DIFFICULTY, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
@@ -655,9 +681,9 @@ public class ColorfulLines
       long chunkInhabitedTime = serverChunk.getInhabitedTime();
       DifficultyInstance diff = new DifficultyInstance(level.getDifficulty(), level.getDayTime(), chunkInhabitedTime, moonPhaseFactor);
       lines.add(line(Formats.DIFFICULTY_FORMAT,
-        va("local", ".2f", diff.getEffectiveDifficulty()),
-        va("clamped", ".2f", diff.getSpecialMultiplier()),
-        va("day", level.getDayTime() / 24000L)));
+        var("local", ".2f", diff.getEffectiveDifficulty()),
+        var("clamped", ".2f", diff.getSpecialMultiplier()),
+        var("day", level.getDayTime() / 24000L)));
     }),
 
     entry(InfoToggle.BIOME, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -667,7 +693,8 @@ public class ColorfulLines
 
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
-      lines.add(line(Formats.BIOME_FORMAT, va("biome", StringUtils.translate("biome." + Objects.requireNonNull(resourceLocation).toString().replace(":", ".")))));
+      lines.add(line(Formats.BIOME_FORMAT,
+        var("biome", StringUtils.translate("biome." + Objects.requireNonNull(resourceLocation).toString().replace(":", ".")))));
     }),
 
     entry(InfoToggle.BIOME_REG_NAME, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -677,10 +704,13 @@ public class ColorfulLines
 
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
-      lines.add(line(Formats.BIOME_REG_NAME_FORMAT, va("name", resourceLocation != null ? resourceLocation.toString() : "?")));
+      lines.add(line(Formats.BIOME_REG_NAME_FORMAT,
+        var("name", resourceLocation != null ? resourceLocation.toString() : "?")));
     }),
 
-    entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TILE_ENTITIES_FORMAT, va("loaded", "?"), va("ticking", "?")))),
+    entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TILE_ENTITIES_FORMAT,
+      var("loaded", "?"),
+      var("ticking", "?")))),
 
     entry(InfoToggle.ENTITIES_CLIENT_WORLD, ENTITIES),
     entry(InfoToggle.ENTITIES, ENTITIES),
@@ -694,10 +724,11 @@ public class ColorfulLines
       {
         long seed = data.getWorldSeed(level);
         lines.add(line(Formats.SLIME_CHUNK_FORMAT,
-          va("result", MiscUtils.canSlimeSpawnAt(pos.getX(), pos.getZ(), seed) ? Formats.SLIME_CHUNK_YES_FORMAT.getStringValue() : Formats.SLIME_CHUNK_NO_FORMAT.getStringValue())));
+          var("result", MiscUtils.canSlimeSpawnAt(pos.getX(), pos.getZ(), seed) ? Formats.SLIME_CHUNK_YES_FORMAT.getStringValue() : Formats.SLIME_CHUNK_NO_FORMAT.getStringValue())));
       }
       else
-        lines.add(line(Formats.SLIME_CHUNK_FORMAT, va("result", Formats.SLIME_CHUNK_NO_SEED_FORMAT.getStringValue())));
+        lines.add(line(Formats.SLIME_CHUNK_FORMAT,
+          var("result", Formats.SLIME_CHUNK_NO_SEED_FORMAT.getStringValue())));
     }),
 
     entry(InfoToggle.LOOKING_AT_ENTITY, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -708,10 +739,11 @@ public class ColorfulLines
       Entity lookedEntity = mc.crosshairPickEntity;
       lines.add(lookedEntity instanceof LivingEntity living ?
         line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
-          va("entity", lookedEntity.getName().getString()),
-          va("hp", living.getHealth()),
-          va("maxhp", living.getMaxHealth())) :
-        line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT, va("entity", Objects.requireNonNull(lookedEntity).getName().getString())));
+          var("entity", lookedEntity.getName().getString()),
+          var("hp", living.getHealth()),
+          var("maxhp", living.getMaxHealth())) :
+        line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
+          var("entity", Objects.requireNonNull(lookedEntity).getName().getString())));
     }),
 
     entry(InfoToggle.ENTITY_REG_NAME, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -721,7 +753,8 @@ public class ColorfulLines
 
       Entity lookedEntity = ((EntityHitResult) mc.hitResult).getEntity();
       ResourceLocation resourceLocation = EntityType.getKey(lookedEntity.getType());
-      lines.add(line(Formats.ENTITY_REG_NAME_FORMAT, va("name", resourceLocation.toString())));
+      lines.add(line(Formats.ENTITY_REG_NAME_FORMAT,
+        var("name", resourceLocation.toString())));
     }),
 
     entry(InfoToggle.LOOKING_AT_BLOCK, LOOKING_BLOCK_CHUNK),
@@ -735,24 +768,27 @@ public class ColorfulLines
         BlockState state = Objects.requireNonNull(mc.level).getBlockState(posLooking);
         ResourceLocation resourceLocation = Registry.BLOCK.getKey(state.getBlock());
 
-        lines.add(line(Formats.BLOCK_PROPS_HEADING_FORMAT, va("block", resourceLocation.toString())));
+        lines.add(line(Formats.BLOCK_PROPS_HEADING_FORMAT,
+          var("block", resourceLocation.toString())));
 
         for(Property<?> property : state.getProperties())
         {
-          Comparable<?> value = state.getValue(property);
-          String value2 = line(
+          Comparable<?> valueForFormat = state.getValue(property);
+          String valueForReplace = line(
             property instanceof BooleanProperty ?
-              value.equals(Boolean.TRUE) ? Formats.BLOCK_PROPS_BOOLEAN_TRUE_FORMAT : Formats.BLOCK_PROPS_BOOLEAN_FALSE_FORMAT :
+              valueForFormat.equals(Boolean.TRUE) ?
+                Formats.BLOCK_PROPS_BOOLEAN_TRUE_FORMAT :
+                Formats.BLOCK_PROPS_BOOLEAN_FALSE_FORMAT :
             property instanceof DirectionProperty ?
               Formats.BLOCK_PROPS_DIRECTION_FORMAT :
             property instanceof IntegerProperty ?
               Formats.BLOCK_PROPS_INT_FORMAT :
               Formats.BLOCK_PROPS_STRING_FORMAT,
-              va("value", value.toString()));
+              var("value", valueForFormat.toString()));
 
           lines.add(line(Formats.BLOCK_PROPS_FORMAT,
-            va("prop", property.getName()),
-            va("value", value2)));
+            var("prop", property.getName()),
+            var("value", valueForReplace)));
         }
       }
     })
