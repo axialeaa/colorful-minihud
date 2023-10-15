@@ -1,7 +1,6 @@
 package me.axialeaa.colorfulminihud;
 
 import fi.dy.masa.malilib.config.options.ConfigString;
-import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.minihud.config.Configs;
@@ -99,8 +98,8 @@ public class ColorfulLines
   {
     public String apply(String text, int i)
     {
-      text = text.replace("%" + key + "$", "%" + i + "$");
-      return text.replace("%" + key, "%" + i + "$" + defaultFormat);
+      text = text.replace("%" + key + "$", "\0" + i + "$");
+      return text.replace("%" + key, "\0" + i + "$" + defaultFormat);
     }
   }
 
@@ -153,8 +152,12 @@ public class ColorfulLines
       values[i] = var.value;
       text = var.apply(text, ++i);
     }
+    text = text
+      .replace("%", "§")
+      .replace("\0", "%");
+    text = String.format(text, values);
 
-    return String.format(text, values);
+    return text.replace("§", "%");
   }
 
   private static <T> Variable<T> var(String key, String defaultFormat, T value)
@@ -280,8 +283,8 @@ public class ColorfulLines
         str1.append(",");
       str1.append(line(Formats.REGION_FILE_FORMAT,
         separator(hasOther),
-        var("x", pos.getX() >> 9),
-        var("z", pos.getZ() >> 9)));
+        var("regionX", pos.getX() >> 9),
+        var("regionZ", pos.getZ() >> 9)));
       addedTypes.add(InfoToggle.REGION_FILE);
     }
     lines.add(str1.append("]").toString());
@@ -569,18 +572,14 @@ public class ColorfulLines
     entry(InfoToggle.FACING, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       Direction facing = player.getDirection();
-      String str = switch(facing)
-      {
-        case NORTH -> Formats.FACING_PZ_FORMAT.getStringValue();
-        case SOUTH -> Formats.FACING_NZ_FORMAT.getStringValue();
-        case EAST -> Formats.FACING_PX_FORMAT.getStringValue();
-        case WEST -> Formats.FACING_NX_FORMAT.getStringValue();
-        default -> "Invalid direction";
-      };
-      lines.add(line(Formats.FACING_FORMAT,
-        var("cardinal", facing.toString()),
-        var("cartesian", str)
-      ));
+      lines.add(line(
+        facing == Direction.NORTH ?
+          Formats.FACING_NORTH_FORMAT :
+        facing == Direction.EAST ?
+          Formats.FACING_EAST_FORMAT :
+        facing == Direction.SOUTH ?
+          Formats.FACING_SOUTH_FORMAT :
+          Formats.FACING_WEST_FORMAT));
     }),
 
     entry(InfoToggle.LIGHT_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -769,10 +768,10 @@ public class ColorfulLines
 
         for(Property<?> property : state.getProperties())
         {
-          Comparable<?> valueForFormat = state.getValue(property);
-          String valueForReplace = line(
+          Comparable<?> value = state.getValue(property);
+          lines.add(line(
             property instanceof BooleanProperty ?
-              valueForFormat.equals(Boolean.TRUE) ?
+              value.equals(Boolean.TRUE) ?
                 Formats.BLOCK_PROPS_BOOLEAN_TRUE_FORMAT :
                 Formats.BLOCK_PROPS_BOOLEAN_FALSE_FORMAT :
             property instanceof DirectionProperty ?
@@ -780,11 +779,8 @@ public class ColorfulLines
             property instanceof IntegerProperty ?
               Formats.BLOCK_PROPS_INT_FORMAT :
               Formats.BLOCK_PROPS_STRING_FORMAT,
-              var("value", valueForFormat.toString()));
-
-          lines.add(line(Formats.BLOCK_PROPERTIES_FORMAT,
-            var("property", property.getName()),
-            var("value", valueForReplace)));
+              var("property", property.getName()),
+              var("value", value.toString())));
         }
       }
     })

@@ -17,245 +17,235 @@ import java.io.File;
 public class Formats implements IConfigHandler
 {
   public static final ConfigColor
-    COLOR0 = new ConfigColor("Color0", "#0021222C", "Variable color 0"),
-    COLOR1 = new ConfigColor("Color1", "#00FF5555", "Variable color 1"),
-    COLOR2 = new ConfigColor("Color2", "#0050FA7B", "Variable color 2"),
-    COLOR3 = new ConfigColor("Color3", "#00F1FA8C", "Variable color 3"),
-    COLOR4 = new ConfigColor("Color4", "#00BD93F9", "Variable color 4"),
-    COLOR5 = new ConfigColor("Color5", "#00FF79C6", "Variable color 5"),
-    COLOR6 = new ConfigColor("Color6", "#008BE9FD", "Variable color 6"),
-    COLOR7 = new ConfigColor("Color7", "#00F8F8F2", "Variable color 7"),
-    COLOR8 = new ConfigColor("Color8", "#006272A4", "Variable color 8"),
-    COLOR9 = new ConfigColor("Color9", "#00FF6E6E", "Variable color 9"),
-    COLOR10 = new ConfigColor("Color10", "#0069FF94", "Variable color 10"),
-    COLOR11 = new ConfigColor("Color11", "#00FFFFA5", "Variable color 11"),
-    COLOR12 = new ConfigColor("Color12", "#00D6ACFF", "Variable color 12"),
-    COLOR13 = new ConfigColor("Color13", "#00FF92DF", "Variable color 13"),
-    COLOR14 = new ConfigColor("Color14", "#00A4FFFF", "Variable color 14"),
-    COLOR15 = new ConfigColor("Color15", "#00FFFFFF", "Variable color 15");
-//    COLOROPTIMUM = new ConfigColor("ColorOptimal", ChatFormatting.GREEN.toString(), "The color used for optimal TPS, MSPT and FPS values"),
-//    COLORGOOD = new ConfigColor("ColorGood", ChatFormatting.YELLOW.toString(), "The color used for good TPS, MSPT and FPS values"),
-//    COLORLACKING = new ConfigColor("ColorLacking", ChatFormatting.GOLD.toString(), "The color used for lacking TPS, MSPT and FPS values"),
-//    COLORPOOR = new ConfigColor("ColorPoor", ChatFormatting.RED.toString(), "The color used for poor TPS, MSPT and FPS values");
+    COLOR0  = new ConfigColor("color0",  "#0021222C", "Variable color 0"),
+    COLOR1  = new ConfigColor("color1",  "#00FF5555", "Variable color 1"),
+    COLOR2  = new ConfigColor("color2",  "#0050FA7B", "Variable color 2"),
+    COLOR3  = new ConfigColor("color3",  "#00F1FA8C", "Variable color 3"),
+    COLOR4  = new ConfigColor("color4",  "#00BD93F9", "Variable color 4"),
+    COLOR5  = new ConfigColor("color5",  "#00FF79C6", "Variable color 5"),
+    COLOR6  = new ConfigColor("color6",  "#008BE9FD", "Variable color 6"),
+    COLOR7  = new ConfigColor("color7",  "#00F8F8F2", "Variable color 7"),
+    COLOR8  = new ConfigColor("color8",  "#006272A4", "Variable color 8"),
+    COLOR9  = new ConfigColor("color9",  "#00FF6E6E", "Variable color 9"),
+    COLOR10 = new ConfigColor("color10", "#0069FF94", "Variable color 10"),
+    COLOR11 = new ConfigColor("color11", "#00FFFFA5", "Variable color 11"),
+    COLOR12 = new ConfigColor("color12", "#00D6ACFF", "Variable color 12"),
+    COLOR13 = new ConfigColor("color13", "#00FF92DF", "Variable color 13"),
+    COLOR14 = new ConfigColor("color14", "#00A4FFFF", "Variable color 14"),
+    COLOR15 = new ConfigColor("color15", "#00FFFFFF", "Variable color 15");
 
   public static final ConfigString
-    BEE_COUNT_FORMAT                 = new ConfigString("infoBeeCountFormat",
-    "\"Bees: \", #aqua\"%count\"", "Format of infoBeeCount"),
+    BEE_COUNT_FORMAT                    = new ConfigString("infoBeeCountFormat",
+      "\"Bees: \", #aqua\"%count\"", "Format of infoBeeCount"),
 
-  BIOME_FORMAT                     = new ConfigString("infoBiomeFormat",
-    "\"Biome: %biome\"", "Format of infoBiome"),
+    BIOME_FORMAT                        = new ConfigString("infoBiomeFormat",
+      "\"Biome: %biome\"", "Format of infoBiome"),
 
-  BIOME_REG_NAME_FORMAT            = new ConfigString("infoBiomeRegistryNameFormat",
-    "\"Biome reg name: %regName\"", "Format of infoBiomeRegistryName"),
+    BIOME_REG_NAME_FORMAT               = new ConfigString("infoBiomeRegistryNameFormat",
+      "\"Biome reg name: %regName\"", "Format of infoBiomeRegistryName"),
 
-  BLOCK_BREAK_SPEED_FORMAT         = new ConfigString("infoBlockBreakSpeedFormat",
-    "\"BBS: %speed\"", "Format of infoBlockBreakSpeed"),
+    BLOCK_BREAK_SPEED_FORMAT            = new ConfigString("infoBlockBreakSpeedFormat",
+      "\"BBS: %speed\"", "Format of infoBlockBreakSpeed"),
 
-  BLOCK_IN_CHUNK_FORMAT            = new ConfigString("infoBlockInChunkFormat",
-    "\"Block: %x, %y, %z within Sub-Chunk: %chunkX, %chunkY, %chunkZ\"", "Format of infoBlockInChunk"),
+    BLOCK_IN_CHUNK_FORMAT               = new ConfigString("infoBlockInChunkFormat",
+      "\"Block: %x, %y, %z within Sub-Chunk: %chunkX, %chunkY, %chunkZ\"", "Format of infoBlockInChunk"),
 
-  BLOCK_POS_FORMAT                 = new ConfigString("infoBlockPositionFormat",
-    "\"Block: %x, %y, %z\"", "Format of infoBlockPosition"),
+    BLOCK_POS_FORMAT                    = new ConfigString("infoBlockPositionFormat",
+      "\"Block: %x, %y, %z\"", "Format of infoBlockPosition"),
 
-  BLOCK_PROPERTIES_FORMAT          = new ConfigString("infoBlockPropertiesFormat",
-    "\"%property: \", %value", "Format of infoBlockProperties"),
+    BLOCK_PROPS_HEADING_FORMAT          = new ConfigString("infoBlockPropertiesHeadingFormat",
+      "\"%block\"", "Format of the heading of infoBlockProperties"),
 
-  BLOCK_PROPS_HEADING_FORMAT       = new ConfigString("infoBlockPropertiesHeadingFormat",
-    "\"%block\"", "Format of the heading of infoBlockProperties"),
+    BLOCK_PROPS_BOOLEAN_TRUE_FORMAT     = new ConfigString("infoBlockPropertiesBooleanTrueFormat",
+      "\"%property: \", #green\"TRUE\"", "Format of boolean properties in infoBlockProperties when they're true"),
 
-  BLOCK_PROPS_BOOLEAN_TRUE_FORMAT  = new ConfigString("infoBlockPropertiesBooleanTrueFormat",
-    "#green\"TRUE\"", "Format of boolean properties in infoBlockProperties when they're true"),
+    BLOCK_PROPS_BOOLEAN_FALSE_FORMAT    = new ConfigString("infoBlockPropertiesBooleanFalseFormat",
+      "\"%property: \", #red\"FALSE\"", "Format of boolean properties in infoBlockProperties when they're false"),
 
-  BLOCK_PROPS_BOOLEAN_FALSE_FORMAT = new ConfigString("infoBlockPropertiesBooleanFalseFormat",
-    "#red\"FALSE\"", "Format of boolean properties in infoBlockProperties when they're false"),
+    BLOCK_PROPS_DIRECTION_FORMAT        = new ConfigString("infoBlockPropertiesDirectionFormat",
+      "\"%property: \", #gold\"%value\"", "Format of direction properties in infoBlockProperties"),
 
-  BLOCK_PROPS_DIRECTION_FORMAT     = new ConfigString("infoBlockPropertiesDirectionFormat",
-    "#gold\"%direction\"", "Format of direction properties in infoBlockProperties"),
+    BLOCK_PROPS_INT_FORMAT              = new ConfigString("infoBlockPropertiesIntFormat",
+      "\"%property: \", #aqua\"%value\"", "Format of int properties in infoBlockProperties"),
 
-  BLOCK_PROPS_INT_FORMAT           = new ConfigString("infoBlockPropertiesIntFormat",
-    "#aqua\"%int\"", "Format of int properties in infoBlockProperties"),
+    BLOCK_PROPS_STRING_FORMAT           = new ConfigString("infoBlockPropertiesStringFormat",
+      "\"%property: \", \"%value\"", "Format of String properties in infoBlockProperties"),
 
-  BLOCK_PROPS_STRING_FORMAT        = new ConfigString("infoBlockPropertiesStringFormat",
-    "\"%string\"", "Format of String properties in infoBlockProperties"),
+    CHUNK_POS_FORMAT                    = new ConfigString("infoChunkPositionFormat",
+      "\"%separator\", \"Sub-Chunk: %chunkX, %chunkY, %chunkZ\"", "Format of infoChunkPosition"),
 
-  CHUNK_POS_FORMAT                 = new ConfigString("infoChunkPositionFormat",
-    "\"%separator\", \"Sub-Chunk: %x, %y, %z\"", "Format of infoChunkPosition"),
+    CHUNK_SECTIONS_FORMAT               = new ConfigString("infoChunkSectionsFormat",
+      "\"C: %count\"", "Format of infoChunkSections"),
 
-  CHUNK_SECTIONS_FORMAT            = new ConfigString("infoChunkSectionsFormat",
-    "\"C: %count\"", "Format of infoChunkSections"),
+    CHUNK_SECTIONS_FULL_FORMAT          = new ConfigString("infoChunkSectionsLineFormat",
+      "\"%count\"", "Format of infoChunkSectionsLine"),
 
-  CHUNK_SECTIONS_FULL_FORMAT       = new ConfigString("infoChunkSectionsLineFormat",
-    "\"%count\"", "Format of infoChunkSectionsLine"),
+    CHUNK_UPDATES_FORMAT                = new ConfigString("infoChunkUpdatesFormat",
+      "\"TODO\"", "Format of infoChunkUpdates"),
 
-  CHUNK_UPDATES_FORMAT             = new ConfigString("infoChunkUpdatesFormat",
-    "\"TODO\"", "Format of infoChunkUpdates"),
+    COORDINATES_FORMAT                  = new ConfigString("infoCoordinatesFormat",
+      "\"XYZ: %x / %y / %z\"", "Format of infoCoordinates, change precision by changing the numbers"),
 
-  COORDINATES_FORMAT               = new ConfigString("infoCoordinatesFormat",
-    "\"XYZ: %x / %y / %z\"", "Format of infoCoordinates, change precision by changing the numbers"),
+    COORDINATES_SCALED_NETHER_FORMAT    = new ConfigString("infoCoordinatesScaledNetherFormat",
+      "\"%separator\", \"Nether: %x / %y / %z\"", "Format of infoCoordinatesScaled when in the nether"),
 
-  COORDINATES_SCALED_NETHER_FORMAT = new ConfigString("infoCoordinatesScaledNetherFormat",
-    "\"%separator\", \"Nether: %x / %y / %z\"", "Format of infoCoordinatesScaled when in the nether"),
+    COORDINATES_SCALED_OVERWORLD_FORMAT = new ConfigString("infoCoordinatesScaledOverworldFormat",
+      "\"%separator\", \"Overworld: %x / %y / %z\"", "Format of infoCoordinatesScaled when in the overworld"),
 
-  COORDINATES_SCALED_OVERWORLD_FORMAT = new ConfigString("infoCoordinatesScaledOverworldFormat",
-    "\"%separator\", \"Overworld: %x / %y / %z\"", "Format of infoCoordinatesScaled when in the overworld"),
+    DIFFICULTY_FORMAT                   = new ConfigString("infoDifficultyFormat",
+      "\"Local Difficulty: %local // %clamped (Day %day)\"", "Format of infoDifficulty"),
 
-  DIFFICULTY_FORMAT                = new ConfigString("infoDifficultyFormat",
-    "\"Local Difficulty: %local // %clamped (Day %day)\"", "Format of infoDifficulty"),
+    DIMENSION_FORMAT                    = new ConfigString("infoDimensionIdFormat",
+      "\"%separator\", \"dim: %dimension\"", "Format of infoDimensionId"),
 
-  DIMENSION_FORMAT                 = new ConfigString("infoDimensionIdFormat",
-    "\"%separator\", \"dim: %dimension\"", "Format of infoDimensionId"),
+    DISTANCE_FORMAT                     = new ConfigString("infoDistanceFormat",
+      "\"Distance: %dist (x: %distX y: %distY z: %distZ) [to x: %refX y: %refY z: %refZ]\"", "Format of infoDistance"),
 
-  DISTANCE_FORMAT                  = new ConfigString("infoDistanceFormat",
-    "\"Distance: %dist (x: %distX y: %distY z: %distZ) [to x: %refX y: %refY z: %refZ]\"", "Format of infoDistance"),
+    ENTITIES_CLIENT_FORMAT              = new ConfigString("infoEntitiesClientFormat",
+      "\"Entities - Client: %count\"", "Format of infoEntitiesClient"),
 
-  ENTITIES_CLIENT_FORMAT           = new ConfigString("infoEntitiesClientFormat",
-    "\"Entities - Client: %count\"", "Format of infoEntitiesClient"),
+    ENTITIES_SERVER_FORMAT              = new ConfigString("infoEntitiesServerFormat",
+      "\", Server: %count\"", "Format of infoEntitiesServer"),
 
-  ENTITIES_SERVER_FORMAT           = new ConfigString("infoEntitiesServerFormat",
-    "\", Server: %count\"", "Format of infoEntitiesServer"),
+    ENTITY_REG_NAME_FORMAT              = new ConfigString("infoEntityRegistryNameFormat",
+      "\"Entity reg name: %regName\"", "Format of infoEntityRegistryName"),
 
-  ENTITY_REG_NAME_FORMAT           = new ConfigString("infoEntityRegistryNameFormat",
-    "\"Entity reg name: %regName\"", "Format of infoEntityRegistryName"),
+    FACING_NORTH_FORMAT                 = new ConfigString("infoFacingNorthFormat",
+      "\"Facing: north (Positive X)\"", "Text for infoFacing when facing north"),
 
-  FACING_FORMAT                    = new ConfigString("infoFacingFormat",
-    "\"Facing: %cardinal (\", %cartesian, \")\"", "Format of infoFacing"),
+    FACING_SOUTH_FORMAT                 = new ConfigString("infoFacingSouthFormat",
+      "\"Facing: south (Negative X)\"", "Text for infoFacing when facing south"),
 
-  FACING_PX_FORMAT                 = new ConfigString("infoFacingPosXFormat",
-    "\"Positive X\"", "Text for infoFacing when facing positive X"),
+    FACING_EAST_FORMAT                  = new ConfigString("infoFacingEastFormat",
+      "\"Facing: east (Positive Z)\"", "Text for infoFacing when facing east"),
 
-  FACING_NX_FORMAT                 = new ConfigString("infoFacingNegXFormat",
-    "\"Negative X\"", "Text for infoFacing when facing negative X"),
+    FACING_WEST_FORMAT                  = new ConfigString("infoFacingWestFormat",
+      "\"Facing: west (Negative Z)\"", "Text for infoFacing when facing west"),
 
-  FACING_PZ_FORMAT                 = new ConfigString("infoFacingPosZFormat",
-    "\"Positive Z\"", "Text for infoFacing when facing positive Z"),
+    FPS_FORMAT                          = new ConfigString("infoFPSFormat",
+      "\"%fps fps\"", "Format of infoFPS"),
 
-  FACING_NZ_FORMAT                 = new ConfigString("infoFacingNegZFormat",
-    "\"Negative Z\"", "Text for infoFacing when facing negative Z"),
+    FURNACE_XP_FORMAT                   = new ConfigString("infoFurnaceXpFormat",
+      "\"Furnace XP: \", #aqua\"%count\"", "Format of infoFurnaceXp"),
 
-  FPS_FORMAT                       = new ConfigString("infoFPSFormat",
-    "\"%fps fps\"", "Format of infoFPS"),
+    HONEY_LEVEL_FORMAT                  = new ConfigString("infoHoneyLevelFormat",
+      "\"Honey: \", #aqua\"%level\"", "Format of infoHoneyLevel"),
 
-  FURNACE_XP_FORMAT                = new ConfigString("infoFurnaceXpFormat",
-    "\"Furnace XP: \", #aqua\"%count\"", "Format of infoFurnaceXp"),
+    HORSE_JUMP_FORMAT                   = new ConfigString("infoHorseJumpFormat",
+      "\"Horse Jump: %jump m\"", "Format of infoHorseJump"),
 
-  HONEY_LEVEL_FORMAT               = new ConfigString("infoHoneyLevelFormat",
-    "\"Honey: \", #aqua\"%level\"", "Format of infoHoneyLevel"),
+    HORSE_SPEED_FORMAT                  = new ConfigString("infoHorseSpeedFormat",
+      "\"Horse Speed: %speed m/s\"", "Format of infoHorseSpeed"),
 
-  HORSE_JUMP_FORMAT                = new ConfigString("infoHorseJumpFormat",
-    "\"Horse Jump: %jump m\"", "Format of infoHorseJump"),
+    LIGHT_LEVEL_CLIENT_FORMAT           = new ConfigString("infoLightLevelClientFormat",
+      "\"Client Light: %light (block: %block, sky: %sky)\"", "Format of infoLightLevelClient"),
 
-  HORSE_SPEED_FORMAT               = new ConfigString("infoHorseSpeedFormat",
-    "\"Horse Speed: %speed m/s\"", "Format of infoHorseSpeed"),
+    LIGHT_LEVEL_SERVER_FORMAT           = new ConfigString("infoLightLevelServerFormat",
+      "\"Server Light: %light (block: %block, sky: %sky)\"", "Format of infoLightLevelServer"),
 
-  LIGHT_LEVEL_CLIENT_FORMAT        = new ConfigString("infoLightLevelClientFormat",
-    "\"Client Light: %light (block: %block, sky: %sky)\"", "Format of infoLightLevelClient"),
+    LOOKING_AT_BLOCK_FORMAT             = new ConfigString("infoLookingAtBlockFormat",
+      "\"Looking at block: %x, %y, %z\"", "Format of infoLookingAtBlock"),
 
-  LIGHT_LEVEL_SERVER_FORMAT        = new ConfigString("infoLightLevelServerFormat",
-    "\"Server Light: %light (block: %block, sky: %sky)\"", "Format of infoLightLevelServer"),
+    LOOKING_AT_BLOCK_CHUNK_FORMAT       = new ConfigString("infoLookingAtBlockInChunkFormat",
+      "\"%separator\", \"Block: %x, %y, %z in Sub-Chunk: %chunkX, %chunkY, %chunkZ\"", "Format of infoLookingAtBlockInChunk"),
 
-  LOOKING_AT_BLOCK_FORMAT          = new ConfigString("infoLookingAtBlockFormat",
-    "\"Looking at block: %x, %y, %z\"", "Format of infoLookingAtBlock"),
+    LOOKING_AT_ENTITY_FORMAT            = new ConfigString("infoLookingAtEntityFormat",
+      "\"Entity: %entity\"", "Format of infoLookingAtEntity"),
 
-  LOOKING_AT_BLOCK_CHUNK_FORMAT    = new ConfigString("infoLookingAtBlockInChunkFormat",
-    "\"%separator\", \"Block: %x, %y, %z in Sub-Chunk: %chunkX, %chunkY, %chunkZ\"", "Format of infoLookingAtBlockInChunk"),
+    LOOKING_AT_ENTITY_LIVING_FORMAT     = new ConfigString("infoLookingAtEntityLivingFormat",
+      "\"Entity: %entity - HP: %health$.1f / %maxHealth$.1f\"", "Format of infoLookingAtEntity when entity is living"),
 
-  LOOKING_AT_ENTITY_FORMAT         = new ConfigString("infoLookingAtEntityFormat",
-    "\"Entity: %entity\"", "Format of infoLookingAtEntity"),
+    LOADED_CHUNKS_COUNT_SERVER_FORMAT   = new ConfigString("infoLoadedChunksCountServerFormat",
+      "\"Server: %loaded / %total - Client: %stats\"", "Format of infoLoadedChunksCount when playing singleplayer"),
 
-  LOOKING_AT_ENTITY_LIVING_FORMAT  = new ConfigString("infoLookingAtEntityLivingFormat",
-    "\"Entity: %entity - HP: %health$.1f / %maxHealth$.1f\"", "Format of infoLookingAtEntity when entity is living"),
+    LOADED_CHUNKS_COUNT_CLIENT_FORMAT   = new ConfigString("infoLoadedChunksCountClientFormat",
+      "\"%stats\"", "Format of infoLoadedChunksCount when playing on a server"),
 
-  LOADED_CHUNKS_COUNT_SERVER_FORMAT= new ConfigString("infoLoadedChunksCountServerFormat",
-    "\"Server: %loaded / %total - Client: %stats\"", "Format of infoLoadedChunksCount when playing singleplayer"),
+    MEMORY_USAGE_FORMAT                 = new ConfigString("infoMemoryUsageFormat",
+      "\"Mem: %pctUsed% %used/%max | Allocated: %pctAllocated% %allocated\"", "Format of infoMemoryUsage"),
 
-  LOADED_CHUNKS_COUNT_CLIENT_FORMAT= new ConfigString("infoLoadedChunksCountClientFormat",
-    "\"%stats\"", "Format of infoLoadedChunksCount when playing on a server"),
+    PARTICLE_COUNT_FORMAT               = new ConfigString("infoParticleCountFormat",
+      "\"P: %count\"", "Format of infoParticleCount"),
 
-  MEMORY_USAGE_FORMAT              = new ConfigString("infoMemoryUsageFormat",
-    "\"Mem: %pctUsed%% %used/%max | Allocated: %pctAllocated%% %allocated\"", "Format of infoMemoryUsage"),
+    PING_FORMAT                         = new ConfigString("infoPingFormat",
+      "\"Ping: %ping\"", "Format of infoPing"),
 
-  PARTICLE_COUNT_FORMAT            = new ConfigString("infoParticleCountFormat",
-    "\"P: %count\"", "Format of infoParticleCount"),
+    REGION_FILE_FORMAT                  = new ConfigString("infoRegionFileFormat",
+      "\"%separator\", \"Region: r.%regionX.%regionZ\"", "Format of infoRegionFile"),
 
-  PING_FORMAT                      = new ConfigString("infoPingFormat",
-    "\"Ping: %ping\"", "Format of infoPing"),
+    ROTATION_PITCH_FORMAT               = new ConfigString("infoRotationPitchFormat",
+      "\"%separator\", \"Pitch: %pitch$.1f\"", "Format of infoRotationPitch"),
 
-  REGION_FILE_FORMAT               = new ConfigString("infoRegionFileFormat",
-    "\"%separator\", \"Region: r.%x.%z\"", "Format of infoRegionFile"),
+    ROTATION_YAW_FORMAT                 = new ConfigString("infoRotationYawFormat",
+      "\"Yaw: %yaw$.1f\"", "Format of infoRotationYaw"),
 
-  ROTATION_PITCH_FORMAT            = new ConfigString("infoRotationPitchFormat",
-    "\"%separator\", \"Pitch: %pitch$.1f\"", "Format of infoRotationPitch"),
+    SEPARATOR_FORMAT                    = new ConfigString("infoSeparatorFormat",
+      " / ", "Format of the separators used for some compound info lines"),
 
-  ROTATION_YAW_FORMAT              = new ConfigString("infoRotationYawFormat",
-    "\"Yaw: %yaw$.1f\"", "Format of infoRotationYaw"),
+    TPS_BELOW_20_FORMAT                 = new ConfigString("tpsBelow40Format",
+      "#green\"%mspt\"", "Format of infoServerTPS tps when it is below 40"),
 
-  SEPARATOR_FORMAT                 = new ConfigString("infoSeparatorFormat",
-    " / ", "Format of the separators used for some compound info lines"),
+    TPS_ABOVE_20_FORMAT                 = new ConfigString("tpsAbove50Format",
+      "#red\"%mspt\"", "Format of infoServerTPS tps when it is below 40"),
 
-  TPS_BELOW_20_FORMAT              = new ConfigString("tpsBelow40Format",
-    "#green\"%mspt\"", "Format of infoServerTPS tps when it is below 40"),
+    MSPT_BELOW_40_FORMAT                = new ConfigString("msptBelow40Format",
+      "#green\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
 
-  TPS_ABOVE_20_FORMAT              = new ConfigString("tpsAbove50Format",
-    "#red\"%mspt\"", "Format of infoServerTPS tps when it is below 40"),
+    MSPT_40_45_FORMAT                   = new ConfigString("mspt40to45Format",
+      "#yellow\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
 
-  MSPT_BELOW_40_FORMAT             = new ConfigString("msptBelow40Format",
-    "#green\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+    MSPT_45_50_FORMAT                   = new ConfigString("mspt45to50Format",
+      "#gold\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
 
-  MSPT_40_45_FORMAT                = new ConfigString("mspt40to45Format",
-    "#yellow\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+    MSPT_ABOVE_50_FORMAT                = new ConfigString("msptAbove50Format",
+      "#red\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
 
-  MSPT_45_50_FORMAT                = new ConfigString("mspt45to50Format",
-    "#gold\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+    SERVER_TPS_VANILLA_FORMAT           = new ConfigString("infoServerTPSVanillaFormat",
+      "\"Server TPS: \", %tps, \" (MSPT [est]: \", %mspt, \")\"", "Format of infoServerTPS for vanilla servers"),
 
-  MSPT_ABOVE_50_FORMAT             = new ConfigString("msptAbove50Format",
-    "#red\"%mspt\"", "Format of infoServerTPS mspt when MSPT is below 40"),
+    SERVER_TPS_CARPET_FORMAT            = new ConfigString("infoServerTPSCarpetFormat",
+      "\"Server TPS: \", %tps, \" MSPT: \", %mspt", "Format of infoServerTPS for carpet servers"),
 
-  SERVER_TPS_VANILLA_FORMAT        = new ConfigString("infoServerTPSVanillaFormat",
-    "\"Server TPS: \", %tps, \" (MSPT [est]: \", %mspt, \")\"", "Format of infoServerTPS for vanilla servers"),
+    SERVER_TPS_NULL_FORMAT              = new ConfigString("infoServerTPSNullFormat",
+      "\"Server TPS: <no valid data>\"", "Format of infoServerTPS when info is unavailable"),
 
-  SERVER_TPS_CARPET_FORMAT         = new ConfigString("infoServerTPSCarpetFormat",
-    "\"Server TPS: \", %tps, \" MSPT: \", %mspt", "Format of infoServerTPS for carpet servers"),
+    SLIME_CHUNK_YES_FORMAT              = new ConfigString("infoSlimeChunkYesFormat",
+      "\"Slime chunk: \", #green\"YES\"", "Format of the infoSlimeChunk result when it's positive"),
 
-  SERVER_TPS_NULL_FORMAT           = new ConfigString("infoServerTPSNullFormat",
-    "\"Server TPS: <no valid data>\"", "Format of infoServerTPS when info is unavailable"),
+    SLIME_CHUNK_NO_FORMAT               = new ConfigString("infoSlimeChunkNoFormat",
+      "\"Slime chunk: \", #red\"NO\"", "Format of the infoSlimeChunk result when it's negative"),
 
-  SLIME_CHUNK_YES_FORMAT           = new ConfigString("infoSlimeChunkYesFormat",
-    "\"Slime chunk: \", #green\"YES\"", "Format of the infoSlimeChunk result when it's positive"),
+    SLIME_CHUNK_NO_SEED_FORMAT          = new ConfigString("infoSlimeChunkNoSeedFormat",
+      "\"Slime chunk: \", \"<world seed not known>\"", "Format of infoSlimeChunk when there's no seed"),
 
-  SLIME_CHUNK_NO_FORMAT            = new ConfigString("infoSlimeChunkNoFormat",
-    "\"Slime chunk: \", #red\"NO\"", "Format of the infoSlimeChunk result when it's negative"),
+    SPEED_FORMAT                        = new ConfigString("infoSpeedFormat",
+      "\"%separator\", \"Speed: %speed$.3f m/s\"", "Format of infoSpeed"),
 
-  SLIME_CHUNK_NO_SEED_FORMAT       = new ConfigString("infoSlimeChunkNoSeedFormat",
-    "\"Slime chunk: \", \"<world seed not known>\"", "Format of infoSlimeChunk when there's no seed"),
+    SPEED_AXIS_FORMAT                   = new ConfigString("infoSpeedAxisFormat",
+      "\"Speed: x: %x$.3f y: %y$.3f z: %z$.3f m/s\"", "Format of infoSpeedAxis"),
 
-  SPEED_FORMAT                     = new ConfigString("infoSpeedFormat",
-    "\"%separator\", \"Speed: %speed$.3f m/s\"", "Format of infoSpeed"),
+    SPEED_HV_FORMAT                     = new ConfigString("infoSpeedHVFormat",
+      "\"Speed: xz: %h y: %v m/s\"", "Format of infoSpeedHV"),
 
-  SPEED_AXIS_FORMAT                = new ConfigString("infoSpeedAxisFormat",
-    "\"Speed: x: %x$.3f y: %y$.3f z: %z$.3f m/s\"", "Format of infoSpeedAxis"),
+    TILE_ENTITIES_FORMAT                = new ConfigString("infoTileEntitiesFormat",
+      "\"Client world TE - L: %loaded, T: %ticking - TODO\"", "Format of infoTileEntities"),
 
-  SPEED_HV_FORMAT                  = new ConfigString("infoSpeedHVFormat",
-    "\"Speed: xz: %h y: %v m/s\"", "Format of infoSpeedHV"),
+    TIME_DAY_MODULO_FORMAT              = new ConfigString("infoTimeDayModuloFormat",
+      "\"Day time % %mod: %time\"", "Format of infoTimeDayModulo"),
 
-  TILE_ENTITIES_FORMAT             = new ConfigString("infoTileEntitiesFormat",
-    "\"Client world TE - L: %loaded, T: %ticking - TODO\"", "Format of infoTileEntities"),
+    TIME_REAL_FORMAT                    = new ConfigString("infoTimeIRLFormat",
+      "\"%time$tk:%time$tM:%time$tS\"", "The format string for real time, see the Java Formatter\nclass for the format patterns, if needed."),
 
-  TIME_DAY_MODULO_FORMAT           = new ConfigString("infoTimeDayModuloFormat",
-    "\"Day time %% %mod: %time\"", "Format of infoTimeDayModulo"),
+    TIME_TOTAL_MODULO_FORMAT            = new ConfigString("infoTimeTotalModuloFormat",
+      "\"Total time % %mod: %time\"", "Format of infoTimeTotalModulo"),
 
-  TIME_REAL_FORMAT                 = new ConfigString("infoTimeIRLFormat",
-    "\"%time$tk:%time$tM:%time$tS\"", "The format string for real time, see the Java Formatter\nclass for the format patterns, if needed."),
+    TIME_WORLD_FORMAT                   = new ConfigString("infoTimeWorldFormat",
+      "\"World time: %time - total: %total\"", "Format of infoTimeWorld"),
 
-  TIME_TOTAL_MODULO_FORMAT         = new ConfigString("infoTimeTotalModuloFormat",
-    "\"Total time %% %mod: %time\"", "Format of infoTimeTotalModulo"),
+    TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoWorldTimeFormattedFormat",
+      "\"MC time: (day %dayZeroBased) %hour:%min:xx\"", "The format string for the Minecraft time.\nThe supported placeholders are: %DAYONEBASED, %DAYZEROBASED, %HOUR, %MIN, %SEC.\n%DAYONEBASED starts the day counter from 1, %DAYZEROBASED starts from 0.");
 
-  TIME_WORLD_FORMAT                = new ConfigString("infoTimeWorldFormat",
-    "\"World time: %time - total: %total\"", "Format of infoTimeWorld"),
-
-  TIME_WORLD_FORMATTED_FORMAT      = new ConfigString("infoWorldTimeFormattedFormat",
-    "\"MC time: (day %dayZeroBased) %hour:%min:xx\"", "The format string for the Minecraft time.\nThe supported placeholders are: %DAYONEBASED, %DAYZEROBASED, %HOUR, %MIN, %SEC.\n%DAYONEBASED starts the day counter from 1, %DAYZEROBASED starts from 0.");
-
-  public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
+  public static final ImmutableList<IConfigValue> COLORS = ImmutableList.of(
     COLOR0,
     COLOR1,
     COLOR2,
@@ -271,15 +261,16 @@ public class Formats implements IConfigHandler
     COLOR12,
     COLOR13,
     COLOR14,
-    COLOR15,
+    COLOR15
+  );
 
+  public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
     BEE_COUNT_FORMAT,
     BIOME_FORMAT,
     BIOME_REG_NAME_FORMAT,
     BLOCK_BREAK_SPEED_FORMAT,
     BLOCK_IN_CHUNK_FORMAT,
     BLOCK_POS_FORMAT,
-    BLOCK_PROPERTIES_FORMAT,
     BLOCK_PROPS_HEADING_FORMAT,
     BLOCK_PROPS_BOOLEAN_TRUE_FORMAT,
     BLOCK_PROPS_BOOLEAN_FALSE_FORMAT,
@@ -299,11 +290,10 @@ public class Formats implements IConfigHandler
     ENTITIES_CLIENT_FORMAT,
     ENTITIES_SERVER_FORMAT,
     ENTITY_REG_NAME_FORMAT,
-    FACING_FORMAT,
-    FACING_PX_FORMAT,
-    FACING_NX_FORMAT,
-    FACING_PZ_FORMAT,
-    FACING_NZ_FORMAT,
+    FACING_NORTH_FORMAT,
+    FACING_SOUTH_FORMAT,
+    FACING_EAST_FORMAT,
+    FACING_WEST_FORMAT,
     FPS_FORMAT,
     FURNACE_XP_FORMAT,
     HONEY_LEVEL_FORMAT,
@@ -345,11 +335,6 @@ public class Formats implements IConfigHandler
     TIME_TOTAL_MODULO_FORMAT,
     TIME_WORLD_FORMAT,
     TIME_WORLD_FORMATTED_FORMAT
-
-//    COLOROPTIMUM,
-//    COLORGOOD,
-//    COLORLACKING,
-//    COLORPOOR
   );
 
   private static final String CONFIG_FILE_NAME = "colorfulminihud.json";
@@ -366,6 +351,7 @@ public class Formats implements IConfigHandler
       return;
 
     JsonObject root = element.getAsJsonObject();
+    ConfigUtils.readConfigBase(root, "Formats", Formats.COLORS);
     ConfigUtils.readConfigBase(root, "Formats", Formats.OPTIONS);
   }
 
@@ -377,6 +363,7 @@ public class Formats implements IConfigHandler
       return;
 
     JsonObject root = new JsonObject();
+    ConfigUtils.writeConfigBase(root, "Formats", Formats.COLORS);
     ConfigUtils.writeConfigBase(root, "Formats", Formats.OPTIONS);
     JsonUtils.writeJsonToFile(root, new File(dir, CONFIG_FILE_NAME));
   }
