@@ -185,10 +185,10 @@ public class ColorfulLines
     return new Variable<>(key, "f", value);
   }
 
-  private static Variable<Double> var(String key, double value)
-  {
-    return new Variable<>(key, "f", value);
-  }
+//  private static Variable<Double> var(String key, double value)
+//  {
+//    return new Variable<>(key, "f", value);
+//  }
 
   private static Variable<String> separator(boolean condition) {
     return var("separator", condition ? Formats.SEPARATOR_FORMAT.getStringValue() : "");
@@ -238,7 +238,7 @@ public class ColorfulLines
         str.append(",");
       str.append(line(Formats.DIMENSION_FORMAT,
         separator(hasOther),
-        var("dimension", Objects.requireNonNull(level).dimension().location().toString())));
+        var("id", Objects.requireNonNull(level).dimension().location().toString())));
       addedTypes.add(InfoToggle.DIMENSION);
       // we don't need to reassign hasOther here because this is the last entry in the compound; we don't need to separate this from anything in front
     }
@@ -270,9 +270,9 @@ public class ColorfulLines
         str1.append(",");
       str1.append(line(Formats.CHUNK_POS_FORMAT,
         separator(hasOther),
-        var("chunkX", chunkPos.x),
-        var("chunkY", pos.getY() >> 4),
-        var("chunkZ", chunkPos.z)));
+        var("subChunkX", chunkPos.x),
+        var("subChunkY", pos.getY() >> 4),
+        var("subChunkZ", chunkPos.z)));
       addedTypes.add(InfoToggle.CHUNK_POS);
       hasOther = true;
     }
@@ -333,7 +333,7 @@ public class ColorfulLines
 
     if(InfoToggle.ENTITIES_CLIENT_WORLD.getBooleanValue())
     {
-      str.append(line(Formats.ENTITIES_CLIENT_FORMAT,
+      str.append(line(Formats.ENTITIES_CLIENT_WORLD_FORMAT,
         var("count", Objects.requireNonNull(mc.level).getEntityCount())));
       addedTypes.add(InfoToggle.ENTITIES_CLIENT_WORLD);
       hasOther = true;
@@ -346,7 +346,7 @@ public class ColorfulLines
       {
         if(hasOther)
           str.append(",");
-        str.append(line(Formats.ENTITIES_SERVER_FORMAT,
+        str.append(line(Formats.ENTITIES_FORMAT,
           separator(hasOther),
           var("count", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
         addedTypes.add(InfoToggle.ENTITIES);
@@ -387,12 +387,12 @@ public class ColorfulLines
           str.append(",");
         str.append(line(Formats.LOOKING_AT_BLOCK_CHUNK_FORMAT,
           separator(hasOther),
-          var("x", lookPos.getX()),
-          var("y", lookPos.getY()),
-          var("z", lookPos.getZ()),
-          var("chunkX", lookPos.getX() >> 4),
-          var("chunkY", lookPos.getY() >> 4),
-          var("chunkZ", lookPos.getZ() >> 4)
+          var("chunkX", lookPos.getX() & 15),
+          var("chunkY", lookPos.getY() & 15),
+          var("chunkZ", lookPos.getZ() & 15),
+          var("subChunkX", lookPos.getX() >> 4),
+          var("subChunkY", lookPos.getY() >> 4),
+          var("subChunkZ", lookPos.getZ() >> 4)
         ));
         addedTypes.add(InfoToggle.LOOKING_AT_BLOCK_CHUNK);
       }
@@ -412,7 +412,7 @@ public class ColorfulLines
     if(InfoToggle.ROTATION_YAW.getBooleanValue())
     {
       str.append(line(Formats.ROTATION_YAW_FORMAT,
-        var("yaw", Mth.wrapDegrees(player.getYRot()))));
+        var("yaw", ".1f", Mth.wrapDegrees(player.getYRot()))));
       addedTypes.add(InfoToggle.ROTATION_YAW);
       hasOther = true;
     }
@@ -423,7 +423,7 @@ public class ColorfulLines
         str.append(",");
       str.append(line(Formats.ROTATION_PITCH_FORMAT,
         separator(hasOther),
-        var("pitch", Mth.wrapDegrees(player.getXRot()))));
+        var("pitch", ".1f", Mth.wrapDegrees(player.getXRot()))));
       addedTypes.add(InfoToggle.ROTATION_PITCH);
       hasOther = true;
     }
@@ -435,7 +435,7 @@ public class ColorfulLines
       double dist1 = Math.sqrt(dx*dx + dy*dy + dz*dz);
       str.append(line(Formats.SPEED_FORMAT,
         separator(hasOther),
-        var("speed", dist1 * 20)));
+        var("speed", ".3f",dist1 * 20)));
       addedTypes.add(InfoToggle.SPEED);
     }
     lines.add(str.append("]").toString());
@@ -464,7 +464,7 @@ public class ColorfulLines
       var("time", "tk", new Date(System.currentTimeMillis()))))),
 
     entry(InfoToggle.TIME_WORLD, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TIME_WORLD_FORMAT,
-      var("time", "5d", Objects.requireNonNull(level).getDayTime()),
+      var("day", "5d", Objects.requireNonNull(level).getDayTime()),
       var("total", level.getGameTime())))),
 
     entry(InfoToggle.TIME_WORLD_FORMATTED, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -546,12 +546,12 @@ public class ColorfulLines
     entry(InfoToggle.REGION_FILE, BLOCK_CHUNK_REGION),
 
     entry(InfoToggle.BLOCK_IN_CHUNK, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_IN_CHUNK_FORMAT,
-      var("x", pos.getX() & 0xf),
-      var("y", pos.getY() & 0xf),
-      var("z", pos.getZ() & 0xf),
-      var("chunkX", chunkPos.x),
-      var("chunkY", pos.getY() >> 4),
-      var("chunkZ", chunkPos.z)))),
+      var("chunkX", pos.getX() & 15),
+      var("chunkY", pos.getY() & 15),
+      var("chunkZ", pos.getZ() & 15),
+      var("subChunkX", chunkPos.x),
+      var("subChunkY", pos.getY() >> 4),
+      var("subChunkZ", chunkPos.z)))),
 
     entry(InfoToggle.BLOCK_BREAK_SPEED, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_BREAK_SPEED_FORMAT,
       var("speed", ".2f", data.getBlockBreakingSpeed())))),
@@ -635,9 +635,9 @@ public class ColorfulLines
         var("v", ".3f", dy * 20.0)))),
 
     entry(InfoToggle.SPEED_AXIS, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.SPEED_AXIS_FORMAT,
-      var("x", dx * 20),
-      var("y", dy * 20),
-      var("z", dz * 20)))),
+      var("x", ".3f", dx * 20),
+      var("y", ".3f", dy * 20),
+      var("z", ".3f", dz * 20)))),
 
     entry(InfoToggle.HORSE_SPEED, HORSE),
     entry(InfoToggle.HORSE_JUMP, HORSE),
