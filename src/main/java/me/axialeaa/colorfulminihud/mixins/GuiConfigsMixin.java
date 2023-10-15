@@ -32,5 +32,4 @@ public class GuiConfigsMixin
     list.addAll(ConfigOptionWrapper.createFor(Formats.COLORS));
     return list.build();
   }
-
 }
