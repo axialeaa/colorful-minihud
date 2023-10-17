@@ -53,11 +53,11 @@ public class Formats implements IConfigHandler
 
     BLOCK_IN_CHUNK_FORMAT               = new ConfigString("infoBlockInChunkFormat",
       "\"Block: %chunkX, %chunkY, %chunkZ within Sub-Chunk: %subChunkX, %subChunkY, %subChunkZ\"",
-      "The text formatting used for infoBlockInChunk\n§6%%%%chunkX, %chunkY, %chunkZ - The chunk coordinates of the block position you're standing at\n§6%%%%subChunkX, %subChunkY, %subChunkZ - The coordinates of the subchunk which contains this position"),
+      "The text formatting used for infoBlockInChunk\n§6%%%%chunkX, %%%%chunkY, %%%%chunkZ - The chunk coordinates of the block position you're standing at\n§6%%%%subChunkX, %%%%subChunkY, %%%%subChunkZ - The coordinates of the subchunk which contains this position"),
 
     BLOCK_POS_FORMAT                    = new ConfigString("infoBlockPositionFormat",
       "\"Block: %x, %y, %z\"",
-      "The text formatting used for infoBlockPosition\n§6%%%%x, %y, %z - The block coordinates of the current player position"),
+      "The text formatting used for infoBlockPosition\n§6%%%%x, %%%%y, %%%%z - The block coordinates of the current player position"),
 
     BLOCK_PROPS_HEADING_FORMAT          = new ConfigString("infoBlockPropertiesHeadingFormat",
       "\"%block\"",
@@ -85,7 +85,7 @@ public class Formats implements IConfigHandler
 
     CHUNK_POS_FORMAT                    = new ConfigString("infoChunkPositionFormat",
       "\"%separator\", \"Sub-Chunk: %subChunkX, %subChunkY, %subChunkZ\"",
-      "The text formatting used for infoChunkPosition\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%subChunkX, %subChunkY, %subChunkZ - The coordinates of the subchunk which contains the position you're standing at"),
+      "The text formatting used for infoChunkPosition\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%subChunkX, %%%%subChunkY, %%%%subChunkZ - The coordinates of the subchunk which contains the position you're standing at"),
 
     CHUNK_SECTIONS_FORMAT               = new ConfigString("infoChunkSectionsFormat",
       "\"C: %count\"",
@@ -97,19 +97,19 @@ public class Formats implements IConfigHandler
 
     CHUNK_UPDATES_FORMAT                = new ConfigString("infoChunkUpdatesFormat",
       "\"TODO\"",
-      "The text formatting used for infoChunkSectionsLine\n§6Note: This is unused in vanilla MiniHUD and is left in for parity. As a trick, you can use this to display memos or other unique strings!"),
+      "The text formatting used for infoChunkSectionsLine\n§6Note: This is unused in vanilla MiniHUD and is left in for parity.\nAs a trick, you can use this to display memos or other unique strings!"),
 
     COORDINATES_FORMAT                  = new ConfigString("infoCoordinatesFormat",
       "\"XYZ: %x / %y / %z\"",
-      "The text formatting used for infoCoordinates\n§6%%%%x, %y, %z - The coordinates of the current player position, truncated to the specified decimal position. Check the README for more info"),
+      "The text formatting used for infoCoordinates\n§6%%%%x, %%%%y, %%%%z - The coordinates of the current player position.\nCheck the README for how to change precision."),
 
     COORDINATES_SCALED_NETHER_FORMAT    = new ConfigString("infoCoordinatesScaledNetherFormat",
       "\"%separator\", \"Nether: %x / %y / %z\"",
-      "The text formatting used for infoCoordinatesScaled when in the overworld\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %y, %z - The nether-scaled coordinates of the current player position, truncated to the specified decimal position. Check the README for more info"),
+      "The text formatting used for infoCoordinatesScaled when in the overworld\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %%%%y, %%%%z - The nether-scaled coordinates of the current player position.\nCheck the README for how to change precision."),
 
     COORDINATES_SCALED_OVERWORLD_FORMAT = new ConfigString("infoCoordinatesScaledOverworldFormat",
       "\"%separator\", \"Overworld: %x / %y / %z\"",
-      "The text formatting used for infoCoordinatesScaled when in the nether\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %y, %z - The overworld-scaled coordinates of the current player position, truncated to the specified decimal position. Check the README for more info"),
+      "The text formatting used for infoCoordinatesScaled when in the nether\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %%%%y, %%%%z - The overworld-scaled coordinates of the current player position.\nCheck the README for how to change precision."),
 
     DIFFICULTY_FORMAT                   = new ConfigString("infoDifficultyFormat",
       "\"Local Difficulty: %local // %clamped (Day %day)\"",
@@ -121,7 +121,7 @@ public class Formats implements IConfigHandler
 
     DISTANCE_FORMAT                     = new ConfigString("infoDistanceFormat",
       "\"Distance: %dist (x: %distX y: %distY z: %distZ) [to x: %refX y: %refY z: %refZ]\"",
-      "The text formatting used for infoDistance\n§6%%%%dist - The distance in blocks to the reference point set by <[]>\n§6%%%%distX, %distY, %distZ - the distance in each axis to the reference point\n§6%%%%refX, %refY, %refZ - The coordinates of the reference point"),
+      "The text formatting used for infoDistance\n§6%%%%dist - The distance in blocks to the reference point set by <[]>\n§6%%%%distX, %%%%distY, %%%%%distZ - the distance in each axis to the reference point\n§6%%%%refX, %%%%refY, %%%%refZ - The coordinates of the reference point"),
 
     ENTITIES_CLIENT_WORLD_FORMAT        = new ConfigString("infoEntitiesClientWorldFormat",
       "\"Entities - Client: %count\"",
@@ -181,11 +181,11 @@ public class Formats implements IConfigHandler
 
     LOOKING_AT_BLOCK_FORMAT             = new ConfigString("infoLookingAtBlockFormat",
       "\"Looking at block: %x, %y, %z\"",
-      "The text formatting used for infoLookingAtBlock\n§6%%%%x, %y, %z - The coordinates of the block you're looking at"),
+      "The text formatting used for infoLookingAtBlock\n§6%%%%x, %%%%y, %%%%z - The coordinates of the block you're looking at"),
 
     LOOKING_AT_BLOCK_CHUNK_FORMAT       = new ConfigString("infoLookingAtBlockInChunkFormat",
       "\"%separator\", \"Block: %chunkX, %chunkY, %chunkZ in Sub-Chunk: %subChunkX, %subChunkY, %subChunkZ\"",
-      "The text formatting used for infoLookingAtBlockInChunk\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%chunkX, %chunkY, %chunkZ - The chunk coordinates of the block you're looking at\n§6%%%%subChunkX, %subChunkY, %subChunkZ - The coordinates of the subchunk which contains this block"),
+      "The text formatting used for infoLookingAtBlockInChunk\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%chunkX, %%%%chunkY, %%%%chunkZ - The chunk coordinates of the block you're looking at\n§6%%%%subChunkX, %%%%subChunkY, %%%%subChunkZ - The coordinates of the subchunk which contains this block"),
 
     LOOKING_AT_ENTITY_FORMAT            = new ConfigString("infoLookingAtEntityFormat",
       "\"Entity: %entity\"",
@@ -217,7 +217,7 @@ public class Formats implements IConfigHandler
 
     REGION_FILE_FORMAT                  = new ConfigString("infoRegionFileFormat",
       "\"%separator\", \"Region: r.%regionX.%regionZ\"",
-      "The text formatting used for infoRegionFile\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%regionX, %regionZ - The coordinates of this region file"),
+      "The text formatting used for infoRegionFile\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%regionX, %%%%regionZ - The coordinates of this region file"),
 
     ROTATION_PITCH_FORMAT               = new ConfigString("infoRotationPitchFormat",
       "\"%separator\", \"Pitch: %pitch\"",
@@ -285,11 +285,11 @@ public class Formats implements IConfigHandler
 
     SPEED_AXIS_FORMAT                   = new ConfigString("infoSpeedAxisFormat",
       "\"Speed: x: %x y: %y z: %z m/s\"",
-      "The text formatting used for infoSpeedAxis\n§6%%%%x, %y, %z - The speed per axis of travel in meters per second, truncated to the specified decimal position. Check the README for more info"),
+      "The text formatting used for infoSpeedAxis\n§6%%%%x, %%%%y, %%%%z - The speed per axis of travel in meters per second, truncated to the specified decimal position. Check the README for more info"),
 
     SPEED_HV_FORMAT                     = new ConfigString("infoSpeedHVFormat",
       "\"Speed: xz: %h y: %v m/s\"",
-      "The text formatting used for infoSpeedHV\n§6%%%%h, %v - The horizontal and vertical speed you're travelling in meters per second, truncated to the specified decimal position. Check the README for more info"),
+      "The text formatting used for infoSpeedHV\n§6%%%%h, %%%%v - The horizontal and vertical speed you're travelling in meters per second.\nCheck the README for more how to change precision."),
 
     TILE_ENTITIES_FORMAT                = new ConfigString("infoTileEntitiesFormat",
       "\"Client world TE - L: %loaded, T: %ticking - TODO\"",
@@ -301,7 +301,7 @@ public class Formats implements IConfigHandler
 
     TIME_REAL_FORMAT                    = new ConfigString("infoTimeIRLFormat",
       "\"%time$tk:%time$tM:%time$tS\"",
-      "The format string for real time, see the Java Formatter\nclass for the format patterns, if needed."),
+      "The format string for real time, see the Java Formatter\nclass for the format patterns, if needed.\n§6%%%%time - The time variable"),
 
     TIME_TOTAL_MODULO_FORMAT            = new ConfigString("infoTimeTotalModuloFormat",
       "\"Total time % %mod: %time\"",
@@ -311,9 +311,9 @@ public class Formats implements IConfigHandler
       "\"World time: %day - total: %total\"",
       "The text formatting used for infoTimeWorld\n§6%%%%day - The current day time value\n§6%%%%total - The total game time value"),
 
-    TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoWorldTimeFormattedFormat",
+    TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoTimeWorldFormattedFormat",
       "\"MC time: (day %dayZeroBased) %hour:%min:xx\"",
-      "The format string for the Minecraft time.\nThe supported placeholders are: %DAYONEBASED, %DAYZEROBASED, %HOUR, %MIN, %SEC.\n%DAYONEBASED starts the day counter from 1, %DAYZEROBASED starts from 0.");
+      "The format string for the Minecraft time.\nThe supported placeholders are: %%%%DAYONEBASED, %%%%DAYZEROBASED, %%%%HOUR, %%%%MIN, %%%%SEC.\n%%%%DAYONEBASED starts the day counter from 1, %%%%DAYZEROBASED starts from 0.");
 
   public static final ImmutableList<IConfigValue> COLORS = ImmutableList.of(
     COLOR0,

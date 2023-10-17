@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
+import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.minihud.gui.GuiConfigs;
 import me.axialeaa.colorfulminihud.config.Formats;
 import me.axialeaa.colorfulminihud.ColorfulMinihudMod;
@@ -17,7 +18,14 @@ import me.axialeaa.colorfulminihud.ColorfulMinihudMod;
 @Mixin(GuiConfigs.class)
 public class GuiConfigsMixin
 {
-  @Inject(method = "getConfigs", at = @At("RETURN"), cancellable = true, remap = false)
+  @Inject(method = "getConfigWidth", at = @At(value = "RETURN", ordinal = 4), cancellable = true, remap = false)
+  private void getConfigWidth(CallbackInfoReturnable<Integer> cir)
+  {
+    if(GuiConfigs.tab == ColorfulMinihudMod.FORMATS)
+      cir.setReturnValue(GuiUtils.getScaledWindowWidth() - 300);
+  }
+
+  @Inject(method = "getConfigs", at = @At(value = "RETURN", ordinal = 5), cancellable = true, remap = false)
   private void getFormatConfig(CallbackInfoReturnable<List<ConfigOptionWrapper>> cir)
   {
     if(GuiConfigs.tab == ColorfulMinihudMod.FORMATS)
