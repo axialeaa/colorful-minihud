@@ -121,7 +121,7 @@ public class Formats implements IConfigHandler
 
     DISTANCE_FORMAT                     = new ConfigString("infoDistanceFormat",
       "\"Distance: %dist (x: %distX y: %distY z: %distZ) [to x: %refX y: %refY z: %refZ]\"",
-      "The text formatting used for infoDistance\n§6%%%%dist - The distance in blocks to the reference point set by <[]>\n§6%%%%distX, %%%%distY, %%%%%distZ - the distance in each axis to the reference point\n§6%%%%refX, %%%%refY, %%%%refZ - The coordinates of the reference point"),
+      "The text formatting used for infoDistance\n§6%%%%dist - The distance in blocks to the reference point set by Generic/setDistanceReferencePoint\n§6%%%%distX, %%%%distY, %%%%%distZ - the distance in each axis to the reference point\n§6%%%%refX, %%%%refY, %%%%refZ - The coordinates of the reference point"),
 
     ENTITIES_CLIENT_WORLD_FORMAT        = new ConfigString("infoEntitiesClientWorldFormat",
       "\"Entities - Client: %count\"",
