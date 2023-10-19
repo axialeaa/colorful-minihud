@@ -457,7 +457,7 @@ public class ColorfulLines
         var("pctAllocated", "2d", memTotal * 100L / memMax),
         var("used", "3d", MiscUtils.bytesToMb(memUsed)),
         var("max", "3d", MiscUtils.bytesToMb(memMax)),
-        var("allocated", "3d", MiscUtils.bytesToMb(memTotal))));
+        var("total", "3d", MiscUtils.bytesToMb(memTotal))));
     }),
 
     entry(InfoToggle.TIME_REAL, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TIME_REAL_FORMAT,
