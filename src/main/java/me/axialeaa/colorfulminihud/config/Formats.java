@@ -44,7 +44,7 @@ public class Formats implements IConfigHandler
       "The text formatting used for infoBiome\n§6%%%%biome - The name of the biome you're standing in"),
 
     BIOME_REG_NAME_FORMAT               = new ConfigString("infoBiomeRegistryNameFormat",
-      "\"Biome reg name: %regName\"",
+      "\"Biome reg name: %name\"",
       "The text formatting used for infoBiomeRegistryName\n§6%%%%regName - The registry name of the current biome"),
 
     BLOCK_BREAK_SPEED_FORMAT            = new ConfigString("infoBlockBreakSpeedFormat",
