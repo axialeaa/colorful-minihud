@@ -270,9 +270,9 @@ public class ColorfulLines
         str1.append(",");
       str1.append(line(Formats.CHUNK_POS_FORMAT,
         separator(hasOther),
-        var("subChunkX", chunkPos.x),
-        var("subChunkY", pos.getY() >> 4),
-        var("subChunkZ", chunkPos.z)));
+        var("chunkX", chunkPos.x),
+        var("chunkY", pos.getY() >> 4),
+        var("chunkZ", chunkPos.z)));
       addedTypes.add(InfoToggle.CHUNK_POS);
       hasOther = true;
     }
@@ -283,8 +283,8 @@ public class ColorfulLines
         str1.append(",");
       str1.append(line(Formats.REGION_FILE_FORMAT,
         separator(hasOther),
-        var("regionX", pos.getX() >> 9),
-        var("regionZ", pos.getZ() >> 9)));
+        var("x", pos.getX() >> 9),
+        var("z", pos.getZ() >> 9)));
       addedTypes.add(InfoToggle.REGION_FILE);
     }
     lines.add(str1.append("]").toString());
@@ -387,12 +387,12 @@ public class ColorfulLines
           str.append(",");
         str.append(line(Formats.LOOKING_AT_BLOCK_CHUNK_FORMAT,
           separator(hasOther),
-          var("chunkX", lookPos.getX() & 15),
-          var("chunkY", lookPos.getY() & 15),
-          var("chunkZ", lookPos.getZ() & 15),
-          var("subChunkX", lookPos.getX() >> 4),
-          var("subChunkY", lookPos.getY() >> 4),
-          var("subChunkZ", lookPos.getZ() >> 4)
+          var("x", lookPos.getX() & 15),
+          var("y", lookPos.getY() & 15),
+          var("z", lookPos.getZ() & 15),
+          var("chunkX", lookPos.getX() >> 4),
+          var("chunkY", lookPos.getY() >> 4),
+          var("chunkZ", lookPos.getZ() >> 4)
         ));
         addedTypes.add(InfoToggle.LOOKING_AT_BLOCK_CHUNK);
       }
@@ -473,8 +473,8 @@ public class ColorfulLines
       long day = timeDay / 24000;
       int dayTicks = (int)(timeDay % 24000);
       lines.add(line(Formats.TIME_WORLD_FORMATTED_FORMAT,
-        var("dayZeroBased", day),
-        var("dayOneBased", day + 1),
+        var("dayFrom0", day),
+        var("dayFrom1", day + 1),
         var("hour", "02d", (dayTicks / 1000 + 6) % 24),
         var("min", "02d", (int)(dayTicks * 0.06) % 60),
         var("sec", "02d", (int)(dayTicks * 3.6) % 60)));
@@ -546,12 +546,12 @@ public class ColorfulLines
     entry(InfoToggle.REGION_FILE, BLOCK_CHUNK_REGION),
 
     entry(InfoToggle.BLOCK_IN_CHUNK, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_IN_CHUNK_FORMAT,
-      var("chunkX", pos.getX() & 15),
-      var("chunkY", pos.getY() & 15),
-      var("chunkZ", pos.getZ() & 15),
-      var("subChunkX", chunkPos.x),
-      var("subChunkY", pos.getY() >> 4),
-      var("subChunkZ", chunkPos.z)))),
+      var("x", pos.getX() & 15),
+      var("y", pos.getY() & 15),
+      var("z", pos.getZ() & 15),
+      var("chunkX", chunkPos.x),
+      var("chunkY", pos.getY() >> 4),
+      var("chunkZ", chunkPos.z)))),
 
     entry(InfoToggle.BLOCK_BREAK_SPEED, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_BREAK_SPEED_FORMAT,
       var("speed", ".2f", data.getBlockBreakingSpeed())))),
@@ -561,9 +561,9 @@ public class ColorfulLines
       Vec3 ref = data.getDistanceReferencePoint();
       lines.add(line(Formats.DISTANCE_FORMAT,
         var("dist", ".2f", Math.sqrt(ref.distanceToSqr(x, y, z))),
-        var("distX", ".2f", x - ref.x),
-        var("distY", ".2f", y - ref.y),
-        var("distZ", ".2f", z - ref.z),
+        var("dx", ".2f", x - ref.x),
+        var("dy", ".2f", y - ref.y),
+        var("dz", ".2f", z - ref.z),
         var("refX", ".2f", ref.x),
         var("refY", ".2f", ref.y),
         var("refZ", ".2f", ref.z)));
@@ -700,7 +700,7 @@ public class ColorfulLines
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
       lines.add(line(Formats.BIOME_REG_NAME_FORMAT,
-        var("regName", resourceLocation != null ? resourceLocation.toString() : "?")));
+        var("name", resourceLocation != null ? resourceLocation.toString() : "?")));
     }),
 
     entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TILE_ENTITIES_FORMAT,
@@ -736,7 +736,7 @@ public class ColorfulLines
         line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
           var("entity", lookedEntity.getName().getString()),
           var("health", living.getHealth()),
-          var("maxHealth", living.getMaxHealth())) :
+          var("max", living.getMaxHealth())) :
         line(Formats.LOOKING_AT_ENTITY_LIVING_FORMAT,
           var("entity", Objects.requireNonNull(lookedEntity).getName().getString())));
     }),
@@ -749,7 +749,7 @@ public class ColorfulLines
       Entity lookedEntity = ((EntityHitResult) mc.hitResult).getEntity();
       ResourceLocation resourceLocation = EntityType.getKey(lookedEntity.getType());
       lines.add(line(Formats.ENTITY_REG_NAME_FORMAT,
-        var("regName", resourceLocation.toString())));
+        var("name", resourceLocation.toString())));
     }),
 
     entry(InfoToggle.LOOKING_AT_BLOCK, LOOKING_BLOCK_CHUNK),
@@ -763,7 +763,7 @@ public class ColorfulLines
         BlockState state = Objects.requireNonNull(mc.level).getBlockState(posLooking);
         ResourceLocation resourceLocation = Registry.BLOCK.getKey(state.getBlock());
 
-        lines.add(line(Formats.BLOCK_PROPS_HEADING_FORMAT,
+        lines.add(line(Formats.BLOCK_PROPS_BLOCK_FORMAT,
           var("block", resourceLocation.toString())));
 
         for(Property<?> property : state.getProperties())
@@ -772,8 +772,8 @@ public class ColorfulLines
           lines.add(line(
             property instanceof BooleanProperty ?
               value.equals(Boolean.TRUE) ?
-                Formats.BLOCK_PROPS_BOOLEAN_TRUE_FORMAT :
-                Formats.BLOCK_PROPS_BOOLEAN_FALSE_FORMAT :
+                Formats.BLOCK_PROPS_TRUE_FORMAT :
+                Formats.BLOCK_PROPS_FALSE_FORMAT :
             property instanceof DirectionProperty ?
               Formats.BLOCK_PROPS_DIRECTION_FORMAT :
             property instanceof IntegerProperty ?
