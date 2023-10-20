@@ -4,13 +4,14 @@
   "version": "${version}",
 
   "name": "${name}",
-  "description": "",
+  "description": "Adds a new Formats tab to maruohon's MiniHUD, giving you full control over your info lines!",
   "authors": [
     "axialeaa",
     "lntricate"
   ],
   "contact": {
-    "sources": "https://github.com/axialeaa/colorful-minihud"
+    "sources": "https://github.com/axialeaa/colorful-minihud",
+    "issues": "https://github.com/axialeaa/colorful-minihud/issues"
   },
 
   "icon": "assets/${id}/icon.png",
@@ -33,6 +34,7 @@
 
   "depends": {
     "fabricloader": ">=0.11.4",
-    "minecraft": "${minecraft_dependency}"
+    "minecraft": "${minecraft_dependency}",
+    "minihud": "${minihud_dependency}"
   }
 }
