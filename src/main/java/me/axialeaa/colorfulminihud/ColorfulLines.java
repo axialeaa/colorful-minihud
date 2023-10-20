@@ -309,7 +309,7 @@ public class ColorfulLines
         double jump = horse.getCustomJump();
         double calculatedJumpHeight = -0.1817584952 * jump*jump*jump + 3.689713992 * jump*jump + 2.128599134 * jump - 0.343930367;
         lines.add(line(Formats.HORSE_JUMP_FORMAT,
-          var("jump", ".3f", calculatedJumpHeight)));
+          var("height", ".3f", calculatedJumpHeight)));
       }
 
       addedTypes.add(InfoToggle.HORSE_SPEED);

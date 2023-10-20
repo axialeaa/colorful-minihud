@@ -59,15 +59,15 @@ public class Formats implements IConfigHandler
       "\"Block: %x, %y, %z\"",
       "The text formatting used for infoBlockPosition\n§6%%%%x, %%%%y, %%%%z - The block coordinates of the position you're standing at"),
 
-    BLOCK_PROPS_BLOCK_FORMAT          = new ConfigString("infoBlockPropertiesBlockFormat",
+    BLOCK_PROPS_BLOCK_FORMAT            = new ConfigString("infoBlockPropertiesBlockFormat",
       "\"%block\"",
       "The text formatting used for the block identifier in infoBlockProperties\n§6%%%%block - The identifier of the block you're looking at"),
 
-    BLOCK_PROPS_TRUE_FORMAT     = new ConfigString("infoBlockPropertiesTrueFormat",
+    BLOCK_PROPS_TRUE_FORMAT             = new ConfigString("infoBlockPropertiesTrueFormat",
       "\"%property: \", #green\"TRUE\"",
       "The text formatting used for boolean properties in infoBlockProperties, when true\n§6%%%%property - The name of this block property"),
 
-    BLOCK_PROPS_FALSE_FORMAT    = new ConfigString("infoBlockPropertiesFalseFormat",
+    BLOCK_PROPS_FALSE_FORMAT            = new ConfigString("infoBlockPropertiesFalseFormat",
       "\"%property: \", #red\"FALSE\"",
       "The text formatting used for boolean properties in infoBlockProperties, when false\n§6%%%%property - The name of this block property"),
 
@@ -123,13 +123,13 @@ public class Formats implements IConfigHandler
       "\"Distance: %dist (x: %dx y: %dy z: %dz) [to x: %refX y: %refY z: %refZ]\"",
       "The text formatting used for infoDistance\n§6%%%%dist - The distance in blocks to the reference point set by Generic/setDistanceReferencePoint\n§6%%%%dx, %%%%dy, %%%%dz - The distance in each axis to the reference point\n§6%%%%refX, %%%%refY, %%%%refZ - The coordinates of the reference point"),
 
-    ENTITIES_CLIENT_WORLD_FORMAT        = new ConfigString("infoEntitiesClientWorldFormat",
-      "\"Entities - Client: %count\"",
-      "The text formatting used for infoEntitiesClient\n§6%%%%count - The number of entities in the world list"),
-
     ENTITIES_FORMAT                     = new ConfigString("infoEntitiesFormat",
       "\", Server: %count\"",
       "The text formatting used for infoEntities\n§6%%%%count - The number of loaded entities"),
+
+    ENTITIES_CLIENT_WORLD_FORMAT        = new ConfigString("infoEntitiesClientWorldFormat",
+      "\"Entities - Client: %count\"",
+      "The text formatting used for infoEntitiesClient\n§6%%%%count - The number of entities in the world list"),
 
     ENTITY_REG_NAME_FORMAT              = new ConfigString("infoEntityRegistryNameFormat",
       "\"Entity reg name: %name\"",
@@ -139,37 +139,37 @@ public class Formats implements IConfigHandler
       "\"Facing: north (Positive X)\"",
       "The text formatting used for infoFacing when facing north"),
 
-    FACING_SOUTH_FORMAT                 = new ConfigString("infoFacingSouthFormat",
-      "\"Facing: south (Negative X)\"",
-      "The text formatting used for infoFacing when facing south"),
-
     FACING_EAST_FORMAT                  = new ConfigString("infoFacingEastFormat",
       "\"Facing: east (Positive Z)\"",
       "The text formatting used for infoFacing when facing east"),
+
+    FACING_SOUTH_FORMAT                 = new ConfigString("infoFacingSouthFormat",
+      "\"Facing: south (Negative X)\"",
+      "The text formatting used for infoFacing when facing south"),
 
     FACING_WEST_FORMAT                  = new ConfigString("infoFacingWestFormat",
       "\"Facing: west (Negative Z)\"",
       "The text formatting used for infoFacing when facing west"),
 
-    FPS_FORMAT                          = new ConfigString("infoFPSFormat",
-      "\"%fps fps\"",
-      "The text formatting used for infoFPS\n§6%%%%fps - The FPS your monitor is running at"),
-
     FURNACE_XP_FORMAT                   = new ConfigString("infoFurnaceXpFormat",
       "\"Furnace XP: \", #aqua\"%count\"",
       "The text formatting used for infoFurnaceXp\n§6%%%%count - The amount of XP stored inside the furnace you're looking at"),
+
+    FPS_FORMAT                          = new ConfigString("infoFPSFormat",
+      "\"%fps fps\"",
+      "The text formatting used for infoFPS\n§6%%%%fps - The FPS your monitor is running at"),
 
     HONEY_LEVEL_FORMAT                  = new ConfigString("infoHoneyLevelFormat",
       "\"Honey: \", #aqua\"%level\"",
       "The text formatting used for infoHoneyLevel\n§6%%%%level - The amount of honey stored inside the nest or hive you're looking at"),
 
-    HORSE_JUMP_FORMAT                   = new ConfigString("infoHorseJumpFormat",
-      "\"Horse Jump: %jump m\"",
-      "The text formatting used for infoHorseJump\n§6%%%%jump - The maximum jump height of the horse you're riding, in meters"),
-
     HORSE_SPEED_FORMAT                  = new ConfigString("infoHorseSpeedFormat",
       "\"Horse Speed: %speed m/s\"",
       "The text formatting used for infoHorseSpeed\n§6%%%%speed - The maximum speed of the horse you're riding, in meters per second"),
+
+    HORSE_JUMP_FORMAT                   = new ConfigString("infoHorseJumpFormat",
+      "\"Horse Jump: %height m\"",
+      "The text formatting used for infoHorseJump\n§6%%%%height - The maximum jump height of the horse you're riding, in meters"),
 
     LIGHT_LEVEL_CLIENT_FORMAT           = new ConfigString("infoLightLevelClientFormat",
       "\"Client Light: %total (block: %block, sky: %sky)\"",
@@ -195,17 +195,17 @@ public class Formats implements IConfigHandler
       "\"Entity: %entity - HP: %health$.1f / %max$.1f\"",
       "The text formatting used for infoLookingAtEntity when the entity is living\n§6%%%%entity - The living entity you're looking at\n§6%%%%health - The current health of this entity\n§6%%%%max - The maximum health of this entity"),
 
-    LOADED_CHUNKS_COUNT_SERVER_FORMAT   = new ConfigString("infoLoadedChunksCountServerFormat",
-      "\"Server: %loaded / %total - Client: %stats\"",
-      "The text formatting used for infoLoadedChunksCount when playing singleplayer\n§6%%%%loaded - The number of loaded chunks\n§6%%%%total - The number of chunks that have been generated\n§6%%%%stats - The client-side chunk source information"),
+    MEMORY_USAGE_FORMAT                 = new ConfigString("infoMemoryUsageFormat",
+      "\"Mem: %pctUsed% %used/%max | Allocated: %pctAllocated% %total\"",
+      "The text formatting used for infoMemoryUsage\n§6%%%%pctUsed - The percentage of RAM being used by the game out of the max\n§6%%%%used - The exact amount of RAM being used by the game\n§6%%%%max - The maximum amount of RAM the game will attempt to use\n§6%%%%pctAllocated - The percentage of RAM allocated to the game out of the max\n§6%%%%total - The amount of RAM allocated to the game"),
 
     LOADED_CHUNKS_COUNT_CLIENT_FORMAT   = new ConfigString("infoLoadedChunksCountClientFormat",
       "\"%stats\"",
       "The text formatting used for infoLoadedChunksCount when playing on a server\n§6%%%%stats - The client-side chunk source information"),
 
-    MEMORY_USAGE_FORMAT                 = new ConfigString("infoMemoryUsageFormat",
-      "\"Mem: %pctUsed% %used/%max | Allocated: %pctAllocated% %total\"",
-      "The text formatting used for infoMemoryUsage\n§6%%%%pctUsed - The percentage of RAM being used by the game out of the max\n§6%%%%used - The exact amount of RAM being used by the game\n§6%%%%max - The maximum amount of RAM the game will attempt to use\n§6%%%%pctAllocated - The percentage of RAM allocated to the game out of the max\n§6%%%%total - The amount of RAM allocated to the game"),
+    LOADED_CHUNKS_COUNT_SERVER_FORMAT   = new ConfigString("infoLoadedChunksCountServerFormat",
+      "\"Server: %loaded / %total - Client: %stats\"",
+      "The text formatting used for infoLoadedChunksCount when playing singleplayer\n§6%%%%loaded - The number of loaded chunks\n§6%%%%total - The number of chunks that have been generated\n§6%%%%stats - The client-side chunk source information"),
 
     PARTICLE_COUNT_FORMAT               = new ConfigString("infoParticleCountFormat",
       "\"P: %count\"",
@@ -227,7 +227,7 @@ public class Formats implements IConfigHandler
       "\"Yaw: %yaw\"",
       "The text formatting used for infoRotationYaw\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%yaw - The camera yaw in degrees, truncated to the specified decimal position\nCheck the README for more info on how to change precision."),
 
-    SEPARATOR_FORMAT                    = new ConfigString("infoSeparatorFormat",
+    SEPARATOR_FORMAT                    = new ConfigString("separatorFormat",
       " / ",
       "The text formatting used for the multi-line separators"),
 
@@ -311,7 +311,7 @@ public class Formats implements IConfigHandler
       "\"World time: %day - total: %total\"",
       "The text formatting used for infoTimeWorld\n§6%%%%day - The current time of day, in ticks\n§6%%%%total - The total time played in this world, in ticks"),
 
-    TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoTimeWorldFormattedFormat",
+    TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoWorldTimeFormattedFormat",
       "\"MC time: (day %dayFrom0) %hour:%min:xx\"",
       "The text formatting used for infoTimeWorldFormatted\n§6The supported placeholders are: %%%%dayFrom0, %%%%dayFrom1, %%%%hour, %%%%min and %%%%sec\n§6%%%%dayFrom0 starts the day counter from 0. %%%%dayFrom1 starts from 1.");
 
@@ -357,18 +357,18 @@ public class Formats implements IConfigHandler
     DIFFICULTY_FORMAT,
     DIMENSION_FORMAT,
     DISTANCE_FORMAT,
-    ENTITIES_CLIENT_WORLD_FORMAT,
     ENTITIES_FORMAT,
+    ENTITIES_CLIENT_WORLD_FORMAT,
     ENTITY_REG_NAME_FORMAT,
     FACING_NORTH_FORMAT,
-    FACING_SOUTH_FORMAT,
     FACING_EAST_FORMAT,
+    FACING_SOUTH_FORMAT,
     FACING_WEST_FORMAT,
-    FPS_FORMAT,
     FURNACE_XP_FORMAT,
+    FPS_FORMAT,
     HONEY_LEVEL_FORMAT,
-    HORSE_JUMP_FORMAT,
     HORSE_SPEED_FORMAT,
+    HORSE_JUMP_FORMAT,
     LIGHT_LEVEL_CLIENT_FORMAT,
     LIGHT_LEVEL_SERVER_FORMAT,
     LOOKING_AT_BLOCK_FORMAT,
@@ -376,8 +376,8 @@ public class Formats implements IConfigHandler
     LOOKING_AT_ENTITY_FORMAT,
     LOOKING_AT_ENTITY_LIVING_FORMAT,
     MEMORY_USAGE_FORMAT,
-    LOADED_CHUNKS_COUNT_SERVER_FORMAT,
     LOADED_CHUNKS_COUNT_CLIENT_FORMAT,
+    LOADED_CHUNKS_COUNT_SERVER_FORMAT,
     PARTICLE_COUNT_FORMAT,
     PING_FORMAT,
     REGION_FILE_FORMAT,
