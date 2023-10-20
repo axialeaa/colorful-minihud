@@ -106,22 +106,22 @@ public class ColorfulLines
   private static String line(ConfigString config, Variable<?>... vars)
   {
     String text = ("[\"\"," + config.getStringValue() + "]")
-      .replaceAll("#15(?=[^\\d])", Formats.COLOR15.getStringValue())
-      .replaceAll("#14(?=[^\\d])", Formats.COLOR14.getStringValue())
-      .replaceAll("#13(?=[^\\d])", Formats.COLOR13.getStringValue())
-      .replaceAll("#12(?=[^\\d])", Formats.COLOR12.getStringValue())
-      .replaceAll("#11(?=[^\\d])", Formats.COLOR11.getStringValue())
-      .replaceAll("#10(?=[^\\d])", Formats.COLOR10.getStringValue())
-      .replaceAll("#6(?=[^\\d])", Formats.COLOR6.getStringValue())
-      .replaceAll("#7(?=[^\\d])", Formats.COLOR7.getStringValue())
-      .replaceAll("#8(?=[^\\d])", Formats.COLOR8.getStringValue())
-      .replaceAll("#9(?=[^\\d])", Formats.COLOR9.getStringValue())
-      .replaceAll("#5(?=[^\\d])", Formats.COLOR5.getStringValue())
-      .replaceAll("#4(?=[^\\d])", Formats.COLOR4.getStringValue())
-      .replaceAll("#3(?=[^\\d])", Formats.COLOR3.getStringValue())
-      .replaceAll("#2(?=[^\\d])", Formats.COLOR2.getStringValue())
-      .replaceAll("#1(?=[^\\d])", Formats.COLOR1.getStringValue())
-      .replaceAll("#0(?=[^\\d])", Formats.COLOR0.getStringValue())
+      .replaceAll("#15(?=\\D)", Formats.COLOR15.getStringValue())
+      .replaceAll("#14(?=\\D)", Formats.COLOR14.getStringValue())
+      .replaceAll("#13(?=\\D)", Formats.COLOR13.getStringValue())
+      .replaceAll("#12(?=\\D)", Formats.COLOR12.getStringValue())
+      .replaceAll("#11(?=\\D)", Formats.COLOR11.getStringValue())
+      .replaceAll("#10(?=\\D)", Formats.COLOR10.getStringValue())
+      .replaceAll("#6(?=\\D)", Formats.COLOR6.getStringValue())
+      .replaceAll("#7(?=\\D)", Formats.COLOR7.getStringValue())
+      .replaceAll("#8(?=\\D)", Formats.COLOR8.getStringValue())
+      .replaceAll("#9(?=\\D)", Formats.COLOR9.getStringValue())
+      .replaceAll("#5(?=\\D)", Formats.COLOR5.getStringValue())
+      .replaceAll("#4(?=\\D)", Formats.COLOR4.getStringValue())
+      .replaceAll("#3(?=\\D)", Formats.COLOR3.getStringValue())
+      .replaceAll("#2(?=\\D)", Formats.COLOR2.getStringValue())
+      .replaceAll("#1(?=\\D])", Formats.COLOR1.getStringValue())
+      .replaceAll("#0(?=\\D)", Formats.COLOR0.getStringValue())
 
       .replace("#black",        "#000000")
       .replace("#dark_red",     "#AA0000")
@@ -185,11 +185,6 @@ public class ColorfulLines
     return new Variable<>(key, "f", value);
   }
 
-//  private static Variable<Double> var(String key, double value)
-//  {
-//    return new Variable<>(key, "f", value);
-//  }
-
   private static Variable<String> separator(boolean condition) {
     return var("separator", condition ? Formats.SEPARATOR_FORMAT.getStringValue() : "");
   }
@@ -238,7 +233,7 @@ public class ColorfulLines
         str.append(",");
       str.append(line(Formats.DIMENSION_FORMAT,
         separator(hasOther),
-        var("id", Objects.requireNonNull(level).dimension().location().toString())));
+        var("dim", Objects.requireNonNull(level).dimension().location().toString())));
       addedTypes.add(InfoToggle.DIMENSION);
       // we don't need to reassign hasOther here because this is the last entry in the compound; we don't need to separate this from anything in front
     }
@@ -270,9 +265,9 @@ public class ColorfulLines
         str1.append(",");
       str1.append(line(Formats.CHUNK_POS_FORMAT,
         separator(hasOther),
-        var("chunkX", chunkPos.x),
-        var("chunkY", pos.getY() >> 4),
-        var("chunkZ", chunkPos.z)));
+        var("subX", chunkPos.x),
+        var("subY", pos.getY() >> 4),
+        var("subZ", chunkPos.z)));
       addedTypes.add(InfoToggle.CHUNK_POS);
       hasOther = true;
     }
@@ -314,7 +309,7 @@ public class ColorfulLines
         double jump = horse.getCustomJump();
         double calculatedJumpHeight = -0.1817584952 * jump*jump*jump + 3.689713992 * jump*jump + 2.128599134 * jump - 0.343930367;
         lines.add(line(Formats.HORSE_JUMP_FORMAT,
-          var("jump", ".3f", calculatedJumpHeight)));
+          var("height", ".3f", calculatedJumpHeight)));
       }
 
       addedTypes.add(InfoToggle.HORSE_SPEED);
@@ -390,9 +385,9 @@ public class ColorfulLines
           var("x", lookPos.getX() & 15),
           var("y", lookPos.getY() & 15),
           var("z", lookPos.getZ() & 15),
-          var("chunkX", lookPos.getX() >> 4),
-          var("chunkY", lookPos.getY() >> 4),
-          var("chunkZ", lookPos.getZ() >> 4)
+          var("subX", lookPos.getX() >> 4),
+          var("subY", lookPos.getY() >> 4),
+          var("subZ", lookPos.getZ() >> 4)
         ));
         addedTypes.add(InfoToggle.LOOKING_AT_BLOCK_CHUNK);
       }
@@ -511,16 +506,16 @@ public class ColorfulLines
       double mspt = data.getServerMSPT();
 
       String msptString = line(
-        mspt <= 40 ? Formats.MSPT_BELOW_40_FORMAT :
-        mspt <= 45 ? Formats.MSPT_40_45_FORMAT :
-        mspt <= 50 ? Formats.MSPT_45_50_FORMAT :
-        Formats.MSPT_ABOVE_50_FORMAT,
-        var("mspt", ".1f", mspt));
+        mspt <= 40 ? Formats.MSPT_GOOD_FORMAT :
+        mspt <= 45 ? Formats.MSPT_MEDIUM_FORMAT :
+        mspt <= 50 ? Formats.MSPT_BAD_FORMAT :
+        Formats.MSPT_IMPACTFUL_FORMAT,
+        var("value", ".1f", mspt));
 
       String tpsString = line(
-        tps >= 20 ? Formats.TPS_ABOVE_20_FORMAT :
-        Formats.TPS_BELOW_20_FORMAT,
-        var("tps", ".1f", tps));
+        tps >= 20 ? Formats.TPS_IMPACTFUL_FORMAT :
+        Formats.TPS_GOOD_FORMAT,
+        var("value", ".1f", tps));
 
       lines.add(line(data.isCarpetServer() || mc.isLocalServer() ?
         Formats.SERVER_TPS_CARPET_FORMAT :
@@ -549,9 +544,9 @@ public class ColorfulLines
       var("x", pos.getX() & 15),
       var("y", pos.getY() & 15),
       var("z", pos.getZ() & 15),
-      var("chunkX", chunkPos.x),
-      var("chunkY", pos.getY() >> 4),
-      var("chunkZ", chunkPos.z)))),
+      var("subX", chunkPos.x),
+      var("subY", pos.getY() >> 4),
+      var("subZ", chunkPos.z)))),
 
     entry(InfoToggle.BLOCK_BREAK_SPEED, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.BLOCK_BREAK_SPEED_FORMAT,
       var("speed", ".2f", data.getBlockBreakingSpeed())))),
@@ -703,9 +698,7 @@ public class ColorfulLines
         var("name", resourceLocation != null ? resourceLocation.toString() : "?")));
     }),
 
-    entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TILE_ENTITIES_FORMAT,
-      var("loaded", "?"),
-      var("ticking", "?")))),
+    entry(InfoToggle.TILE_ENTITIES, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TILE_ENTITIES_FORMAT))),
 
     entry(InfoToggle.ENTITIES_CLIENT_WORLD, ENTITIES),
     entry(InfoToggle.ENTITIES, ENTITIES),

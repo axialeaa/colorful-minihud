@@ -1,19 +1,18 @@
 package me.axialeaa.colorfulminihud.mixins;
 
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
+import fi.dy.masa.malilib.util.GuiUtils;
+import fi.dy.masa.minihud.gui.GuiConfigs;
+import me.axialeaa.colorfulminihud.ColorfulMinihudMod;
+import me.axialeaa.colorfulminihud.config.Formats;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
-import fi.dy.masa.malilib.util.GuiUtils;
-import fi.dy.masa.minihud.gui.GuiConfigs;
-import me.axialeaa.colorfulminihud.config.Formats;
-import me.axialeaa.colorfulminihud.ColorfulMinihudMod;
+import java.util.List;
 
 @Mixin(GuiConfigs.class)
 public class GuiConfigsMixin
