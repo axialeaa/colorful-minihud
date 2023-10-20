@@ -16,23 +16,25 @@ import java.io.File;
 
 public class Formats implements IConfigHandler
 {
+  public static final String COLOR_DESC = "A customizable color usable in format strings";
+
   public static final ConfigColor
-    COLOR0  = new ConfigColor("color0",  "#0021222C", "A customizable color usable in format strings"),
-    COLOR1  = new ConfigColor("color1",  "#00FF5555", "A customizable color usable in format strings"),
-    COLOR2  = new ConfigColor("color2",  "#0050FA7B", "A customizable color usable in format strings"),
-    COLOR3  = new ConfigColor("color3",  "#00F1FA8C", "A customizable color usable in format strings"),
-    COLOR4  = new ConfigColor("color4",  "#00BD93F9", "A customizable color usable in format strings"),
-    COLOR5  = new ConfigColor("color5",  "#00FF79C6", "A customizable color usable in format strings"),
-    COLOR6  = new ConfigColor("color6",  "#008BE9FD", "A customizable color usable in format strings"),
-    COLOR7  = new ConfigColor("color7",  "#00F8F8F2", "A customizable color usable in format strings"),
-    COLOR8  = new ConfigColor("color8",  "#006272A4", "A customizable color usable in format strings"),
-    COLOR9  = new ConfigColor("color9",  "#00FF6E6E", "A customizable color usable in format strings"),
-    COLOR10 = new ConfigColor("color10", "#0069FF94", "A customizable color usable in format strings"),
-    COLOR11 = new ConfigColor("color11", "#00FFFFA5", "A customizable color usable in format strings"),
-    COLOR12 = new ConfigColor("color12", "#00D6ACFF", "A customizable color usable in format strings"),
-    COLOR13 = new ConfigColor("color13", "#00FF92DF", "A customizable color usable in format strings"),
-    COLOR14 = new ConfigColor("color14", "#00A4FFFF", "A customizable color usable in format strings"),
-    COLOR15 = new ConfigColor("color15", "#00FFFFFF", "A customizable color usable in format strings");
+    COLOR0  = new ConfigColor("color0",  "#0021222C", COLOR_DESC),
+    COLOR1  = new ConfigColor("color1",  "#00FF5555", COLOR_DESC),
+    COLOR2  = new ConfigColor("color2",  "#0050FA7B", COLOR_DESC),
+    COLOR3  = new ConfigColor("color3",  "#00F1FA8C", COLOR_DESC),
+    COLOR4  = new ConfigColor("color4",  "#00BD93F9", COLOR_DESC),
+    COLOR5  = new ConfigColor("color5",  "#00FF79C6", COLOR_DESC),
+    COLOR6  = new ConfigColor("color6",  "#008BE9FD", COLOR_DESC),
+    COLOR7  = new ConfigColor("color7",  "#00F8F8F2", COLOR_DESC),
+    COLOR8  = new ConfigColor("color8",  "#006272A4", COLOR_DESC),
+    COLOR9  = new ConfigColor("color9",  "#00FF6E6E", COLOR_DESC),
+    COLOR10 = new ConfigColor("color10", "#0069FF94", COLOR_DESC),
+    COLOR11 = new ConfigColor("color11", "#00FFFFA5", COLOR_DESC),
+    COLOR12 = new ConfigColor("color12", "#00D6ACFF", COLOR_DESC),
+    COLOR13 = new ConfigColor("color13", "#00FF92DF", COLOR_DESC),
+    COLOR14 = new ConfigColor("color14", "#00A4FFFF", COLOR_DESC),
+    COLOR15 = new ConfigColor("color15", "#00FFFFFF", COLOR_DESC);
 
   public static final ConfigString
     BEE_COUNT_FORMAT                    = new ConfigString("infoBeeCountFormat",
