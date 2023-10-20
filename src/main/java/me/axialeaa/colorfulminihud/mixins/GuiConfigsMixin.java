@@ -29,10 +29,13 @@ public class GuiConfigsMixin
   {
     ImmutableList.Builder<ConfigOptionWrapper> list = ImmutableList.builder();
     for(ConfigOptionWrapper wrapper : original)
-      if(!wrapper.getConfig().getName().equals("coordinateFormat") &&
-        !wrapper.getConfig().getName().equals("dateFormatReal") &&
-        !wrapper.getConfig().getName().equals("dateFormatMinecraft"))
+    {
+      String name = wrapper.getConfig().getName();
+      if(!name.equals("coordinateFormat") &&
+        !name.equals("dateFormatReal") &&
+        !name.equals("dateFormatMinecraft"))
         list.add(wrapper);
+    }
     return list.build();
   }
 
