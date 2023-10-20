@@ -24,6 +24,18 @@ public class GuiConfigsMixin
       cir.setReturnValue(GuiUtils.getScaledWindowWidth() - 300);
   }
 
+  @ModifyReturnValue(method = "getConfigs", at = @At(value = "RETURN", ordinal = 0), remap = false)
+  private List<ConfigOptionWrapper> getGenericConfigs(List<ConfigOptionWrapper> original)
+  {
+    ImmutableList.Builder<ConfigOptionWrapper> list = ImmutableList.builder();
+    for(ConfigOptionWrapper wrapper : original)
+      if(!wrapper.getConfig().getName().equals("coordinateFormat") &&
+        !wrapper.getConfig().getName().equals("dateFormatReal") &&
+        !wrapper.getConfig().getName().equals("dateFormatMinecraft"))
+        list.add(wrapper);
+    return list.build();
+  }
+
   @Inject(method = "getConfigs", at = @At(value = "RETURN", ordinal = 5), cancellable = true, remap = false)
   private void getFormatConfig(CallbackInfoReturnable<List<ConfigOptionWrapper>> cir)
   {
