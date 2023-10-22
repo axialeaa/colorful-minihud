@@ -63,10 +63,14 @@ public class RenderHandlerMixin
     Level level = mc.level;
     LocalPlayer player = mc.player;
     double x = Objects.requireNonNull(player).getX(), y = player.getY(), z = player.getZ();
+    //#if MC >= 11940
+    //$$ BlockPos pos = BlockPos.ofFloored(x, y, z);
+    //#else
     BlockPos pos = new BlockPos(x, y, z);
+    //#endif
     ChunkPos chunkPos = new ChunkPos(pos);
 
-    //#if mc >= 11930
+    //#if MC >= 11930
     //$$ ColorfulLines.setup(mc.getCurrentFps(), data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
     //#else
     ColorfulLines.setup(fps, data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
