@@ -1,0 +1,2 @@
+net.minecraft.util.registry.Registry net.minecraft.registry.Registries
+net.minecraft.util.registry.Registry.BIOME_KEY net.minecraft.registry.RegistyKeys.BIOME

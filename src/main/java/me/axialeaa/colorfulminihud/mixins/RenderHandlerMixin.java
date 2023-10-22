@@ -36,7 +36,9 @@ import java.util.Set;
 @Mixin(RenderHandler.class)
 public class RenderHandlerMixin
 {
+  //#if MC < 11930
   @Shadow private int fps;
+  //#end
   @Shadow @Final private DataStorage data;
   @Shadow private Set<InfoToggle> addedTypes;
 
@@ -64,7 +66,11 @@ public class RenderHandlerMixin
     BlockPos pos = new BlockPos(x, y, z);
     ChunkPos chunkPos = new ChunkPos(pos);
 
+    //#if mc >= 11930
+    //$$ ColorfulLines.setup(mc.getCurrentFps(), data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
+    //#else
     ColorfulLines.setup(fps, data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
+    //#endif
     linesString.clear();
   }
 
