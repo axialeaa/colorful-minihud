@@ -95,7 +95,11 @@ public class RenderHandlerMixin
       }
       catch(Exception e)
       {
+        //#if MC >= 11900
+        //$$ linesComponent.add(Component.literal("Formatting failed - Invalid JSON"));
+        //#else
         linesComponent.add(new TextComponent("Formatting failed - Invalid JSON"));
+        //#endif
       }
 
     if(Configs.Generic.SORT_LINES_BY_LENGTH.getBooleanValue())

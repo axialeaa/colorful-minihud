@@ -1,0 +1,1 @@
+net.minecraft.entity.passive.HorseBaseEntity net.minecraft.entity.passive.AbstractHorseEntity
