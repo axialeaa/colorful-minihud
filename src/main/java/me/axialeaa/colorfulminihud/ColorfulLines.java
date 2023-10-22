@@ -577,6 +577,17 @@ public class ColorfulLines
           Formats.FACING_WEST_FORMAT));
     }),
 
+    //#if MC >= 11800
+    //$$ entry(InfoToggle.LIGHT_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
+    //$$ {
+    //$$   if(clientChunk.isEmpty())
+    //$$     return;
+    //$$
+    //$$   LevelLightEngine lightEngine = Objects.requireNonNull(level).getChunkSource().getLightEngine();
+    //$$   lines.add(line(Formats.LIGHT_LEVEL_FORMAT,
+    //$$     var("light", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos))));
+    //$$ }),
+    //#else
     entry(InfoToggle.LIGHT_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       if(clientChunk.isEmpty())
@@ -598,6 +609,7 @@ public class ColorfulLines
         var("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
         var("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
     }),
+    //#endif
 
     entry(InfoToggle.BEE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
@@ -628,6 +640,14 @@ public class ColorfulLines
       lines.add(line(Formats.SPEED_HV_FORMAT,
         var("h", ".3f", Math.sqrt(dx*dx + dz*dz) * 20.0),
         var("v", ".3f", dy * 20.0)))),
+
+    //#if MC >= 11800
+    //$$ entry(InfoToggle.SPRINTING, (List<String> lines, Set<InfoToggle> addedTypes) ->
+    //$$ {
+    //$$   if(player.isSprinting())
+    //$$     lines.add(line(Formats.SPRINTING_FORMAT));
+    //$$ }),
+    //#endif
 
     entry(InfoToggle.SPEED_AXIS, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.SPEED_AXIS_FORMAT,
       var("x", ".3f", dx * 20),
@@ -681,7 +701,11 @@ public class ColorfulLines
       if(serverChunk.isEmpty())
         return;
 
+      //#if MC >= 11800
+      //$$ Biome biome = Objects.requireNonNull(level).getBiome(pos).value();
+      //#else
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
+      //#endif
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
       lines.add(line(Formats.BIOME_FORMAT,
         var("biome", StringUtils.translate("biome." + Objects.requireNonNull(resourceLocation).toString().replace(":", ".")))));
@@ -692,7 +716,11 @@ public class ColorfulLines
       if(serverChunk.isEmpty())
         return;
 
+      //#if MC >= 11800
+      //$$ Biome biome = Objects.requireNonNull(level).getBiome(pos).value();
+      //#else
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
+      //#endif
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
       lines.add(line(Formats.BIOME_REG_NAME_FORMAT,
         var("name", resourceLocation != null ? resourceLocation.toString() : "?")));

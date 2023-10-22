@@ -173,13 +173,19 @@ public class Formats implements IConfigHandler
       "\"Horse Jump: %height m\"",
       "The text formatting used for infoHorseJump\n§6%%%%height - The maximum jump height of the horse you're riding, in meters"),
 
+    //#if MC >= 11800
+    //$$ LIGHT_LEVEL_FORMAT                  = new ConfigString("infoLightLevelFormat",
+    //$$   "\"Light (block): %light\"",
+    //$$   "The text formatting used for infoLightLevel\n§6%%%%light - The block light level at where you're standing"),
+    //#else
     LIGHT_LEVEL_CLIENT_FORMAT           = new ConfigString("infoLightLevelClientFormat",
       "\"Client Light: %total (block: %block, sky: %sky)\"",
-      "The text formatting used for infoLightLevelClient\n§6%%%%total - The raw brightness at where you're standing\n§6%%%%block - The block light level at where you're standing\n§6%%%%sky - The sky light level at where you're standing"),
+      "The text formatting used for infoLightLevel for client light\n§6%%%%total - The raw brightness at where you're standing\n§6%%%%block - The block light level at where you're standing\n§6%%%%sky - The sky light level at where you're standing"),
 
     LIGHT_LEVEL_SERVER_FORMAT           = new ConfigString("infoLightLevelServerFormat",
       "\"Server Light: %total (block: %block, sky: %sky)\"",
-      "The text formatting used for infoLightLevelServer\n§6%%%%total - The raw brightness at where you're standing\n§6%%%%block - The block light level at where you're standing\n§6%%%%sky - The sky light level at where you're standing"),
+      "The text formatting used for infoLightLevel for server light\n§6%%%%total - The raw brightness at where you're standing\n§6%%%%block - The block light level at where you're standing\n§6%%%%sky - The sky light level at where you're standing"),
+    //#endif
 
     LOOKING_AT_BLOCK_FORMAT             = new ConfigString("infoLookingAtBlockFormat",
       "\"Looking at block: %x, %y, %z\"",
@@ -293,6 +299,12 @@ public class Formats implements IConfigHandler
       "\"Speed: xz: %h y: %v m/s\"",
       "The text formatting used for infoSpeedHV\n§6%%%%h, %%%%v - The horizontal and vertical speed you're travelling at in meters per second\nCheck the README for more info on how to change precision."),
 
+    //#if MC >= 11800
+    //$$ SPRINTING_FORMAT                    = new ConfigString("infoSprintingFormat",
+    //$$   "#gold\"Sprinting\"",
+    //$$   "The text formatting used for infoSprinting"),
+    //#endif
+
     TILE_ENTITIES_FORMAT                = new ConfigString("infoTileEntitiesFormat",
       "\"Client world TE - L: ?, T: ? - TODO\"",
       "The text formatting used for infoTileEntities"),
@@ -371,8 +383,12 @@ public class Formats implements IConfigHandler
     HONEY_LEVEL_FORMAT,
     HORSE_SPEED_FORMAT,
     HORSE_JUMP_FORMAT,
+    //#if MC >= 11800
+    //$$ LIGHT_LEVEL_FORMAT,
+    //#else
     LIGHT_LEVEL_CLIENT_FORMAT,
     LIGHT_LEVEL_SERVER_FORMAT,
+    //#endif
     LOOKING_AT_BLOCK_FORMAT,
     LOOKING_AT_BLOCK_CHUNK_FORMAT,
     LOOKING_AT_ENTITY_FORMAT,
@@ -401,6 +417,9 @@ public class Formats implements IConfigHandler
     SPEED_FORMAT,
     SPEED_AXIS_FORMAT,
     SPEED_HV_FORMAT,
+    //#if MC >= 11800
+    //$$ SPRINTING_FORMAT,
+    //#endif
     TILE_ENTITIES_FORMAT,
     TIME_DAY_MODULO_FORMAT,
     TIME_REAL_FORMAT,
