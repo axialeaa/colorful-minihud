@@ -49,7 +49,11 @@ public class RenderUtils extends fi.dy.masa.malilib.render.RenderUtils
     for(Component line : lines)
     {
       if(line == null)
+        //#if MC >= 11900
+        //$$ line = Component.literal("NULL");
+        //#else
         line = new TextComponent("NULL");
+        //#endif
 
       final int width = font.width(line);
       switch(alignment)

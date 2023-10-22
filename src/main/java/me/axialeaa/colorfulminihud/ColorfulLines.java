@@ -185,6 +185,11 @@ public class ColorfulLines
     return new Variable<>(key, "f", value);
   }
 
+  private static Variable<Double> var(String key, double value)
+  {
+    return new Variable<>(key, "s", value);
+  }
+
   private static Variable<String> separator(boolean condition) {
     return var("separator", condition ? Formats.SEPARATOR_FORMAT.getStringValue() : "");
   }
@@ -471,8 +476,23 @@ public class ColorfulLines
         var("dayFrom0", day),
         var("dayFrom1", day + 1),
         var("hour", "02d", (dayTicks / 1000 + 6) % 24),
-        var("min", "02d", (int)(dayTicks * 0.06) % 60),
-        var("sec", "02d", (int)(dayTicks * 3.6) % 60)));
+        var("min", "02d", (dayTicks * 0.06) % 60),
+        var("sec", "02d", (dayTicks * 3.6) % 60)
+        //#if MC >= 11900
+        //$$ ,
+        //$$ var("moon", switch ((int) (day % 8)) {
+        //$$  case 0 -> "Full moon";
+        //$$  case 1 -> "Waning gibbous";
+        //$$  case 2 -> "Last quarter";
+        //$$  case 3 -> "Waning crescent";
+        //$$  case 4 -> "New moon";
+        //$$  case 5 -> "Waxing crescent";
+        //$$  case 6 -> "First quarter";
+        //$$  case 7 -> "Waxing gibbous";
+        //$$  default -> "Invalid";
+        //$$})
+        //#endif
+      ));
     }),
 
     entry(InfoToggle.TIME_DAY_MODULO, (List<String> lines, Set<InfoToggle> addedTypes) ->
