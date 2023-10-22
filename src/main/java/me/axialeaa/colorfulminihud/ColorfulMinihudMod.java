@@ -16,7 +16,7 @@ import me.axialeaa.colorfulminihud.config.Formats;
 
 public class ColorfulMinihudMod implements ModInitializer, IInitializationHandler
 {
-  public static final Logger LOGGER = LogManager.getLogger();
+//  public static final Logger LOGGER = LogManager.getLogger();
 
   public static final String MOD_ID = "colorfulminihud";
   public static String MOD_VERSION = "unknown";

@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Mixin(GuiConfigs.class)
 public class GuiConfigsMixin
@@ -25,12 +26,12 @@ public class GuiConfigsMixin
   }
 
   @ModifyReturnValue(method = "getConfigs", at = @At(value = "RETURN", ordinal = 0), remap = false)
-  private List<ConfigOptionWrapper> getGenericConfigs(List<ConfigOptionWrapper> original)
+  public List<ConfigOptionWrapper> getGenericConfigs(List<ConfigOptionWrapper> original)
   {
     ImmutableList.Builder<ConfigOptionWrapper> list = ImmutableList.builder();
     for(ConfigOptionWrapper wrapper : original)
     {
-      String name = wrapper.getConfig().getName();
+      String name = Objects.requireNonNull(wrapper.getConfig()).getName();
       if(!name.equals("coordinateFormat") &&
         !name.equals("dateFormatReal") &&
         !name.equals("dateFormatMinecraft"))
