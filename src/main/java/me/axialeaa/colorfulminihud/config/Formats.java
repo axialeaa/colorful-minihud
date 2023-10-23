@@ -174,9 +174,13 @@ public class Formats implements IConfigHandler
       "The text formatting used for infoHorseJump\n§6%%%%height - The maximum jump height of the horse you're riding, in meters"),
 
     //#if MC >= 11800
-    //$$ LIGHT_LEVEL_FORMAT                  = new ConfigString("infoLightLevelFormat",
-    //$$   "\"Light (block): %light\"",
-    //$$   "The text formatting used for infoLightLevel\n§6%%%%light - The block light level at where you're standing"),
+    //$$ LIGHT_LEVEL_CLIENT_FORMAT           = new ConfigString("infoLightLevelClientFormat",
+    //$$   "\"Client Light (block): %block\"",
+    //$$   "The text formatting used for infoLightLevel for client light\n§6%%%%total - The raw brightness at where you're standing\n§6%%%%block - The block light level at where you're standing\n§6%%%%sky - The sky light level at where you're standing"),
+    //$$
+    //$$ LIGHT_LEVEL_SERVER_FORMAT           = new ConfigString("infoLightLevelServerFormat",
+    //$$   "\"Server Light (block): %block\"",
+    //$$   "The text formatting used for infoLightLevel for server light\n§6%%%%total - The raw brightness at where you're standing\n§6%%%%block - The block light level at where you're standing\n§6%%%%sky - The sky light level at where you're standing"),
     //#else
     LIGHT_LEVEL_CLIENT_FORMAT           = new ConfigString("infoLightLevelClientFormat",
       "\"Client Light: %total (block: %block, sky: %sky)\"",
@@ -389,12 +393,8 @@ public class Formats implements IConfigHandler
     HONEY_LEVEL_FORMAT,
     HORSE_SPEED_FORMAT,
     HORSE_JUMP_FORMAT,
-    //#if MC >= 11800
-    //$$ LIGHT_LEVEL_FORMAT,
-    //#else
     LIGHT_LEVEL_CLIENT_FORMAT,
     LIGHT_LEVEL_SERVER_FORMAT,
-    //#endif
     LOOKING_AT_BLOCK_FORMAT,
     LOOKING_AT_BLOCK_CHUNK_FORMAT,
     LOOKING_AT_ENTITY_FORMAT,

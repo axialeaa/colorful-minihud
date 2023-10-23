@@ -9,6 +9,7 @@ import fi.dy.masa.minihud.util.DataStorage;
 import me.axialeaa.colorfulminihud.ColorfulLines;
 import me.axialeaa.colorfulminihud.RenderUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -60,7 +61,7 @@ public class RenderHandlerMixin
   private void preUpdateLines(CallbackInfo ci)
   {
     Minecraft mc = Minecraft.getInstance();
-    Level level = mc.level;
+    ClientLevel level = mc.level;
     LocalPlayer player = mc.player;
     double x = Objects.requireNonNull(player).getX(), y = player.getY(), z = player.getZ();
     //#if MC >= 11904

@@ -12,6 +12,7 @@ import fi.dy.masa.minihud.util.IServerEntityManager;
 import fi.dy.masa.minihud.util.MiscUtils;
 import me.axialeaa.colorfulminihud.config.Formats;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -64,7 +65,8 @@ public class ColorfulLines
   private static DataStorage data;
 
   private static final Minecraft mc = Minecraft.getInstance();
-  private static Level level;
+  private static ClientLevel level;
+  private static Level bestLevel;
   private static LocalPlayer player;
   private static double x, y, z;
   private static double dx, dy, dz;
@@ -73,12 +75,14 @@ public class ColorfulLines
   private static LevelChunk clientChunk, serverChunk;
   private static BlockState targetedBlockState;
   private static BlockEntity targetedBlockEntity;
+  private static boolean nonNull, isServerLevel;
 
-  public static void setup(int fps, DataStorage data, Level level, LocalPlayer player, double x, double y, double z, BlockPos pos, ChunkPos chunkPos, LevelChunk clientChunk, LevelChunk serverChunk, BlockState targetedBlockState, BlockEntity targetedBlockEntity)
+  public static void setup(int fps, DataStorage data, ClientLevel level, LocalPlayer player, double x, double y, double z, BlockPos pos, ChunkPos chunkPos, LevelChunk clientChunk, LevelChunk serverChunk, BlockState targetedBlockState, BlockEntity targetedBlockEntity)
   {
     ColorfulLines.fps = fps;
     ColorfulLines.data = data;
     ColorfulLines.level = level;
+    bestLevel = WorldUtils.getBestWorld(mc);
     ColorfulLines.player = player;
     ColorfulLines.x = x;
     ColorfulLines.y = y;
@@ -92,11 +96,14 @@ public class ColorfulLines
     ColorfulLines.serverChunk = serverChunk;
     ColorfulLines.targetedBlockState = targetedBlockState;
     ColorfulLines.targetedBlockEntity = targetedBlockEntity;
+    nonNull = level != null;
+    isServerLevel = bestLevel != null && mc.hasSingleplayerServer() && bestLevel instanceof ServerLevel;
   }
 
   public static void addLine(InfoToggle type, List<String> lines, Set<InfoToggle> addedTypes)
   {
-    lineMap.get(type).accept(lines, addedTypes);
+    if(nonNull)
+      lineMap.get(type).accept(lines, addedTypes);
   }
 
   private record Variable<T>(String key, String defaultFormat, T value)
@@ -243,7 +250,7 @@ public class ColorfulLines
         str.append(",");
       str.append(line(Formats.DIMENSION_FORMAT,
         separator(hasOther),
-        var("dim", Objects.requireNonNull(level).dimension().location().toString())));
+        var("dim", level.dimension().location().toString())));
       addedTypes.add(InfoToggle.DIMENSION);
       // we don't need to reassign hasOther here because this is the last entry in the compound; we don't need to separate this from anything in front
     }
@@ -339,24 +346,20 @@ public class ColorfulLines
     if(InfoToggle.ENTITIES_CLIENT_WORLD.getBooleanValue())
     {
       str.append(line(Formats.ENTITIES_CLIENT_WORLD_FORMAT,
-        var("count", Objects.requireNonNull(mc.level).getEntityCount())));
+        var("count", level.getEntityCount())));
       addedTypes.add(InfoToggle.ENTITIES_CLIENT_WORLD);
       hasOther = true;
     }
 
-    if(InfoToggle.ENTITIES.getBooleanValue() && mc.hasSingleplayerServer())
+    if(InfoToggle.ENTITIES.getBooleanValue() && isServerLevel)
     {
-      Level world = WorldUtils.getBestWorld(mc);
-      if(world instanceof ServerLevel)
-      {
-        if(hasOther)
-          str.append(",");
-        str.append(line(Formats.ENTITIES_FORMAT,
-          separator(hasOther),
-          var("count", ((IServerEntityManager) ((IMixinServerWorld) world).minihud_getEntityManager()).getIndexSize())));
-        addedTypes.add(InfoToggle.ENTITIES);
-        hasOther = true; // we need to reassign hasOther here in case if(world instanceof ServerLevel) returns false
-      }
+      if(hasOther)
+        str.append(",");
+      str.append(line(Formats.ENTITIES_FORMAT,
+        separator(hasOther),
+        var("count", ((IServerEntityManager) ((IMixinServerWorld) bestLevel).minihud_getEntityManager()).getIndexSize())));
+      addedTypes.add(InfoToggle.ENTITIES);
+      hasOther = true;
     }
     if(hasOther)
       lines.add(str.append("]").toString());
@@ -469,12 +472,12 @@ public class ColorfulLines
       var("time", "tk", new Date(System.currentTimeMillis()))))),
 
     entry(InfoToggle.TIME_WORLD, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.TIME_WORLD_FORMAT,
-      var("day", "5d", Objects.requireNonNull(level).getDayTime()),
+      var("day", "5d", level.getDayTime()),
       var("total", level.getGameTime())))),
 
     entry(InfoToggle.TIME_WORLD_FORMATTED, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      long timeDay = Objects.requireNonNull(level).getDayTime();
+      long timeDay = level.getDayTime();
       long day = timeDay / 24000;
       int dayTicks = (int)(timeDay % 24000);
       lines.add(line(Formats.TIME_WORLD_FORMATTED_FORMAT,
@@ -505,7 +508,7 @@ public class ColorfulLines
       int mod = Configs.Generic.TIME_DAY_DIVISOR.getIntegerValue();
       lines.add(line(Formats.TIME_DAY_MODULO_FORMAT,
         var("mod", mod),
-        var("time", "5d", Objects.requireNonNull(level).getDayTime() % mod)));
+        var("time", "5d", level.getDayTime() % mod)));
     }),
 
     entry(InfoToggle.TIME_TOTAL_MODULO, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -513,7 +516,7 @@ public class ColorfulLines
       int mod1 = Configs.Generic.TIME_TOTAL_DIVISOR.getIntegerValue();
       lines.add(line(Formats.TIME_TOTAL_MODULO_FORMAT,
         var("mod", mod1),
-        var("time", "5d", Objects.requireNonNull(level).getGameTime() % mod1)));
+        var("time", "5d", level.getGameTime() % mod1)));
     }),
 
     entry(InfoToggle.SERVER_TPS, (List<String> lines, Set<InfoToggle> addedTypes) ->
@@ -602,39 +605,28 @@ public class ColorfulLines
           Formats.FACING_WEST_FORMAT));
     }),
 
-    //#if MC >= 11800
-    //$$ entry(InfoToggle.LIGHT_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
-    //$$ {
-    //$$   if(clientChunk.isEmpty())
-    //$$     return;
-    //$$
-    //$$   LevelLightEngine lightEngine = Objects.requireNonNull(level).getChunkSource().getLightEngine();
-    //$$   lines.add(line(Formats.LIGHT_LEVEL_FORMAT,
-    //$$     var("light", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos))));
-    //$$ }),
-    //#else
     entry(InfoToggle.LIGHT_LEVEL, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       if(clientChunk.isEmpty())
         return;
 
-      LevelLightEngine lightEngine = Objects.requireNonNull(level).getChunkSource().getLightEngine();
+      if(isServerLevel && serverChunk != null)
+      {
+        LevelLightEngine lightEngine = bestLevel.getChunkSource().getLightEngine();
+        lines.add(line(Formats.LIGHT_LEVEL_SERVER_FORMAT,
+          var("light", lightEngine.getRawBrightness(pos, 0)),
+          var("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
+          var("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
+        return;
+      }
+
+      LevelLightEngine lightEngine = level.getChunkSource().getLightEngine();
       lines.add(line(Formats.LIGHT_LEVEL_CLIENT_FORMAT,
         var("light", lightEngine.getRawBrightness(pos, 0)),
         var("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
         var("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
 
-      Level bestLevel = WorldUtils.getBestWorld(mc);
-      if(serverChunk == null || serverChunk == clientChunk)
-        return;
-
-      lightEngine = Objects.requireNonNull(bestLevel).getChunkSource().getLightEngine();
-      lines.add(line(Formats.LIGHT_LEVEL_SERVER_FORMAT,
-        var("light", lightEngine.getRawBrightness(pos, 0)),
-        var("block", lightEngine.getLayerListener(LightLayer.BLOCK).getLightValue(pos)),
-        var("sky", lightEngine.getLayerListener(LightLayer.SKY).getLightValue(pos))));
     }),
-    //#endif
 
     entry(InfoToggle.BEE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
@@ -692,17 +684,19 @@ public class ColorfulLines
 
     entry(InfoToggle.LOADED_CHUNKS_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      String chunksClient = Objects.requireNonNull(level).gatherChunkSourceStats();
-      Level levelServer = WorldUtils.getBestWorld(mc);
-      if(levelServer == null || levelServer != level)
-        lines.add(line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT,
-          var("stats", chunksClient)));
+      String stats = level.gatherChunkSourceStats();
+      if(isServerLevel)
+      {
+        ServerChunkCache cache = (ServerChunkCache)bestLevel.getChunkSource();
+        lines.add(line(Formats.LOADED_CHUNKS_COUNT_SERVER_FORMAT,
+          var("loaded", cache.getLoadedChunksCount()),
+          var("total", cache.getTickingGenerated()),
+          var("stats", stats)));
+        return;
+      }
 
-      ServerChunkCache cache = (ServerChunkCache)Objects.requireNonNull(levelServer).getChunkSource();
-      lines.add(line(Formats.LOADED_CHUNKS_COUNT_SERVER_FORMAT,
-        var("loaded", cache.getLoadedChunksCount()),
-        var("total", cache.getTickingGenerated()),
-        var("stats", chunksClient)));
+      lines.add(line(Formats.LOADED_CHUNKS_COUNT_CLIENT_FORMAT,
+        var("stats", stats)));
     }),
 
     entry(InfoToggle.PARTICLE_COUNT, (List<String> lines, Set<InfoToggle> addedTypes) -> lines.add(line(Formats.PARTICLE_COUNT_FORMAT,
@@ -710,7 +704,7 @@ public class ColorfulLines
 
     entry(InfoToggle.DIFFICULTY, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      ChunkAccess serverChunk = Objects.requireNonNull(level).getChunk(chunkPos.getWorldPosition());
+      ChunkAccess serverChunk = level.getChunk(chunkPos.getWorldPosition());
 
       float moonPhaseFactor = level.getMoonBrightness();
       long chunkInhabitedTime = serverChunk.getInhabitedTime();
@@ -727,9 +721,9 @@ public class ColorfulLines
         return;
 
       //#if MC >= 11800
-      //$$ Biome biome = Objects.requireNonNull(level).getBiome(pos).value();
+      //$$ Biome biome = level.getBiome(pos).value();
       //#else
-      Biome biome = Objects.requireNonNull(level).getBiome(pos);
+      Biome biome = level.getBiome(pos);
       //#endif
 
       //#if MC >= 11903
@@ -747,9 +741,9 @@ public class ColorfulLines
         return;
 
       //#if MC >= 11800
-      //$$ Biome biome = Objects.requireNonNull(level).getBiome(pos).value();
+      //$$ Biome biome = level.getBiome(pos).value();
       //#else
-      Biome biome = Objects.requireNonNull(level).getBiome(pos);
+      Biome biome = level.getBiome(pos);
       //#endif
 
       //#if MC >= 11903
@@ -768,7 +762,7 @@ public class ColorfulLines
 
     entry(InfoToggle.SLIME_CHUNK, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
-      if(!MiscUtils.isOverworld(Objects.requireNonNull(level)))
+      if(!MiscUtils.isOverworld(level))
         return;
 
       if(data.isWorldSeedKnown(level))
@@ -816,7 +810,7 @@ public class ColorfulLines
       if(mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK)
       {
         BlockPos posLooking = ((BlockHitResult)mc.hitResult).getBlockPos();
-        BlockState state = Objects.requireNonNull(mc.level).getBlockState(posLooking);
+        BlockState state = level.getBlockState(posLooking);
         //#if MC >= 11903
         //$$ ResourceLocation resourceLocation = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         //#else
