@@ -18,7 +18,7 @@ import java.util.Objects;
 @Mixin(GuiConfigs.class)
 public class GuiConfigsMixin
 {
-  @Inject(method = "getConfigWidth", at = @At(value = "RETURN", ordinal = 4), cancellable = true, remap = false)
+  @Inject(method = "getConfigWidth", at = @At(value = "TAIL", shift = At.Shift.BEFORE), cancellable = true, remap = false)
   private void getConfigWidth(CallbackInfoReturnable<Integer> cir)
   {
     if(GuiConfigs.tab == ColorfulMinihudMod.FORMATS)

@@ -1,6 +1,10 @@
 package me.axialeaa.colorfulminihud.mixins;
 
+//#if MC >= 12000
+//$$ import net.minecraft.client.gui.GuiGraphics;
+//#else
 import com.mojang.blaze3d.vertex.PoseStack;
+//#endif
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
@@ -51,11 +55,19 @@ public class RenderHandlerMixin
   @Unique private final List<String> linesString = new ArrayList<>();
   @Unique private final List<Component> linesComponent = new ArrayList<>();
 
+  //#if MC >= 12000
+  //$$ @Redirect(method = "onRenderGameOverlayPost", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/render/RenderUtils;renderText(IIDIILfi/dy/masa/malilib/config/HudAlignment;ZZLjava/util/List;Lnet/minecraft/client/gui/GuiGraphics;)I"))
+  //$$ private int renderText(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment, boolean useBackground, boolean useShadow, List<String> lines, GuiGraphics graphics)
+  //$$ {
+  //$$   return RenderUtils.renderComponents(xOff, yOff, scale, textColor, bgColor, alignment, useBackground, useShadow, linesComponent, graphics);
+  //$$ }
+  //#else
   @Redirect(method = "onRenderGameOverlayPost", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/render/RenderUtils;renderText(IIDIILfi/dy/masa/malilib/config/HudAlignment;ZZLjava/util/List;Lcom/mojang/blaze3d/vertex/PoseStack;)I"))
   private int renderText(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment, boolean useBackground, boolean useShadow, List<String> lines, PoseStack poseStack)
   {
     return RenderUtils.renderComponents(xOff, yOff, scale, textColor, bgColor, alignment, useBackground, useShadow, linesComponent, poseStack);
   }
+  //#endif
 
   @Inject(method = "updateLines", at = @At(value = "INVOKE", target = "Ljava/util/Collections;sort(Ljava/util/List;)V", ordinal = 0), remap = false)
   private void preUpdateLines(CallbackInfo ci)

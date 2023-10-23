@@ -5,6 +5,9 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+//#if MC >= 12000
+//$$ import net.minecraft.client.gui.GuiGraphics;
+//#endif
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -24,8 +27,14 @@ public class RenderUtils extends fi.dy.masa.malilib.render.RenderUtils
   private static final Font font = mc.font;
   private static final Tesselator tesselator = Tesselator.getInstance();
 
+//#if MC >= 12000
+//$$ public static int renderComponents(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment, boolean useBackground, boolean useShadow, List<Component> lines, GuiGraphics graphics)
+//$$ {
+//$$   PoseStack poseStack = graphics.pose();
+//#else
   public static int renderComponents(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment, boolean useBackground, boolean useShadow, List<Component> lines, PoseStack poseStack)
   {
+//#endif
     final int scaledWidth = GuiUtils.getScaledWindowWidth();
     final int lineHeight = font.lineHeight + 2;
     final int contentHeight = lines.size() * lineHeight - 2;
@@ -75,11 +84,14 @@ public class RenderUtils extends fi.dy.masa.malilib.render.RenderUtils
       if(useBackground)
         drawRect(poseStack.last().pose(), x - bgMargin, y - bgMargin, width + bgMargin, bgMargin + font.lineHeight, bgColor);
 
+      //#if MC >= 12000
+      //$$ graphics.drawString(font, line, x, y, textColor, useShadow);
+      //#else
       if(useShadow)
         font.drawShadow(poseStack, line, x, y, textColor);
-
       else
         font.draw(poseStack, line, x, y, textColor);
+      //#endif
     }
 
     if(scale != 1d)
