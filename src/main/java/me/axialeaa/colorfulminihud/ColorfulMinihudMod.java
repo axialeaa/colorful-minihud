@@ -3,8 +3,8 @@ package me.axialeaa.colorfulminihud;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+// import org.apache.logging.log4j.LogManager;
+// import org.apache.logging.log4j.Logger;
 
 import com.chocohead.mm.api.ClassTinkerers;
 

@@ -16,7 +16,12 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+//#if MC >= 11903
+//$$ import net.minecraft.core.registries.Registries;
+//$$ import net.minecraft.core.registries.BuiltInRegistries;
+//#else
 import net.minecraft.core.Registry;
+//#endif
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerChunkCache;
@@ -726,7 +731,12 @@ public class ColorfulLines
       //#else
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
       //#endif
+
+      //#if MC >= 11903
+      //$$ ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registries.BIOME).getKey(biome);
+      //#else
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+      //#endif
       lines.add(line(Formats.BIOME_FORMAT,
         var("biome", StringUtils.translate("biome." + Objects.requireNonNull(resourceLocation).toString().replace(":", ".")))));
     }),
@@ -741,7 +751,12 @@ public class ColorfulLines
       //#else
       Biome biome = Objects.requireNonNull(level).getBiome(pos);
       //#endif
+
+      //#if MC >= 11903
+      //$$ ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registries.BIOME).getKey(biome);
+      //#else
       ResourceLocation resourceLocation = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+      //#endif
       lines.add(line(Formats.BIOME_REG_NAME_FORMAT,
         var("name", resourceLocation != null ? resourceLocation.toString() : "?")));
     }),
@@ -802,7 +817,11 @@ public class ColorfulLines
       {
         BlockPos posLooking = ((BlockHitResult)mc.hitResult).getBlockPos();
         BlockState state = Objects.requireNonNull(mc.level).getBlockState(posLooking);
+        //#if MC >= 11903
+        //$$ ResourceLocation resourceLocation = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        //#else
         ResourceLocation resourceLocation = Registry.BLOCK.getKey(state.getBlock());
+        //#endif
 
         lines.add(line(Formats.BLOCK_PROPS_BLOCK_FORMAT,
           var("block", resourceLocation.toString())));

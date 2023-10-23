@@ -36,9 +36,9 @@ import java.util.Set;
 @Mixin(RenderHandler.class)
 public class RenderHandlerMixin
 {
-  //#if MC < 11930
+  //#if MC < 11903
   @Shadow private int fps;
-  //#end
+  //#endif
   @Shadow @Final private DataStorage data;
   @Shadow private Set<InfoToggle> addedTypes;
 
@@ -63,15 +63,15 @@ public class RenderHandlerMixin
     Level level = mc.level;
     LocalPlayer player = mc.player;
     double x = Objects.requireNonNull(player).getX(), y = player.getY(), z = player.getZ();
-    //#if MC >= 11940
-    //$$ BlockPos pos = BlockPos.ofFloored(x, y, z);
+    //#if MC >= 11904
+    //$$ BlockPos pos = BlockPos.containing(x, y, z);
     //#else
     BlockPos pos = new BlockPos(x, y, z);
     //#endif
     ChunkPos chunkPos = new ChunkPos(pos);
 
-    //#if MC >= 11930
-    //$$ ColorfulLines.setup(mc.getCurrentFps(), data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
+    //#if MC >= 11903
+    //$$ ColorfulLines.setup(mc.getFps(), data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
     //#else
     ColorfulLines.setup(fps, data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
     //#endif
