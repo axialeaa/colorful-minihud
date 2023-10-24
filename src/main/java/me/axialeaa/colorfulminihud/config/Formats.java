@@ -313,15 +313,9 @@ public class Formats implements IConfigHandler
       "\"World time: %day - total: %total\"",
       "The text formatting used for infoTimeWorld\n§6%%%%day - The current time of day, in ticks\n§6%%%%total - The total time played in this world, in ticks"),
 
-    //#if MC >= 11900
-    //$$ TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoWorldTimeFormattedFormat",
-    //$$   "\"MC time: (day %dayFrom0) %hour:%min:xx\"",
-    //$$   "The text formatting used for infoTimeWorldFormatted\n§6The supported placeholders are: %%%%dayFrom0, %%%%dayFrom1, %%%%hour, %%%%min, %%%%sec and %%%%moon\n§6%%%%dayFrom0 starts the day counter from 0. %%%%dayFrom1 starts from 1.");
-    //#else
     TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoWorldTimeFormattedFormat",
       "\"MC time: (day %dayFrom0) %hour:%min:xx\"",
       "The text formatting used for infoTimeWorldFormatted\n§6The supported placeholders are: %%%%dayFrom0, %%%%dayFrom1, %%%%hour, %%%%min and %%%%sec\n§6%%%%dayFrom0 starts the day counter from 0. %%%%dayFrom1 starts from 1.");
-    //#endif
 
   public static final ImmutableList<IConfigValue> COLORS = ImmutableList.of(
     COLOR0,
