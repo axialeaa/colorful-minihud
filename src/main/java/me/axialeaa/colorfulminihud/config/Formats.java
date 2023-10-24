@@ -103,15 +103,15 @@ public class Formats implements IConfigHandler
 
     COORDINATES_FORMAT                  = new ConfigString("infoCoordinatesFormat",
       "\"XYZ: %x / %y / %z\"",
-      "The text formatting used for infoCoordinates\n§6%%%%x, %%%%y, %%%%z - The coordinates of the position you're standing at\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoCoordinates\n§6%%%%x, %%%%y, %%%%z - The coordinates of the position you're standing at\n§6Check the README for more info on how to change precision."),
 
     COORDINATES_SCALED_NETHER_FORMAT    = new ConfigString("infoCoordinatesScaledNetherFormat",
       "\"%separator\", \"Nether: %x / %y / %z\"",
-      "The text formatting used for infoCoordinatesScaled when in the overworld\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %%%%y, %%%%z - The nether-scaled coordinates of the position you're standing at\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoCoordinatesScaled when in the overworld\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %%%%y, %%%%z - The nether-scaled coordinates of the position you're standing at\n§6Check the README for more info on how to change precision."),
 
     COORDINATES_SCALED_OVERWORLD_FORMAT = new ConfigString("infoCoordinatesScaledOverworldFormat",
       "\"%separator\", \"Overworld: %x / %y / %z\"",
-      "The text formatting used for infoCoordinatesScaled when in the nether\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %%%%y, %%%%z - The overworld-scaled coordinates of the position you're standing at\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoCoordinatesScaled when in the nether\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%x, %%%%y, %%%%z - The overworld-scaled coordinates of the position you're standing at\n§6Check the README for more info on how to change precision."),
 
     DIFFICULTY_FORMAT                   = new ConfigString("infoDifficultyFormat",
       "\"Local Difficulty: %local // %clamped (Day %day)\"",
@@ -223,11 +223,11 @@ public class Formats implements IConfigHandler
 
     ROTATION_PITCH_FORMAT               = new ConfigString("infoRotationPitchFormat",
       "\"%separator\", \"Pitch: %pitch\"",
-      "The text formatting used for infoRotationPitch\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%pitch - The camera pitch in degrees, truncated to the specified decimal position\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoRotationPitch\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%pitch - The camera pitch in degrees, truncated to the specified decimal position\n§6Check the README for more info on how to change precision."),
 
     ROTATION_YAW_FORMAT                 = new ConfigString("infoRotationYawFormat",
       "\"Yaw: %yaw\"",
-      "The text formatting used for infoRotationYaw\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%yaw - The camera yaw in degrees, truncated to the specified decimal position\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoRotationYaw\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%yaw - The camera yaw in degrees, truncated to the specified decimal position\n§6Check the README for more info on how to change precision."),
 
     SEPARATOR_FORMAT                    = new ConfigString("separatorFormat",
       " / ",
@@ -283,15 +283,15 @@ public class Formats implements IConfigHandler
 
     SPEED_FORMAT                        = new ConfigString("infoSpeedFormat",
       "\"%separator\", \"Speed: %speed m/s\"",
-      "The text formatting used for infoSpeed\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%speed - The speed you're travelling at in meters per second, truncated to the specified decimal position\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoSpeed\n§6%%%%separator - The multi-line separator to visually cut this off from other info\n§6%%%%speed - The speed you're travelling at in meters per second, truncated to the specified decimal position\n§6Check the README for more info on how to change precision."),
 
     SPEED_AXIS_FORMAT                   = new ConfigString("infoSpeedAxisFormat",
       "\"Speed: x: %x y: %y z: %z m/s\"",
-      "The text formatting used for infoSpeedAxis\n§6%%%%x, %%%%y, %%%%z - The speed per axis of travel in meters per second, truncated to the specified decimal position\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoSpeedAxis\n§6%%%%x, %%%%y, %%%%z - The speed per axis of travel in meters per second, truncated to the specified decimal position\n§6Check the README for more info on how to change precision."),
 
     SPEED_HV_FORMAT                     = new ConfigString("infoSpeedHVFormat",
       "\"Speed: xz: %h y: %v m/s\"",
-      "The text formatting used for infoSpeedHV\n§6%%%%h, %%%%v - The horizontal and vertical speed you're travelling at in meters per second\nCheck the README for more info on how to change precision."),
+      "The text formatting used for infoSpeedHV\n§6%%%%h, %%%%v - The horizontal and vertical speed you're travelling at in meters per second\n§6Check the README for more info on how to change precision."),
 
     TILE_ENTITIES_FORMAT                = new ConfigString("infoTileEntitiesFormat",
       "\"Client world TE - L: ?, T: ? - TODO\"",
@@ -303,7 +303,7 @@ public class Formats implements IConfigHandler
 
     TIME_REAL_FORMAT                    = new ConfigString("infoTimeIRLFormat",
       "\"%time$tk:%time$tM:%time$tS\"",
-      "The text formatting used for infoTimeIRL\n§6%%%%time - The generic time variable used for all formatting inputs\nCheck the README for more info on time formatting."),
+      "The text formatting used for infoTimeIRL\n§6%%%%time - The generic time variable used for all formatting inputs\n§6Check the README for more info on time formatting."),
 
     TIME_TOTAL_MODULO_FORMAT            = new ConfigString("infoTimeTotalModuloFormat",
       "\"Total time % %mod: %time\"",
@@ -314,8 +314,8 @@ public class Formats implements IConfigHandler
       "The text formatting used for infoTimeWorld\n§6%%%%day - The current time of day, in ticks\n§6%%%%total - The total time played in this world, in ticks"),
 
     TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoWorldTimeFormattedFormat",
-      "\"MC time: (day %dayFrom0) %hour:%min:xx\"",
-      "The text formatting used for infoTimeWorldFormatted\n§6The supported placeholders are: %%%%dayFrom0, %%%%dayFrom1, %%%%hour, %%%%min and %%%%sec\n§6%%%%dayFrom0 starts the day counter from 0. %%%%dayFrom1 starts from 1.");
+      "\"MC time: (day %day0) %hour:%min:xx\"",
+      "The text formatting used for infoWorldTimeFormatted\n§6%%%%day0, %%%%day1 - The days this world has been running for, counting from day 0 and 1 respectively\n§6%%%%hour, %%%%min, %%%%sec - The total hours, minutes and seconds of world playtime");
 
   public static final ImmutableList<IConfigValue> COLORS = ImmutableList.of(
     COLOR0,

@@ -481,8 +481,8 @@ public class ColorfulLines
       long day = timeDay / 24000;
       int dayTicks = (int)(timeDay % 24000);
       lines.add(line(Formats.TIME_WORLD_FORMATTED_FORMAT,
-        var("dayFrom0", day),
-        var("dayFrom1", day + 1),
+        var("day0", day),
+        var("day1", day + 1),
         var("hour", "02d", (dayTicks / 1000 + 6) % 24),
         var("min", "02d", (int)(dayTicks * 0.06) % 60), // These casts are necessary
         var("sec", "02d", (int)(dayTicks * 3.6) % 60)
