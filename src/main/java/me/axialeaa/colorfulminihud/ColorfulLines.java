@@ -132,7 +132,7 @@ public class ColorfulLines
       .replaceAll("#4(?=\\D)", Formats.COLOR4.getStringValue())
       .replaceAll("#3(?=\\D)", Formats.COLOR3.getStringValue())
       .replaceAll("#2(?=\\D)", Formats.COLOR2.getStringValue())
-      .replaceAll("#1(?=\\D])", Formats.COLOR1.getStringValue())
+      .replaceAll("#1(?=\\D)", Formats.COLOR1.getStringValue())
       .replaceAll("#0(?=\\D)", Formats.COLOR0.getStringValue())
 
       .replace("#black",        "#000000")
@@ -549,6 +549,19 @@ public class ColorfulLines
         var("tps", tpsString),
         var("mspt", msptString)));
     }),
+
+    //#if MC >= 11903
+    //$$ entry(InfoToggle.MOB_CAPS, (List<String> lines, Set<InfoToggle> addedTypes) ->
+    //$$ {
+    //$$   MobCapDataHandler mobCapData = data.getMobCapData();
+    //$$
+    //$$   if(mc.hasSingleplayerServer() && Objects.requireNonNull(mc.getSingleplayerServer()).getTickCount() % 100 == 0)
+    //$$     mobCapData.updateIntegratedServerMobCaps();
+    //$$
+    //$$   if(mobCapData.getHasValidData())
+    //$$     lines.add(line(mobCapData.getFormattedString())); // this will need to change
+    //$$ }),
+    //#endif
 
     entry(InfoToggle.PING, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
