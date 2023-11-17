@@ -201,6 +201,12 @@ public class Formats implements IConfigHandler
     "\"Mem: %pctUsed% %used/%max | Allocated: %pctAllocated% %total\"",
     "The text formatting used for infoMemoryUsage\n§6%%pctUsed - The percentage of RAM being used by the game out of the max\n§6%%used - The exact amount of RAM being used by the game\n§6%%max - The maximum amount of RAM the game will attempt to use\n§6%%pctAllocated - The percentage of RAM allocated to the game out of the max\n§6%%total - The amount of RAM allocated to the game"),
 
+  //#if MC >= 11903
+  //$$ MOB_CAPS_FORMAT                = new ConfigString("infoMobCapsFormat",
+  //$$   "let's figure this out at some point",
+  //$$   "The text formatting used for infoMobCaps\n§6%%var - Simple variable explanation"),
+  //#endif
+
   LOADED_CHUNKS_COUNT_CLIENT_FORMAT   = new ConfigString("infoLoadedChunksCountClientFormat",
     "\"%stats\"",
     "The text formatting used for infoLoadedChunksCount when playing on a server\n§6%%stats - The client-side chunk source information"),
@@ -318,7 +324,7 @@ public class Formats implements IConfigHandler
     "The text formatting used for infoTimeWorld\n§6%%day - The current time of day, in ticks\n§6%%total - The total time played in this world, in ticks"),
 
   //#if MC >= 11900
-  //$$ TIME_WORLD_FORMATTED_FORMAT         = new ConfigString("infoWorldTimeFormattedFormat",
+  //$$ TIME_WORLD_FORMATTED_FORMAT    = new ConfigString("infoWorldTimeFormattedFormat",
   //$$   "\"MC time: (day %day0) %hour:%min:xx\"",
   //$$   "The text formatting used for infoWorldTimeFormatted\n§6%%day0, %%day1 - The days this world has been running for, counting from day 0 and 1 respectively\n§6%%hour, %%min, %%sec - The total hours, minutes and seconds of world playtime\n§6%%moon - The current phase of the moon");
   //#else
