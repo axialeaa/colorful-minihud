@@ -1,4 +1,4 @@
-package me.axialeaa.colorfulminihud;
+package com.axialeaa.minideco;
 
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -10,7 +10,7 @@ import fi.dy.masa.minihud.mixin.IMixinWorldRenderer;
 import fi.dy.masa.minihud.util.DataStorage;
 import fi.dy.masa.minihud.util.IServerEntityManager;
 import fi.dy.masa.minihud.util.MiscUtils;
-import me.axialeaa.colorfulminihud.config.Formats;
+import com.axialeaa.minideco.config.Formats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -59,7 +59,7 @@ import java.util.function.BiConsumer;
 
 import static java.util.Map.entry;
 
-public class ColorfulLines
+public class InfoLines
 {
   private static int fps;
   private static DataStorage data;
@@ -79,23 +79,23 @@ public class ColorfulLines
 
   public static void setup(int fps, DataStorage data, ClientLevel level, LocalPlayer player, double x, double y, double z, BlockPos pos, ChunkPos chunkPos, LevelChunk clientChunk, LevelChunk serverChunk, BlockState targetedBlockState, BlockEntity targetedBlockEntity)
   {
-    ColorfulLines.fps = fps;
-    ColorfulLines.data = data;
-    ColorfulLines.level = level;
+    InfoLines.fps = fps;
+    InfoLines.data = data;
+    InfoLines.level = level;
     bestLevel = WorldUtils.getBestWorld(mc);
-    ColorfulLines.player = player;
-    ColorfulLines.x = x;
-    ColorfulLines.y = y;
-    ColorfulLines.z = z;
+    InfoLines.player = player;
+    InfoLines.x = x;
+    InfoLines.y = y;
+    InfoLines.z = z;
     dx = x - player.xOld;
     dy = y - player.yOld;
     dz = z - player.zOld;
-    ColorfulLines.pos = pos;
-    ColorfulLines.chunkPos = chunkPos;
-    ColorfulLines.clientChunk = clientChunk;
-    ColorfulLines.serverChunk = serverChunk;
-    ColorfulLines.targetedBlockState = targetedBlockState;
-    ColorfulLines.targetedBlockEntity = targetedBlockEntity;
+    InfoLines.pos = pos;
+    InfoLines.chunkPos = chunkPos;
+    InfoLines.clientChunk = clientChunk;
+    InfoLines.serverChunk = serverChunk;
+    InfoLines.targetedBlockState = targetedBlockState;
+    InfoLines.targetedBlockEntity = targetedBlockEntity;
     nonNull = level != null;
     isServerLevel = bestLevel != null && mc.hasSingleplayerServer() && bestLevel instanceof ServerLevel;
   }

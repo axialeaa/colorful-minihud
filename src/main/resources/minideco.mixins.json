@@ -1,13 +1,11 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "me.axialeaa.${id}.mixins",
+  "package": "com.axialeaa.${id}.mixins",
   "compatibilityLevel": "${compatibility_level}",
-  "mixins": [
+  "client": [
     "RenderHandlerMixin",
     "GuiConfigsMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

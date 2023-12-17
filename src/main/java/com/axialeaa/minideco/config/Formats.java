@@ -1,4 +1,4 @@
-package me.axialeaa.colorfulminihud.config;
+package com.axialeaa.minideco.config;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
@@ -409,7 +409,7 @@ public class Formats implements IConfigHandler
     TIME_WORLD_FORMATTED_FORMAT
   );
 
-  private static final String CONFIG_FILE_NAME = "colorfulminihud.json";
+  private static final String CONFIG_FILE_NAME = "minideco.json";
 
   @Override
   public void load()

@@ -1,4 +1,4 @@
-package me.axialeaa.colorfulminihud;
+package com.axialeaa.minideco;
 
 import java.util.List;
 

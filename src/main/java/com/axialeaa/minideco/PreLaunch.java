@@ -1,4 +1,4 @@
-package me.axialeaa.colorfulminihud;
+package com.axialeaa.minideco;
 
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;

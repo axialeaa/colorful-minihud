@@ -1,17 +1,17 @@
-package me.axialeaa.colorfulminihud.mixins;
+package com.axialeaa.minideco.mixins;
 
 //#if MC >= 12000
 //$$ import net.minecraft.client.gui.GuiGraphics;
 //#else
 import com.mojang.blaze3d.vertex.PoseStack;
 //#endif
+import com.axialeaa.minideco.InfoLines;
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.event.RenderHandler;
 import fi.dy.masa.minihud.util.DataStorage;
-import me.axialeaa.colorfulminihud.ColorfulLines;
-import me.axialeaa.colorfulminihud.RenderUtils;
+import com.axialeaa.minideco.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -86,9 +86,9 @@ public class RenderHandlerMixin
     ChunkPos chunkPos = new ChunkPos(pos);
 
     //#if MC >= 11903
-    //$$ ColorfulLines.setup(mc.getFps(), data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
+    //$$ InfoLines.setup(mc.getFps(), data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
     //#else
-    ColorfulLines.setup(fps, data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
+    InfoLines.setup(fps, data, level, player, x, y, z, pos, chunkPos, getClientChunk(chunkPos), getChunk(chunkPos), getTargetedBlock(mc), getTargetedBlockEntity(level, mc));
     //#endif
     linesString.clear();
   }
@@ -96,7 +96,7 @@ public class RenderHandlerMixin
   @Redirect(method = "updateLines", at = @At(value = "INVOKE", target = "Lfi/dy/masa/minihud/event/RenderHandler;addLine(Lfi/dy/masa/minihud/config/InfoToggle;)V"), remap = false)
   private void addLine(RenderHandler self, InfoToggle type)
   {
-    ColorfulLines.addLine(type, linesString, addedTypes);
+    InfoLines.addLine(type, linesString, addedTypes);
   }
 
   @Inject(method = "updateLines", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/config/options/ConfigBoolean;getBooleanValue()Z", ordinal = 0), cancellable = true, remap = false)
@@ -119,7 +119,7 @@ public class RenderHandlerMixin
 
     if(Configs.Generic.SORT_LINES_BY_LENGTH.getBooleanValue())
     {
-      linesComponent.sort(new ColorfulLines.StringHolder());
+      linesComponent.sort(new InfoLines.StringHolder());
       if(Configs.Generic.SORT_LINES_REVERSED.getBooleanValue())
         Collections.reverse(linesComponent);
     }

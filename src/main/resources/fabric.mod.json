@@ -10,31 +10,37 @@
     "lntricate"
   ],
   "contact": {
-    "sources": "https://github.com/axialeaa/colorful-minihud",
-    "issues": "https://github.com/axialeaa/colorful-minihud/issues"
+    "sources": "https://github.com/axialeaa/MiniDeco",
+    "issues": "https://github.com/axialeaa/MiniDeco/issues"
   },
-
   "icon": "assets/${id}/icon.png",
-
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
-      "me.axialeaa.${id}.ColorfulMinihudMod"
+      "com.axialeaa.${id}.MiniDecoMod"
     ],
     "preLaunch": [
-      "me.axialeaa.${id}.PreLaunch"
+      "com.axialeaa.${id}.PreLaunch"
     ],
     "mm:early_risers": [
-      "me.axialeaa.${id}.EarlyRiser"
+      "com.axialeaa.${id}.EarlyRiser"
     ]
   },
   "mixins": [
     "${id}.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.11.4",
     "minecraft": "${minecraft_dependency}",
     "minihud": "${minihud_dependency}"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "minihud",
+      "links": {
+        "modmenu.github_releases": "https://github.com/axialeaa/MiniDeco/releases",
+        "modmenu.modrinth": "https://modrinth.com/mod/minideco"
+      }
+    }
   }
 }

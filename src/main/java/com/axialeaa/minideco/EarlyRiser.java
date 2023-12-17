@@ -1,4 +1,4 @@
-package me.axialeaa.colorfulminihud;
+package com.axialeaa.minideco;
 
 import com.chocohead.mm.api.ClassTinkerers;
 
@@ -10,6 +10,6 @@ public class EarlyRiser implements Runnable
   public void run()
   {
     ClassTinkerers.enumBuilder("fi.dy.masa.minihud.gui.GuiConfigs$ConfigGuiTab", String.class)
-      .addEnum("FORMATS", "colorfulminihud.gui.button.config_gui.formats").build();
+      .addEnum("FORMATS", "minideco.gui.button.config_gui.formats").build();
   }
 }

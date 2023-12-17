@@ -1,4 +1,4 @@
-package me.axialeaa.colorfulminihud;
+package com.axialeaa.minideco;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -12,13 +12,13 @@ import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import fi.dy.masa.minihud.gui.GuiConfigs.ConfigGuiTab;
-import me.axialeaa.colorfulminihud.config.Formats;
+import com.axialeaa.minideco.config.Formats;
 
-public class ColorfulMinihudMod implements ModInitializer, IInitializationHandler
+public class MiniDecoMod implements ModInitializer, IInitializationHandler
 {
 //  public static final Logger LOGGER = LogManager.getLogger();
 
-  public static final String MOD_ID = "colorfulminihud";
+  public static final String MOD_ID = "minideco";
   public static String MOD_VERSION = "unknown";
   public static String MOD_NAME = "unknown";
   public static ConfigGuiTab FORMATS;
