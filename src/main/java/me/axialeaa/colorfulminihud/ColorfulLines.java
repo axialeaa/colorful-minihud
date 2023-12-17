@@ -550,19 +550,6 @@ public class ColorfulLines
         var("mspt", msptString)));
     }),
 
-    //#if MC >= 11903
-    //$$ entry(InfoToggle.MOB_CAPS, (List<String> lines, Set<InfoToggle> addedTypes) ->
-    //$$ {
-    //$$   MobCapDataHandler mobCapData = data.getMobCapData();
-    //$$
-    //$$   if(mc.hasSingleplayerServer() && Objects.requireNonNull(mc.getSingleplayerServer()).getTickCount() % 100 == 0)
-    //$$     mobCapData.updateIntegratedServerMobCaps();
-    //$$
-    //$$   if(mobCapData.getHasValidData())
-    //$$     lines.add(line(mobCapData.getFormattedString())); // this will need to change
-    //$$ }),
-    //#endif
-
     entry(InfoToggle.PING, (List<String> lines, Set<InfoToggle> addedTypes) ->
     {
       PlayerInfo info = player.connection.getPlayerInfo(player.getUUID());
