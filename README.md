@@ -1,5 +1,5 @@
 # Hi there! Thanks for checking out MiniDeco!
-<img align="right" width="140" src="src/main/resources/assets/minideco/icon.png">
+<img align="right" width="130" src="src/main/resources/assets/minideco/icon.png">
 
 [![GitHub downloads](https://img.shields.io/github/downloads/axialeaa/MiniDeco/total?label=Github%20downloads&logo=github&style=for-the-badge)](https://github.com/axialeaa/MiniDeco/releases)
 
