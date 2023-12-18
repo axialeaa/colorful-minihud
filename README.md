@@ -12,7 +12,7 @@ Please go and check out [intricate]'s profile. She did most of the work for this
 ***
 
 ### Getting Started
-<strong>MiniDeco</strong> relies on [MiniHUD], and by extension [Malilib], being installed. Once you've downloaded both of these, download them and <strong>MiniDeco</strong> into your Fabric mods folder. If you're playing on a multiplayer server, you'll need to have these mods installed on both the server and client sides.
+<strong>MiniDeco</strong> relies on [MiniHUD], and by extension [Malilib], being installed. Once you've downloaded both of these, simply drag them and <strong>MiniDeco</strong> into your Fabric mods folder.
 ***
 
 ### Formatting Syntax
