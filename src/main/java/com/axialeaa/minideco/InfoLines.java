@@ -154,7 +154,7 @@ public class InfoLines
       .replace("#white",        "#FFFFFF");
 
     // Replaces #abcdef"stuff" with {"color":"abcdef","text":"stuff"}
-    text = text.replaceAll("(#[a-fA-F\\d]{6,8})(\".*?(?<!\\\\)\")",
+    text = text.replaceAll("(?<!\")(#[a-fA-F\\d]{6,8})(\".*?(?<!\\\\)\")",
       "{\"color\":\"$1\",\"text\":$2}");
 
     Object[] values = new Object[vars.length];
